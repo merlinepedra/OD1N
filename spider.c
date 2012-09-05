@@ -1,7 +1,6 @@
 #include "spider.h"
 #define TABLE "tables/output_array.txt"
 
-
 char *rand_str(char *dst, int size)
 {
  static const char text[] = "abcdefghijklmnopqrstuvwxyz"
@@ -35,8 +34,10 @@ int char_type_counter(char *string,char type)
 
 void chomp(char * str)
 {
-  while (*str) {
-    if (*str == '\n' || *str == '\r') {
+  while (*str) 
+  {
+    if (*str == '\n' || *str == '\r') 
+    {
       *str = 0;
       return;
     }
@@ -48,8 +49,11 @@ size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data)
 {
   size_t realsize = size * nmemb;
   struct MemoryStruct *mem = (struct MemoryStruct *)data;
+
   mem->memory = realloc(mem->memory, mem->size + realsize + 1);
-  if (mem->memory) {
+
+  if(mem->memory) 
+  {
     memcpy(&(mem->memory[mem->size]), ptr, realsize);
     mem->size += realsize;
     mem->memory[mem->size] = 0;
@@ -91,14 +95,17 @@ int WriteFile(char *file,char *str)
  FILE *arq;
  
  arq=fopen(file,"a"); 
+
   if(!arq) 
   {
    fprintf(stdout,"error in WriteFile() %s",file); 
    return 0;
   }
+
  fprintf(arq,"%s\n",str); 
  fclose(arq); 
- return 1;
+
+return 1;
 }
 
 void spider(void *pack,char *line)
@@ -107,7 +114,6 @@ void spider(void *pack,char *line)
  struct MemoryStruct chunk;
  FILE *fp=NULL;
 
-// CURL *curl;  
  CURL *curl;  
  curl_global_init(CURL_GLOBAL_ALL); 
 
@@ -115,18 +121,13 @@ void spider(void *pack,char *line)
  char line2[1024];
  char *make=NULL;
 
- // Unpack args , and follow arg[0]...
  char **pack_ptr=(char **)pack;
  char **arg = pack_ptr;
  char tabledata[6660],randname[16],log[1024];
  char *pathsource=NULL;   
 
+ POST=(arg[4]==NULL)?0:1;
  
-//if be POST
-  if(arg[4]==NULL)
-  {
-    POST=0;
-  } else POST=1;
   
   counter=char_type_counter(POST?arg[4]:arg[0],'!');
   old=counter;  
@@ -136,38 +137,41 @@ void spider(void *pack,char *line)
    {
     chunk.memory=NULL; 
     chunk.size = 0;  
-//    make=(char *)malloc(sizeof(char)*( strlen(arg[4])+5023));
-//payload with arguments ok
+
     make=payload_injector( (POST?arg[4]:arg[0]),line,old);
-// send to POST on curl
+    
     curl = curl_easy_init();
     curl_easy_setopt(curl,  CURLOPT_URL, POST?arg[0]:make);
-    if(POST)
-     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, make);
+ 
+     if(POST)
+      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, make);
+      
     curl_easy_setopt(curl,  CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
     curl_easy_setopt(curl,  CURLOPT_WRITEDATA, (void *)&chunk);
-    if(arg[6]!=NULL)
-     curl_easy_setopt(curl,  CURLOPT_USERAGENT, arg[6]);
-    else
-     curl_easy_setopt(curl,  CURLOPT_USERAGENT, "Mozilla/5.0 (0d1n v0.1) ");
+    
+     if(arg[6]!=NULL)
+      curl_easy_setopt(curl,  CURLOPT_USERAGENT, arg[6]);
+     else
+      curl_easy_setopt(curl,  CURLOPT_USERAGENT, "Mozilla/5.0 (0d1n v0.1) ");
+      
     curl_easy_setopt(curl,  CURLOPT_ENCODING,"gzip,deflate");
-//    curl_easy_setopt(curl, CURLOPT_SETIMEOUT,3);
-    if(arg[3]!=NULL)
-    {
-     curl_easy_setopt(curl,CURLOPT_COOKIEFILE,arg[3]);
-     curl_easy_setopt(curl,CURLOPT_COOKIEJAR,arg[3]);
-    } else 
-     curl_easy_setopt(curl,CURLOPT_COOKIEJAR,"odin_cookiejar.txt");
+
+      if(arg[3]!=NULL)
+      {
+       curl_easy_setopt(curl,CURLOPT_COOKIEFILE,arg[3]);
+       curl_easy_setopt(curl,CURLOPT_COOKIEJAR,arg[3]);
+      } else 
+       curl_easy_setopt(curl,CURLOPT_COOKIEJAR,"odin_cookiejar.txt");
+ 
     curl_easy_setopt(curl,CURLOPT_FOLLOWLOCATION,1);
     curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0); 
     curl_easy_setopt(curl,CURLOPT_HEADER,1);
-  
   
     curl_easy_perform(curl);
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
     curl_easy_cleanup(curl);
 
-//open response list 2 grep
+
     fp = fopen(arg[2], "r");
     if(!fp)
     { 
@@ -175,13 +179,14 @@ void spider(void *pack,char *line)
      exit(0);
     }
 
-      line=html_entities(line);
-      make=html_entities(make);
+    line=html_entities(line);
+    make=html_entities(make);
 
     while(fgets(line2,1023,fp) != NULL) 
     {
-// grep response
+
      chomp(line2);
+     
      if(chunk.memory && strstr(chunk.memory,line2)!=NULL) 
      {
       fprintf(stdout,"%s [ %s%d%s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
@@ -218,6 +223,7 @@ void spider(void *pack,char *line)
 
     if(make)
      free(make);
+
     if(chunk.size <10) 
      free(chunk.memory);
 
@@ -232,35 +238,32 @@ void scan(void *arguments)
 {
  FILE *fp=NULL;
 
- // Unpack args , and follow arg[0]...
  char **arg = (char **)arguments;
  char line[2024]; 
 
-// open payload list and get lines
-  fp = fopen(arg[1], "r");
+ fp = fopen(arg[1], "r");
+
   if(!fp)
   { 
    puts("error to open Payload list"); 
    exit(0);
   }
  
-// delete out table
+
   unlink(TABLE);
-//start array to use in datatables
+
   WriteFile(TABLE,"{ \"aaData\": [ \n");
  
-  while(fgets(line,2023,fp) != NULL) 
-   spider(arguments,line);
+   while(fgets(line,2023,fp) != NULL) 
+    spider(arguments,line);
   
-// end datables array
   WriteFile(TABLE," [\"\",\"\",\"\",\"\"]");
   WriteFile(TABLE,"] }");
 
   fclose(fp);
 
- puts(RED);
- puts("end scan \n look the tables/hammer.html");
- puts(LAST);
-
+  puts(RED);
+  puts("end scan \n look the tables/hammer.html");
+  puts(LAST);
 
 }
