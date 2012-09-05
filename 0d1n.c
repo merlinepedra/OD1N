@@ -1,7 +1,7 @@
 /*
 Author:Antonio Costa aka " Cooler_ "
 contact: c00f3r[at]gmail[dot]com
-contribuitor: Sergio Renan aka slyfunky
+
 
     Copyright (C) 2012 0d1n authors,
     
@@ -23,7 +23,7 @@ contribuitor: Sergio Renan aka slyfunky
 
 
 What this IT ?
-this is another Web POST,GET vulnerability scanner
+this is another Web POST,GET test tool lol
 
 need libcurl to run
 
