@@ -248,17 +248,15 @@ void scan(void *arguments)
    puts("error to open Payload list"); 
    exit(0);
   }
- 
+
 
   unlink(TABLE);
-
   WriteFile(TABLE,"{ \"aaData\": [ \n");
  
    while(fgets(line,2047,fp) != NULL) 
     spider(arguments,line);
   
-  WriteFile(TABLE," [\"\",\"\",\"\",\"\"]");
-  WriteFile(TABLE,"] }");
+  WriteFile(TABLE," [\"\",\"\",\"\",\"\"] \n ] }");
 
   fclose(fp);
 
