@@ -123,7 +123,7 @@ void spider(void *pack,char *line)
 
  char **pack_ptr=(char **)pack;
  char **arg = pack_ptr;
- char tabledata[6660],randname[16],log[1024];
+ char tabledata[6660],randname[16],log[5025];
  char *pathsource=NULL;   
 
  POST=(arg[4]==NULL)?0:1;
@@ -190,7 +190,7 @@ void spider(void *pack,char *line)
      if(chunk.memory && strstr(chunk.memory,line2)!=NULL) 
      {
       fprintf(stdout,"%s [ %s%d%s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
-      sprintf(log,"[%d] Payload: %s  Grep: %s Params: %s",status,line,line2,make);
+      snprintf(log,5023,"[%d] Payload: %s  Grep: %s Params: %s",status,line,line2,make);
       WriteFile(arg[5],log);
       pathsource=malloc(sizeof(char)*64);
       bzero(pathsource, sizeof(char)*64);
@@ -213,7 +213,7 @@ void spider(void *pack,char *line)
       WriteFile(pathsource,"</pre></html>");
 
 // make the table lines
-      sprintf(tabledata,"[\"<a href=\\\"../%s\\\">%d </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,make,html_entities(line2),line);
+      snprintf(tabledata,6659,"[\"<a href=\\\"../%s\\\">%d </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,make,html_entities(line2),line);
       WriteFile(TABLE,tabledata);
       
       free(pathsource);
@@ -239,7 +239,7 @@ void scan(void *arguments)
  FILE *fp=NULL;
 
  char **arg = (char **)arguments;
- char line[2024]; 
+ char line[2048]; 
 
  fp = fopen(arg[1], "r");
 
@@ -254,7 +254,7 @@ void scan(void *arguments)
 
   WriteFile(TABLE,"{ \"aaData\": [ \n");
  
-   while(fgets(line,2023,fp) != NULL) 
+   while(fgets(line,2047,fp) != NULL) 
     spider(arguments,line);
   
   WriteFile(TABLE," [\"\",\"\",\"\",\"\"]");
