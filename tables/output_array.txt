@@ -1,0 +1,26 @@
+{ "aaData": [ 
+
+["<a href=\"../response_sources/KNWUYr.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name='","SQL","'"],
+
+["<a href=\"../response_sources/DsPDvtNpVnb.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name='","","'"],
+
+["<a href=\"../response_sources/tocsY.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name=&quot;","SQL","&quot;"],
+
+["<a href=\"../response_sources/T.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name=&quot;","","&quot;"],
+
+["<a href=\"../response_sources/XBV.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name=' or 2=2","SQL","' or 2=2"],
+
+["<a href=\"../response_sources/NkBH.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name=' or 2=2","","' or 2=2"],
+
+["<a href=\"../response_sources/TInlxQi.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name=&quot; or 2=2","SQL","&quot; or 2=2"],
+
+["<a href=\"../response_sources/fxQV.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name=&quot; or 2=2","","&quot; or 2=2"],
+
+["<a href=\"../response_sources/qoosiOA.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name=&lt;SCRIPT&gt;alert('XSS')&lt;/SCRIPT&gt;","&lt;SCRIPT&gt;alert('XSS')&lt;/SCRIPT&gt;","&lt;SCRIPT&gt;alert('XSS')&lt;/SCRIPT&gt;"],
+
+["<a href=\"../response_sources/Rae.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name=&lt;SCRIPT&gt;alert('XSS')&lt;/SCRIPT&gt;","SQL","&lt;SCRIPT&gt;alert('XSS')&lt;/SCRIPT&gt;"],
+
+["<a href=\"../response_sources/FSyhbHCJwpJ.html\">200 </a>","http://localhost/dvwa/vulnerabilities/xss_r/?name=&lt;SCRIPT&gt;alert('XSS')&lt;/SCRIPT&gt;","","&lt;SCRIPT&gt;alert('XSS')&lt;/SCRIPT&gt;"],
+
+ ["","","",""]
+] }
