@@ -7,14 +7,14 @@ char *readLine(char * NameFile)
  if(!file)
  {
   puts("error in template file"); 	 
-  return NULL;
+  exit(0);
  }
  char *lineBuffer=calloc(1,1), line[128];
 
  if(!lineBuffer)
  {
   fprintf(stdout,"error in readLine() at %s",NameFile);
-  return NULL;
+  exit(0);
  }
 
  while(fgets(line,sizeof line,file))  
@@ -41,7 +41,7 @@ int WriteFile(char *file,char *str)
   if(!arq) 
   {
    fprintf(stdout,"error in WriteFile() %s",file); 
-   return 0;
+   exit(0);
   }
 
  fprintf(arq,"%s\n",str); 
