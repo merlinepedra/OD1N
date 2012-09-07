@@ -1,49 +1,7 @@
 #include "spider.h"
 #define TABLE "tables/output_array.txt"
+#define TEMPLATE "template.conf"
 
-char *rand_str(char *dst, int size)
-{
- static const char text[] = "abcdefghijklmnopqrstuvwxyz"
-                              "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
- int i, len = rand() % (size - 1);
- if(!len) 
-  len=8;
-
-  for(i=0; i<len; ++i)
-   dst[i] = text[rand() % (sizeof text - 1)];
-   
- dst[i] = '\0';
-
- return dst;
-}
-
-int char_type_counter(char *string,char type)
-{
- int counter=0;
- 
- while(*string != '\0')
- {
-  if(*string==type) 
-   counter++;
-  string++;
- }
- return counter;
-}
-
-
-void chomp(char * str)
-{
-  while (*str) 
-  {
-    if (*str == '\n' || *str == '\r') 
-    {
-      *str = 0;
-      return;
-    }
-    str++;
-  }
-}
 
 size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data) 
 {
@@ -61,77 +19,26 @@ size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data)
   return realsize;
 }
 
-char *payload_injector(char * ptr,char * payload,int counter)
-{
- char *new=(char *)malloc((strlen(ptr)+strlen(payload)+2)*sizeof(char));
- short i=0,x=1;
- bzero(new, sizeof(char)*(strlen(ptr)+strlen(payload)+1));
-
- while(*ptr != '\0')
- {
-  if(*ptr == '!')
-  {
-   if(counter==x)
-   {
-    strncat(new,payload,strlen(payload));
-    i+=strlen(payload);
-   }
-   x++;
-  } 
-  else 
-  { 
-   *(new+i)=*ptr;
-   i++;
-  }
-  ptr++;
- }
-
- return new;
-}
-
-
-int WriteFile(char *file,char *str)
-{
- FILE *arq;
- 
- arq=fopen(file,"a"); 
-
-  if(!arq) 
-  {
-   fprintf(stdout,"error in WriteFile() %s",file); 
-   return 0;
-  }
-
- fprintf(arq,"%s\n",str); 
- fclose(arq); 
-
-return 1;
-}
-
 void spider(void *pack,char *line)
 {
 
  struct MemoryStruct chunk;
  FILE *fp=NULL;
 
+ int old=0,counter=0,POST=0,status=0;
+ char *make=NULL,*pathsource=NULL;
+ char **pack_ptr=(char **)pack,**arg = pack_ptr;
+ char tabledata[6660],randname[16],log[5025],line2[1024];
+
  CURL *curl;  
  curl_global_init(CURL_GLOBAL_ALL); 
 
- int old=0,counter=0,POST=0,status=0;
- char line2[1024];
- char *make=NULL;
-
- char **pack_ptr=(char **)pack;
- char **arg = pack_ptr;
- char tabledata[6660],randname[16],log[5025];
- char *pathsource=NULL;   
 
  POST=(arg[4]==NULL)?0:1;
- 
-  
-  counter=char_type_counter(POST?arg[4]:arg[0],'!');
-  old=counter;  
-  chomp(line);
+   
+ counter=char_type_counter(POST?arg[4]:arg[0],'!');
+ old=counter;  
+ chomp(line);
 
    while(old)
    {
@@ -149,28 +56,41 @@ void spider(void *pack,char *line)
     curl_easy_setopt(curl,  CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
     curl_easy_setopt(curl,  CURLOPT_WRITEDATA, (void *)&chunk);
     
-     if(arg[6]!=NULL)
-      curl_easy_setopt(curl,  CURLOPT_USERAGENT, arg[6]);
-     else
-      curl_easy_setopt(curl,  CURLOPT_USERAGENT, "Mozilla/5.0 (0d1n v0.1) ");
-      
+    if(arg[6]!=NULL)
+    {
+     curl_easy_setopt(curl,  CURLOPT_USERAGENT, arg[6]);
+    } else {
+     curl_easy_setopt(curl,  CURLOPT_USERAGENT, "Mozilla/5.0 (0d1n v0.1) ");
+    }
+ 
     curl_easy_setopt(curl,  CURLOPT_ENCODING,"gzip,deflate");
 
-      if(arg[3]!=NULL)
-      {
-       curl_easy_setopt(curl,CURLOPT_COOKIEFILE,arg[3]);
-       curl_easy_setopt(curl,CURLOPT_COOKIEJAR,arg[3]);
-      } else 
-       curl_easy_setopt(curl,CURLOPT_COOKIEJAR,"odin_cookiejar.txt");
- 
+    if(arg[3]!=NULL)
+    {
+     curl_easy_setopt(curl,CURLOPT_COOKIEFILE,arg[3]);
+     curl_easy_setopt(curl,CURLOPT_COOKIEJAR,arg[3]);
+    } else {
+     curl_easy_setopt(curl,CURLOPT_COOKIEJAR,"odin_cookiejar.txt");
+    }
+
     curl_easy_setopt(curl,CURLOPT_FOLLOWLOCATION,1);
-    curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0); 
-    curl_easy_setopt(curl,CURLOPT_HEADER,1);
-  
+
+    if(arg[7]!=NULL) 
+    {
+     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2);
+     curl_easy_setopt(curl, CURLOPT_CAINFO, arg[7]);
+    } else {
+     curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0); 
+    }
+
+    if(arg[8]!=NULL) 
+     curl_easy_setopt(curl,CURLOPT_TIMEOUT,atoi(arg[8])); 
+    
+    curl_easy_setopt(curl,CURLOPT_HEADER,1);  
     curl_easy_perform(curl);
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
     curl_easy_cleanup(curl);
-
 
     fp = fopen(arg[2], "r");
     if(!fp)
@@ -192,33 +112,23 @@ void spider(void *pack,char *line)
       fprintf(stdout,"%s [ %s%d%s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
       snprintf(log,5023,"[%d] Payload: %s  Grep: %s Params: %s",status,line,line2,make);
       WriteFile(arg[5],log);
+
       pathsource=malloc(sizeof(char)*64);
       bzero(pathsource, sizeof(char)*64);
       strcat(pathsource,"response_sources/");
       strcat(pathsource,rand_str(randname, sizeof randname));
       strcat(pathsource,".html");
-      WriteFile(pathsource,"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\\
-<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\\
-<head>\\
-	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\\
-	<title>SyntaxHighlighter</title>\\
-	<script type=\"text/javascript\" src=\"../tables/media/js/shCore.js\"></script>\\
-	<script type=\"text/javascript\" src=\"../tables/media/js/shBrushXml.js\"></script>\\
-	<link type=\"text/css\" rel=\"Stylesheet\" href=\"../tables/media/css/shCoreRDark.css\"/>\\
-	<script type=\"text/javascript\">SyntaxHighlighter.all();</script>\\
-</head>\\
-<body style=\"background: black; font-family: Helvetica\">\\
-<pre class='brush: xml'>");
+      WriteFile(pathsource,readLine(TEMPLATE));
       WriteFile(pathsource,html_entities(chunk.memory));
       WriteFile(pathsource,"</pre></html>");
 
-// make the table lines
       snprintf(tabledata,6659,"[\"<a href=\\\"../%s\\\">%d </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,make,html_entities(line2),line);
       WriteFile(TABLE,tabledata);
       
       free(pathsource);
      }
     }
+ 
     fclose(fp);
 
     if(make)
