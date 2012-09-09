@@ -57,7 +57,7 @@ void init()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "Odin scan tool  v 0.8 beta\n"
+ "0d1n  v 0.8 beta\n"
  LAST
  "-h host to scan\n"
  "-p payload list to inject\n"
