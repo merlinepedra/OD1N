@@ -8,9 +8,11 @@
 //#include <curl/types.h>
 #include <curl/easy.h>
 
+#include "0d1n.h"
 #include "html_entities.h" 
 #include "string_ops.h"
 #include "file_ops.h"
+#include "tombpool.h"
 
 // colors macro
 #define RED "\033[22;31m"
@@ -26,5 +28,5 @@ struct MemoryStruct {
 };
 
 size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data);
-void spider(void *arg,char *line);
-void scan(void *arg);
+void spider(void *enter);
+void scan();

@@ -19,19 +19,19 @@ size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data)
   return realsize;
 }
 
-void spider(void *pack,char *line)
+void spider(void *enter)
 {
 
  struct MemoryStruct chunk;
  FILE *fp=NULL;
 
  int old=0,counter=0,POST=0,status=0;
- char *make=NULL,*pathsource=NULL;
+ char *make=NULL,*pathsource=NULL,*line=(char *)enter;
  char **pack_ptr=(char **)pack,**arg = pack_ptr;
- char tabledata[6660],randname[16],log[5025],line2[1024];
-
+ char tabledata[4000],randname[16],log[4048],line2[1024];
+ 
  CURL *curl;  
- curl_global_init(CURL_GLOBAL_ALL); 
+// curl_global_init(CURL_GLOBAL_ALL); 
 
 
  POST=(arg[4]==NULL)?0:1;
@@ -106,11 +106,10 @@ void spider(void *pack,char *line)
     {
 
      chomp(line2);
-     
      if(chunk.memory && strstr(chunk.memory,line2)!=NULL) 
      {
       fprintf(stdout,"%s [ %s%d%s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
-      snprintf(log,5023,"[%d] Payload: %s  Grep: %s Params: %s",status,line,line2,make);
+      snprintf(log,4047,"[%d] Payload: %s  Grep: %s Params: %s",status,line,line2,make);
       WriteFile(arg[5],log);
 
       pathsource=malloc(sizeof(char)*64);
@@ -122,7 +121,7 @@ void spider(void *pack,char *line)
       WriteFile(pathsource,html_entities(chunk.memory));
       WriteFile(pathsource,"</pre></html>");
 
-      snprintf(tabledata,6659,"[\"<a href=\\\"../%s\\\">%d </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,make,html_entities(line2),line);
+      snprintf(tabledata,3999,"[\"<a href=\\\"../%s\\\">%d </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,make,html_entities(line2),line);
       WriteFile(TABLE,tabledata);
       
       free(pathsource);
@@ -144,28 +143,41 @@ void spider(void *pack,char *line)
 }
 
 
-void scan(void *arguments)
+void scan()
 {
  FILE *fp=NULL;
 
- char **arg = (char **)arguments;
- char line[2048]; 
+ char **arg = (char **)pack;
+ char line[1024]; 
 
- fp = fopen(arg[1], "r");
+ piscina* threadpool;
+// init pool, to fill the pool, alloc heap
+ int numberthread=arg[9]!=NULL?atoi(arg[9]):2,count=1;
+ threadpool=Dig_TombPool(numberthread); 
 
+ 
+ curl_global_init(CURL_GLOBAL_ALL); 
+
+ printf("threads: %s \n",arg[9]);
+
+  fp = fopen(arg[1], "r");
   if(!fp)
   { 
    puts("error to open Payload list"); 
    exit(0);
   }
 
-
   unlink(TABLE);
   WriteFile(TABLE,"{ \"aaData\": [ \n");
  
-   while(fgets(line,2047,fp) != NULL) 
-    spider(arguments,line);
-  
+   while(fgets(line,1023,fp) != NULL) 
+   {
+    spider(line);
+    Add_Corpse(threadpool, (void*)spider, (void*)line);
+    count++;
+   }
+  Cover_TombPool(threadpool,count);
+
   WriteFile(TABLE," [\"\",\"\",\"\",\"\"] \n ] }");
 
   fclose(fp);

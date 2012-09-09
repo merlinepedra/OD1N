@@ -33,12 +33,13 @@ $./0d1n
 
 
 */
+
 #include <stdio.h> 
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 #include "spider.h"
-
+#include "0d1n.h"
 
 void init()
 {
@@ -56,7 +57,7 @@ void init()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "Odin simple scanner v 0.7\n"
+ "Odin scan tool  v 0.8 beta\n"
  LAST
  "-h host to scan\n"
  "-p payload list to inject\n"
@@ -66,7 +67,8 @@ void init()
  "-o output of result\n"
  "-u custom UserAgent\n"
  "-s Load CA certificate to work with SSL\n"
- "-T timeout of response\n"
+ "-T Timeout of response\n"
+ "-t Number of threads\n"
  YELLOW
  "example:\n./odin -h 'http://site.com/view/1!/product/!/' -p sqli.txt -f response_sqli.txt -o site \n"
  CYAN
@@ -75,10 +77,11 @@ void init()
  puts(LAST);
 }
 
+
+
 int main(int argc, char ** argv)
 {
  char c;
- char *pack[9]; 
 
  if(argc < 9) 
  {
@@ -86,7 +89,7 @@ int main(int argc, char ** argv)
   return 0;
  }
  
- short y=8;
+ short y=9;
  while(y)
  {
   pack[y]=NULL;
@@ -95,7 +98,7 @@ int main(int argc, char ** argv)
 
  opterr = 0;
 
- while((c = getopt(argc, argv, "h:p:f:c:P:o:u:s:T:")) != -1)
+ while((c = getopt(argc, argv, "h:p:f:c:P:o:u:s:T:t:")) != -1)
   switch(c) 
   {
    case 'h':
@@ -131,8 +134,12 @@ int main(int argc, char ** argv)
    case 'T':
     pack[8]=optarg;
 
+   case 't':
+    pack[9]=optarg;
+
+
    case '?':
-    if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s') 
+    if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s' || optopt=='T') 
     {
      init();
      puts(RED);
@@ -145,7 +152,7 @@ int main(int argc, char ** argv)
  srand(time(NULL));
  
  if(strlen(pack[0]))
-  scan((void *)pack);
+  scan();
 
 
  return 0;
