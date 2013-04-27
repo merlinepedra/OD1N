@@ -7,14 +7,11 @@ This is just another security tool, to tests inputs on Web Applications.
 Works similar to Burp "Intruder"...
 
 
-> You can do: 
+#You can do: 
 
 > *brute force passwords in auth forms
-
 > *diretory disclosure ( use PATH list to brute, and find HTTP status code )
-
 > *test list on input to find SQL Injection and XSS vulnerabilities 
-
 > other things...
 
 I explain in portuguese language here:
