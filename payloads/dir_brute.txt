@@ -1,0 +1,4 @@
+phpmyadmin/
+webmin/
+auth/
+login/
