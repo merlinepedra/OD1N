@@ -27,5 +27,5 @@ struct MemoryStruct {
 };
 
 size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data);
-void spider(void *arg,char *line);
+void spider(void *arg,char *line,char * pathtable);
 void scan(void *arg);
