@@ -191,7 +191,7 @@ void scan(void *arguments)
   WriteFile(pathtable," [\"\",\"\",\"\",\"\"] \n ] }");
 
   puts(RED);
-  fprintf(stdout,"end scan \n look the file %s\n",pathhammer);
+  fprintf(stdout,"end scan \n look the file %s\n long life to Wotan\n",pathhammer);
   puts(LAST);
 
 
