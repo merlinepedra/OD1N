@@ -27,7 +27,7 @@ void spider(void *pack,char *line)
  int old=0,counter=0,POST=0; 
  char *make=NULL,*pathsource=NULL;
  char **pack_ptr=(char **)pack,**arg = pack_ptr;
- char tabledata[6660],randname[16],log[5025],line2[1024];
+ char tabledata[6660],randname[16],log[5025],line2[1024],randname2[16];
 
  CURL *curl;  
  curl_global_init(CURL_GLOBAL_ALL); 
@@ -105,14 +105,17 @@ void spider(void *pack,char *line)
      if(chunk.memory && bitap_search(chunk.memory,line2)) 
      {
       fprintf(stdout,"%s [ %s %lu %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
-      snprintf(log,5023,"[%lu] Payload: %s  Grep: %s Params: %s",status,line,line2,make);
-      WriteFile(arg[5],log);
 
       pathsource=(char *)malloc(sizeof(char)*64);
       bzero(pathsource, sizeof(char)*64);
       strncat(pathsource,"response_sources/",63);
+      strncat(pathsource,rand_str(randname2, sizeof randname2),63);
+      mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
+      strncat(pathsource,"/",63);
       strncat(pathsource,rand_str(randname, sizeof randname),63);
       strncat(pathsource,".html",63);
+      snprintf(log,5023,"[%lu] Payload: %s  Grep: %s Params: %s \n Path Response Source: %s\n",status,line,line2,make,pathsource);
+      WriteFile(arg[5],log);
       WriteFile(pathsource,readLine(TEMPLATE));
       WriteFile(pathsource,html_entities(chunk.memory));
       WriteFile(pathsource,"</pre></html>");
