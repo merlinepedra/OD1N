@@ -1,6 +1,8 @@
 #include "spider.h"
 #define TABLE "tables/output_array.txt"
 #define TEMPLATE "template.conf"
+#define TEMPLATE2 "hammer1.conf"
+#define TEMPLATE3 "hammer2.conf"
 
 size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data) 
 {
@@ -18,7 +20,7 @@ size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data)
   return realsize;
 }
 
-void spider(void *pack,char *line)
+void spider(void *pack,char *line,char * pathtable)
 {
  struct MemoryStruct chunk;
  FILE *fp=NULL;
@@ -122,7 +124,7 @@ void spider(void *pack,char *line)
 
       snprintf(tabledata,6659,"[\"<a href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),
 html_entities(line2),html_entities(line));
-      WriteFile(TABLE,tabledata);
+      WriteFile(pathtable,tabledata);
       
       free(pathsource);
      }
@@ -148,8 +150,15 @@ void scan(void *arguments)
  FILE *fp=NULL;
 
  char **arg = (char **)arguments;
+ char *pathtable=NULL,*pathhammer=NULL,*view;
  char line[2048]; 
 
+ 
+ pathtable=(char *)malloc(sizeof(char)*64);
+ bzero(pathtable, sizeof(char)*64);
+ strncat(pathtable,"tables/",63);
+ strncat(pathtable,arg[5],63);
+ strncat(pathtable,".txt",63);
  fp = fopen(arg[1], "r");
 
   if(!fp)
@@ -157,20 +166,46 @@ void scan(void *arguments)
    puts("error to open Payload list"); 
    exit(1);
   }
-
-
-  unlink(TABLE);
-  WriteFile(TABLE,"{ \"aaData\": [ \n");
  
+  view=(char *)malloc(sizeof(char)*6048);
+  bzero(view, sizeof(char)*6048);
+
+  strncat(view,readLine(TEMPLATE2),6047);
+  strncat(view,"\"sAjaxSource\": \"",6047);
+  strncat(view,arg[5],6047);
+  strncat(view,".txt\" \n",6047);
+  strncat(view,readLine(TEMPLATE3),6047);
+
+  pathhammer=(char *)malloc(sizeof(char)*64);
+  bzero(pathhammer, sizeof(char)*64);
+  strncat(pathhammer,"tables/hammer_",63);
+  strncat(pathhammer,arg[5],63);
+  strncat(pathhammer,".html",63);
+  WriteFile(pathhammer,view);
+  WriteFile(pathtable,"{ \"aaData\": [ \n");
+
+
    while(fgets(line,2047,fp) != NULL) 
-    spider(arguments,line);
+    spider(arguments,line,pathtable);
   
-  WriteFile(TABLE," [\"\",\"\",\"\",\"\"] \n ] }");
+  WriteFile(pathtable," [\"\",\"\",\"\",\"\"] \n ] }");
+
+  puts(RED);
+  fprintf(stdout,"end scan \n look the file %s\n",pathhammer);
+  puts(LAST);
+
+
+  if(pathtable)
+   free(pathtable);
+
+  if(pathhammer)
+   free(pathhammer);
+
+  if(view)
+   free(view);
 
   fclose(fp);
 
-  puts(RED);
-  puts("end scan \n look the tables/hammer.html");
-  puts(LAST);
+ exit(0);
 
 }
