@@ -56,7 +56,7 @@ void init()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "Odin simple http test params tool v 1.0 STABLE\n"
+ "Odin simple http inputs tester v 1.0 STABLE\n"
  LAST
  "-h host to scan\n"
  "-p payload list to inject\n"
