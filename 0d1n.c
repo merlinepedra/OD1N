@@ -56,7 +56,7 @@ void init()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "Odin simple scanner v 0.9 STABLE\n"
+ "Odin simple http test params tool v 1.0 STABLE\n"
  LAST
  "-h host to scan\n"
  "-p payload list to inject\n"
@@ -75,7 +75,8 @@ void init()
  puts(LAST);
 }
 
-int main(int argc, char ** argv)
+int 
+main(int argc, char ** argv)
 {
  char c;
  char *pack[9]; 
