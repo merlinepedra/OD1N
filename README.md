@@ -28,4 +28,16 @@ require libcurl-dev or libcurl-devel(on rpm linux based)
 
 $ git clone https://github.com/CoolerVoid/0d1n/
 
-$ cd 0d1n; make; 0d1n
+$ cd 0d1n; make; ./0d1n
+
+
+Example to use:
+
+$ ./0d1n -h 'https://github.com/CoolerVoid?tab=!' -p payloads/xss.txt -f response2find/find.txt -o log14
+
+$ firefox tables/hammer_log14.html
+
+
+More about on portuguese language:
+
+http://blog.conviso.com.br/2012/11/um-pouco-sobre-teste-de-parametros-em_19.html
