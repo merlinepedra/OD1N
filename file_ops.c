@@ -27,6 +27,8 @@ char *readLine(char * NameFile)
   }
   strncat(lineBuffer,line,strlen(lineBuffer)-1);
  }
+ 
+  fclose(NameFile);
 
  return lineBuffer;
 }
