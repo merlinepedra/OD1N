@@ -110,12 +110,12 @@ void spider(void *pack,char *line,char * pathtable)
 
       pathsource=(char *)malloc(sizeof(char)*64);
       bzero(pathsource, sizeof(char)*64);
-      strncat(pathsource,"response_sources/",63);
-      strncat(pathsource,rand_str(randname2, sizeof randname2),63);
+      strncat(pathsource,"response_sources/",18);
+      strncat(pathsource,rand_str(randname2, sizeof randname2),16);
       mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
-      strncat(pathsource,"/",63);
-      strncat(pathsource,rand_str(randname, sizeof randname),63);
-      strncat(pathsource,".html",63);
+      strncat(pathsource,"/",2);
+      strncat(pathsource,rand_str(randname, sizeof randname),16);
+      strncat(pathsource,".html",6);
       snprintf(log,5023,"[%lu] Payload: %s  Grep: %s Params: %s \n Path Response Source: %s\n",status,line,line2,make,pathsource);
       WriteFile(arg[5],log);
       WriteFile(pathsource,readLine(TEMPLATE));
@@ -156,9 +156,9 @@ void scan(void *arguments)
  
  pathtable=(char *)malloc(sizeof(char)*64);
  bzero(pathtable, sizeof(char)*64);
- strncat(pathtable,"tables/",63);
- strncat(pathtable,arg[5],63);
- strncat(pathtable,".txt",63);
+ strncat(pathtable,"tables/",8);
+ strncat(pathtable,arg[5],16);
+ strncat(pathtable,".txt",5);
  fp = fopen(arg[1], "r");
 
   if(!fp)
@@ -170,17 +170,17 @@ void scan(void *arguments)
   view=(char *)malloc(sizeof(char)*6048);
   bzero(view, sizeof(char)*6048);
 
-  strncat(view,readLine(TEMPLATE2),6047);
-  strncat(view,"\"sAjaxSource\": \"",6047);
-  strncat(view,arg[5],6047);
-  strncat(view,".txt\" \n",6047);
-  strncat(view,readLine(TEMPLATE3),6047);
+  strncat(view,readLine(TEMPLATE2),2047);
+  strncat(view,"\"sAjaxSource\": \"",23);
+  strncat(view,arg[5],16);
+  strncat(view,".txt\" \n",11);
+  strncat(view,readLine(TEMPLATE3),2047);
 
   pathhammer=(char *)malloc(sizeof(char)*64);
   bzero(pathhammer, sizeof(char)*64);
-  strncat(pathhammer,"tables/hammer_",63);
-  strncat(pathhammer,arg[5],63);
-  strncat(pathhammer,".html",63);
+  strncat(pathhammer,"tables/hammer_",15);
+  strncat(pathhammer,arg[5],16);
+  strncat(pathhammer,".html",6);
   WriteFile(pathhammer,view);
   WriteFile(pathtable,"{ \"aaData\": [ \n");
 
