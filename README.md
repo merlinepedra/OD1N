@@ -2,9 +2,7 @@
 =====
 ![Alt text](http://4.bp.blogspot.com/-5wsk7TYyfPs/UMYXZ8JTT2I/AAAAAAAAAo0/HyQa5hK_rkA/s1600/Barbarians-VIKING.gif)
 
-This is just another security tool, to tests inputs on Web Applications.
-
-Works similar to Burp "Intruder"...
+Just another security tool to tests inputs on Web Applications.
 
 
 #You can do: 
