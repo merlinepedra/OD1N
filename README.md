@@ -2,7 +2,7 @@
 =====
 ![Alt text](http://4.bp.blogspot.com/-5wsk7TYyfPs/UMYXZ8JTT2I/AAAAAAAAAo0/HyQa5hK_rkA/s1600/Barbarians-VIKING.gif)
 
-Just another security tool to tests inputs on Web Applications.
+0d1n is a tool for automating customized attacks against web applications.
 
 
 #You can do: 
@@ -36,6 +36,4 @@ $ ./0d1n -h 'https://github.com/CoolerVoid?tab=!' -p payloads/xss.txt -f respons
 $ firefox tables/hammer_log14.html
 
 
-More about on portuguese language:
 
-http://blog.conviso.com.br/2012/11/um-pouco-sobre-teste-de-parametros-em_19.html
