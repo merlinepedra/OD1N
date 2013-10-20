@@ -9,4 +9,4 @@ char *rand_str(char *dst, int size);
 int char_type_counter(char *string,char type);
 void chomp(char * str);
 char *payload_injector(char * ptr,char * payload,int counter);
-int bitap_search(const char *text, const char *pattern);
+
