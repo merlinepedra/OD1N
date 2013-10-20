@@ -104,7 +104,7 @@ void spider(void *pack,char *line,char * pathtable)
     {
      chomp(line2);
 
-     if(chunk.memory && bitap_search(chunk.memory,line2)) 
+     if(chunk.memory && strstr(chunk.memory,line2)) 
      {
       fprintf(stdout,"%s [ %s %lu %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
 
