@@ -81,9 +81,10 @@ main(int argc, char ** argv)
  char c;
  char *pack[9]; 
 
- if(argc < 9) 
+ if(argc < 7) 
  {
   init();
+  fprintf(stderr, " requires more arguments.\n");
   exit(0);
  }
  
