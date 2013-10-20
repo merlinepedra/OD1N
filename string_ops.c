@@ -73,37 +73,4 @@ char *payload_injector(char * ptr,char * payload,int counter)
 }
 
 
-int bitap_search(const char *text, const char *pattern)
-{
- int num = strlen(pattern),i=0;
- unsigned long X;
- unsigned long mask[CHAR_MAX+1];
- 
-  if (pattern[0] == '\0') 
-   return 0;
- 
-  if (num > 31)
-  { 
-   puts ("The pattern is too long!");
-   return 0;
-  }
-
-  X = ~1;
- 
-  for (i=0; i <= CHAR_MAX; ++i)
-   mask[i] = ~0;
-
-  for (i=0; i < num; ++i)
-   mask[(unsigned)pattern[i]] &= ~(1UL << i);
- 
-  for (i=0; text[i] != '\0'; ++i) 
-  {
-   X |= mask[(unsigned)text[i]];
-   X <<= 1;
-   if (!(X & (1UL << num)))
-    return 1;
-  }
- 
- return 0;
-}
 
