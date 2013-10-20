@@ -92,6 +92,8 @@ void spider(void *pack,char *line,char * pathtable)
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
     curl_easy_cleanup(curl);
 
+   if(arg[2]!=NULL)
+   {
     fp = fopen(arg[2], "r");
     if(!fp)
     { 
@@ -131,7 +133,26 @@ html_entities(line2),html_entities(line));
     }
  
     fclose(fp);
-
+   } else {
+      fprintf(stdout,"%s [ %s %lu %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
+      pathsource=(char *)malloc(sizeof(char)*64);
+      bzero(pathsource, sizeof(char)*64);
+      strncat(pathsource,"response_sources/",18);
+      strncat(pathsource,rand_str(randname2, sizeof randname2),16);
+      mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
+      strncat(pathsource,"/",2);
+      strncat(pathsource,rand_str(randname, sizeof randname),16);
+      strncat(pathsource,".html",6);
+      snprintf(log,5023,"[%lu] Payload: %s Params: %s \n Path Response Source: %s\n",status,line,make,pathsource);
+      WriteFile(arg[5],log);
+      WriteFile(pathsource,readLine(TEMPLATE));
+      WriteFile(pathsource,html_entities(chunk.memory));
+      WriteFile(pathsource,"</pre></html>");
+      snprintf(tabledata,6659,"[\"<a href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),
+html_entities(line2),html_entities(line));
+      WriteFile(pathtable,tabledata);
+      free(pathsource);
+   }
     if(make)
      free(make);
 
