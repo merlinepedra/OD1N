@@ -86,6 +86,9 @@ void spider(void *pack,char *line,char * pathtable)
 
     if(arg[8]!=NULL) 
      curl_easy_setopt(curl,CURLOPT_TIMEOUT,atoi(arg[8])); 
+
+    if(arg[9]!=NULL) 
+     curl_easy_setopt(curl,CURLOPT_SSLVERSION,atoi(arg[9])); 
     
     curl_easy_setopt(curl,CURLOPT_HEADER,1);  
     curl_easy_perform(curl);

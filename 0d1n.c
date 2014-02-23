@@ -66,6 +66,7 @@ void init()
  "-o output of result\n"
  "-u custom UserAgent\n"
  "-s Load CA certificate to work with SSL\n"
+ "-V choice SSL version 2 or 3\n"
  "-T timeout of response\n"
  YELLOW
  "example:\n./odin -h 'http://site.com/view/1!/product/!/' -p sqli.txt -f response_sqli.txt -o site \n"
@@ -79,7 +80,7 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[9]; 
+ char *pack[10]; 
 
  if(argc < 7) 
  {
@@ -97,7 +98,7 @@ main(int argc, char ** argv)
 
  opterr = 0;
 
- while((c = getopt(argc, argv, "h:p:f:c:P:o:u:s:T:")) != -1)
+ while((c = getopt(argc, argv, "h:p:f:c:P:o:u:s:T:V:")) != -1)
   switch(c) 
   {
    case 'h':
@@ -132,6 +133,9 @@ main(int argc, char ** argv)
  
    case 'T':
     pack[8]=optarg;
+ 
+   case 'V':
+    pack[9]=optarg;
 
    case '?':
     if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s') 
