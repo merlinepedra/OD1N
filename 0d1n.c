@@ -58,29 +58,47 @@ void init()
  YELLOW
  "Odin simple http inputs tester v 1.0 STABLE\n"
  LAST
- "-h host to scan\n"
- "-p payload list to inject\n"
- "-f grep list to find on response\n"
- "-c cookie jar file to load\n"
- "-P post method params  ex: 'var=!&x=!...'\n"
- "-o output of result\n"
- "-u custom UserAgent\n"
- "-s Load CA certificate to work with SSL\n"
- "-V choice SSL version 2 or 3\n"
- "-T timeout of response\n"
+ "-host :	host to scan\n"
+ "-payloads :	payload list to inject\n"
+ "-find_string_list :	strings list to find on response\n"
+ "-find_regex_list :	regex list to find on response\n"
+ "-cookie_jar :	 cookie jar file to load\n"
+ "-post :	post method params  ex: 'var=!&x=!...'\n"
+ "-log :	output of result\n"
+ "-UserAgent :	custom UserAgent\n"
+ "-CA_certificate :	Load CA certificate to work with SSL\n"
+ "-SSL_version :	choice SSL version 2 or 3\n"
+ "-timeout_response :	timeout of response\n"
  YELLOW
- "example:\n./odin -h 'http://site.com/view/1!/product/!/' -p sqli.txt -f response_sqli.txt -o site \n"
+ "example:\n./odin -host 'http://site.com/view/1!/product/!/' -payloads sqli.txt -find_string_list response_sqli.txt -log site \n"
  CYAN
  "Coded by Cooler_\n c00f3r[at]gmail[dot]com\n BUGSEC TEAM"
  );
  puts(LAST);
 }
 
+static struct option long_options[] =
+{
+    {"host", required_argument, NULL, 'h'},
+    {"payloads", required_argument, NULL, 'p'},
+    {"find_string_list", required_argument, NULL, 'f'},
+    {"find_regex_list", required_argument, NULL, 'z'},
+    {"cookie_jar", required_argument, NULL, 'c'},
+    {"post", required_argument, NULL, 'P'},
+    {"log", required_argument, NULL, 'o'},
+    {"UserAgent", required_argument, NULL, 'u'},
+    {"CA_certificate", required_argument, NULL, 's'},
+    {"SSL_version", required_argument, NULL, 'V'},
+    {"timeout_response", required_argument, NULL, 'T'},
+    {NULL, 0, NULL, 0}
+};
+
+
 int 
 main(int argc, char ** argv)
 {
  char c;
- char *pack[10]; 
+ char *pack[11]; 
 
  if(argc < 7) 
  {
@@ -89,7 +107,7 @@ main(int argc, char ** argv)
   exit(0);
  }
  
- short y=8;
+ short y=10;
  while(y)
  {
   pack[y]=NULL;
@@ -98,19 +116,27 @@ main(int argc, char ** argv)
 
  opterr = 0;
 
- while((c = getopt(argc, argv, "h:p:f:c:P:o:u:s:T:V:")) != -1)
+ while((c = getopt_long(argc, argv, "h:p:f:z:c:P:o:u:s:T:V:",long_options,NULL)) != -1)
   switch(c) 
   {
    case 'h':
     pack[0] = optarg;
+    printf("Host: %s \n",optarg);
     break;
 
    case 'p':
     pack[1]=optarg;
+    printf("Payloads: %s \n",optarg);
     break;
 
    case 'f':
     pack[2]=optarg;
+    printf("Find list: %s \n",optarg);
+    break;
+
+   case 'z':
+    pack[10]=optarg;
+    printf("Regex list: %s \n",optarg);
     break;
 
    case 'c':
@@ -123,6 +149,7 @@ main(int argc, char ** argv)
 
    case 'o':
     pack[5]=optarg;
+    printf("Log file: %s \n",optarg);
     break;
    
    case 'u':

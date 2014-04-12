@@ -73,4 +73,34 @@ char *payload_injector(char * ptr,char * payload,int counter)
 }
 
 
+int 
+strstr_regex(char *string, char *expression)
+{
+
+ regex_t regex;
+ int reti;
+
+// Compile regular expression
+  reti = regcomp(&regex, expression, 0);
+
+  if(reti) 
+   fprintf(stdout, "Could not compile regex\n at match_regex() function \n");
+
+  reti = regexec(&regex, string, 0, NULL, 0);
+
+  if(!reti)
+  { 
+
+   regfree(&regex);
+   return 1;
+
+  } else {
+
+   regfree(&regex);
+   return 0;
+
+  }
+
+}
+
 

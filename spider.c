@@ -25,6 +25,7 @@ void spider(void *pack,char *line,char * pathtable)
  struct MemoryStruct chunk;
  FILE *fp=NULL;
 
+ bool match_string=false;
  long status=0;
  int old=0,counter=0,POST=0; 
  char *make=NULL,*pathsource=NULL;
@@ -95,9 +96,10 @@ void spider(void *pack,char *line,char * pathtable)
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
     curl_easy_cleanup(curl);
 
-   if(arg[2]!=NULL)
+// arg[10]  list to find with regex , arg[2] list without regex
+   if( (arg[2] || arg[10] ) )
    {
-    fp = fopen(arg[2], "r");
+    fp = fopen((arg[2]!=NULL)?arg[2]:arg[10], "r");
     if(!fp)
     { 
      puts("error to open response list"); 
@@ -109,7 +111,14 @@ void spider(void *pack,char *line,char * pathtable)
     {
      chomp(line2);
 
-     if(chunk.memory && strstr(chunk.memory,line2)) 
+
+     if(arg[2]!=NULL)
+      match_string=strstr(chunk.memory,line2)?true:false;
+
+     if(arg[10]!=NULL)
+      match_string=strstr_regex(chunk.memory,line2)?true:false;
+
+     if(chunk.memory && (match_string == true) ) 
      {
       fprintf(stdout,"%s [ %s %lu %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
 
