@@ -88,18 +88,14 @@ strstr_regex(char *string, char *expression)
 
   reti = regexec(&regex, string, 0, NULL, 0);
 
+  regfree(&regex);
+  
   if(!reti)
-  { 
-
-   regfree(&regex);
    return 1;
-
-  } else {
-
-   regfree(&regex);
+  else 
    return 0;
 
-  }
+  
 
 }
 
