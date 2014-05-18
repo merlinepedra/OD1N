@@ -2,37 +2,39 @@
 
 char *rand_str(char *dst, int size)
 {
- static const char text[] = "abcdefghijklmnopqrstuvwxyz"
-                              "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
- int i, len = rand() % (size - 1);
- if(!len) 
-  len=8;
+  static const char text[] = "abcdefghijklmnopqrstuvwxyz"
+                             "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  int i, len = rand() % (size - 1);
+  
+  if(!len) 
+   len=8;
  
   for(i=0; i<len; ++i)
    dst[i] = text[rand() % (sizeof text - 1)];
    
- dst[i] = '\0';
+  dst[i] = '\0';
 
- return dst;
+  return dst;
 }
 
 int char_type_counter(char *string,char type)
 {
- int counter=0;
+  int counter=0;
  
- while(*string != '\0')
- {
-  if(*string==type) 
-   counter++;
-  string++;
- }
- return counter;
+  while(*string != '\0')
+  {
+   if(*string==type) 
+    counter++;
+   string++;
+  }
+  
+  return counter;
 }
 
 
 void chomp(char * str)
 {
+ 
   while (*str) 
   {
     if (*str == '\n' || *str == '\r') 
@@ -42,6 +44,7 @@ void chomp(char * str)
     }
     str++;
   }
+  
 }
 
 char *payload_injector(char * ptr,char * payload,int counter)
@@ -94,8 +97,6 @@ strstr_regex(char *string, char *expression)
    return 1;
   else 
    return 0;
-
-  
 
 }
 
