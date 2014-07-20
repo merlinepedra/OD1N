@@ -157,7 +157,7 @@ void spider(void *pack,char *line,char * pathtable)
 					WriteFile(pathsource,html_entities(chunk.memory));
 					WriteFile(pathsource,"</pre></html>");
 
-					snprintf(tabledata,6659,"[\"<a href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),
+					snprintf(tabledata,6659,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),
 					html_entities(line2),html_entities(line));
       					WriteFile(pathtable,tabledata);
 					memset(pathsource,0,strlen(pathsource)-1);
@@ -209,7 +209,7 @@ void spider(void *pack,char *line,char * pathtable)
                // response_template=NULL;
 		WriteFile(pathsource,html_entities(chunk.memory));
 		WriteFile(pathsource,"</pre></html>");
-		snprintf(tabledata,3659,"[\"<a href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),
+		snprintf(tabledata,3659,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),
 		html_entities(line2),html_entities(line));
 		WriteFile(pathtable,tabledata);
                 memset(pathsource,0,strlen(pathsource)-1);
