@@ -10,6 +10,8 @@
 //#include <curl/types.h>
 #include <curl/easy.h>
 
+
+#include "mem_ops.h"
 #include "html_entities.h" 
 #include "string_ops.h"
 #include "file_ops.h"
@@ -20,13 +22,6 @@
 #define CYAN "\033[22;36m"
 #define GREEN "\033[22;32m"
 #define LAST "\033[0m"
-
  
-struct MemoryStruct {
-  char *memory;
-  size_t size;
-};
-
-size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data);
 void spider(void *arg,char *line,char * pathtable);
 void scan(void *arg);

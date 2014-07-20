@@ -21,11 +21,6 @@ Contact: c00f3r[at]gmail[dot]com
 
 COOLER LABs  lol  ::: coolerlab.wordpress.com :::
 
-more information about this project
-http://code.google.com/p/0d1n/
-
-BUGSEC TEAM
-
 ====================================================================
 
 
@@ -34,18 +29,25 @@ how too install ?
 $ make
 $ ./0d1n
 
-Example:
+ What this IT ?
+  this is another Web POST,GET test tool lol
+  
+ need libcurl to run
+  
+  $ sudo apt-get install libcurl-dev
+  if rpm distro
+  $ sudo yum install libcurl-devel
+  $ make
+  $./0d1n
 
-$ ./0d1n -h 'http://host/find.php?search=!&type=!' -p payloads/xss-rsnake.txt -f response2find/find.txt  -o outa -T 10 -u "firefox OS from hell"
 
-Notes:
+Examples:
 
-the list to "grep", dont can have large strings, 
-max string size is 31 chars.
+Brute path:
+$ ./0d1n --host 'http://host/find.php?search=!&type=!' --payloads payloads/xss-rsnake.txt -find_string_list response2find/find.txt  --log out_data22
 
-if you want look the current version, you can going 
-here https://github.com/CoolerVoid/0d1n
-
+Brute GET n Find string:
+$ ./0d1n --host 'http://coolerlab.wordpress.com/!' --payloads test_list1 --find_string_list find_list_one --log thunder27
 
 
 

@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <limits.h>
+//#include "mem_ops.h"
 
 char *rand_str(char *dst, int size);
 int char_type_counter(char *string,char type);

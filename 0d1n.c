@@ -28,6 +28,8 @@ this is another Web POST,GET test tool lol
 need libcurl to run
 
 $ sudo apt-get install libcurl-dev
+if rpm distro
+$ sudo yum install libcurl-devel
 $ make
 $./0d1n
 
@@ -56,23 +58,23 @@ void init()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "Odin simple http inputs tester v 1.0 STABLE\n"
+ "Odin simple http inputs tester v 1.2 STABLE\n"
  LAST
- "-host :	host to scan\n"
- "-payloads :	payload list to inject\n"
- "-find_string_list :	strings list to find on response\n"
- "-find_regex_list :	regex list to find on response\n"
- "-cookie_jar :	 cookie jar file to load\n"
- "-post :	post method params  ex: 'var=!&x=!...'\n"
- "-log :	output of result\n"
- "-UserAgent :	custom UserAgent\n"
- "-CA_certificate :	Load CA certificate to work with SSL\n"
- "-SSL_version :	choice SSL version 2 or 3\n"
- "-timeout_response :	timeout of response\n"
+ "--host :	host to scan\n"
+ "--payloads :	payload list to inject\n"
+ "--find_string_list :	strings list to find on response\n"
+ "--find_regex_list :	regex list to find on response\n"
+ "--cookie_jar :	 cookie jar file to load\n"
+ "--post :	post method params  ex: 'var=!&x=!...'\n"
+ "--log :	output of result\n"
+ "--UserAgent :	custom UserAgent\n"
+ "--CA_certificate :	Load CA certificate to work with SSL\n"
+ "--SSL_version :	choice SSL version 2 or 3\n"
+ "--timeout_response :	timeout of response\n"
  YELLOW
- "example:\n./odin -host 'http://site.com/view/1!/product/!/' -payloads sqli.txt -find_string_list response_sqli.txt -log site \n"
+ "example:\n./odin --host 'http://site.com/view/1!/product/!/' --payloads sqli.txt --find_string_list response_sqli.txt --log site \n"
  CYAN
- "Coded by Cooler_\n c00f3r[at]gmail[dot]com\n BUGSEC TEAM"
+ "Coded by Cooler_\n c00f3r[at]gmail[dot]com\n "
  );
  puts(LAST);
 }

@@ -1,78 +1,79 @@
 #include "string_ops.h"
+#include "mem_ops.h"
 
 char *rand_str(char *dst, int size)
 {
-  static const char text[] = "abcdefghijklmnopqrstuvwxyz"
-                             "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  int i, len = rand() % (size - 1);
+	static const char text[] =	"abcdefghijklmnopqrstuvwxyz"                     
+					"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	int i, len = rand() % (size - 1);
   
-  if(!len) 
-   len=8;
+	if( !len ) 
+		len=8;
  
-  for(i=0; i<len; ++i)
-   dst[i] = text[rand() % (sizeof text - 1)];
-   
-  dst[i] = '\0';
+	for ( i=0; i<len; ++i )
+		dst[i] = text[rand() % (sizeof text - 1)];
 
-  return dst;
+   	dst[i] = '\0';
+
+	return dst;
 }
 
 int char_type_counter(char *string,char type)
 {
-  int counter=0;
+	int counter=0;
  
-  while(*string != '\0')
-  {
-   if(*string==type) 
-    counter++;
-   string++;
-  }
+	while(*string != '\0')
+	{
+		if(*string==type) 
+			counter++;
+		string++;
+	}
   
-  return counter;
+	return counter;
 }
 
 
 void chomp(char * str)
 {
  
-  while (*str) 
-  {
-    if (*str == '\n' || *str == '\r') 
-    {
-      *str = 0;
-      return;
-    }
-    str++;
-  }
+	while (*str) 
+	{
+		if ( *str == '\n' || *str == '\r' ) 
+		{
+			*str = 0;
+			return;
+		}
+		str++;
+	}
   
 }
 
 char *payload_injector(char * ptr,char * payload,int counter)
 {
- char *new=(char *)malloc((strlen(ptr)+strlen(payload)+2)*sizeof(char));
- short i=0,x=1;
- bzero(new, sizeof(char)*(strlen(ptr)+strlen(payload)+1));
+	char *new=(char *)xmalloc((strlen(ptr)+strlen(payload)+2)*sizeof(char));
+	short i=0,x=1;
+	memset(new, 0,sizeof(char)*(strlen(ptr)+strlen(payload)+1));
 
- while(*ptr != '\0')
- {
-  if(*ptr == '!')
-  {
-   if(counter==x)
-   {
-    strncat(new,payload,strlen(payload));
-    i+=strlen(payload);
-   }
-   x++;
-  } 
-  else 
-  { 
-   *(new+i)=*ptr;
-   i++;
-  }
-  ptr++;
- }
+	while(*ptr != '\0')
+	{
+		if(*ptr == '!')
+		{
+			if(counter==x)
+			{
+				strncat(new,payload,strlen(payload));
+				i+=strlen(payload);
+			}
+			x++;
+		} 
+		else 
+		{ 
+			*(new+i)=*ptr;
+			i++;
+		}
+		ptr++;
+	}
 
- return new;
+	return new;
 }
 
 
@@ -80,23 +81,23 @@ int
 strstr_regex(char *string, char *expression)
 {
 
- regex_t regex;
- int reti;
+	regex_t regex;
+	int reti;
 
 // Compile regular expression
-  reti = regcomp(&regex, expression, 0);
+	reti = regcomp(&regex, expression, 0);
 
-  if(reti) 
-   fprintf(stdout, "Could not compile regex\n at match_regex() function \n");
+	if(reti) 
+		fprintf(stdout, "Could not compile regex\n at match_regex() function \n");
 
-  reti = regexec(&regex, string, 0, NULL, 0);
+	reti = regexec(&regex, string, 0, NULL, 0);
 
-  regfree(&regex);
+	regfree(&regex);
   
-  if(!reti)
-   return 1;
-  else 
-   return 0;
+	if( !reti )
+		return 1;
+	else 
+		return 0;
 
 }
 
