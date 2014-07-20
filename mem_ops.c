@@ -13,7 +13,7 @@ static void *xmalloc_fatal(size_t size)
 	if ( size == 0 ) 
 		return NULL;
 
-	fprintf(stderr, "Out of memory.");
+	fprintf(stderr, "\n Out of memory...\n");
 
 	exit(1);
 }
