@@ -162,7 +162,7 @@ void spider(void *pack,char *line,char * pathtable)
       					WriteFile(pathtable,tabledata);
 					memset(pathsource,0,strlen(pathsource)-1);
 					if(pathsource)
-						free(pathsource);
+						xfree(pathsource);
 					pathsource=NULL;
 				}
 			}
