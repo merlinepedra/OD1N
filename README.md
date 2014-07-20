@@ -26,14 +26,25 @@ require libcurl-dev or libcurl-devel(on rpm linux based)
 
 $ git clone https://github.com/CoolerVoid/0d1n/
 
-$ cd 0d1n; make; ./0d1n
+ 
+ need libcurl to run
+  
+  $ sudo apt-get install libcurl-dev
+  if rpm distro
+  $ sudo yum install libcurl-devel
+  $ make
+  $./0d1n
 
 
-Example to use:
+Examples:
 
-$ ./0d1n -h 'https://github.com/CoolerVoid?tab=!' -p payloads/xss.txt -f response2find/find.txt -o log14
+Brute path:
+$ ./0d1n --host 'http://host/find.php?search=!&type=!' --payloads payloads/xss-rsnake.txt -find_string_list response2find/find.txt  --log out_data22
 
-$ firefox tables/hammer_log14.html
+Brute GET n Find string:
+$ ./0d1n --host 'http://coolerlab.wordpress.com/!' --payloads test_list1 --find_string_list find_list_one --log thunder27
+
+$ firefox tables/hammer_thunder27.html
 
 
 
