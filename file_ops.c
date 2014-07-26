@@ -9,18 +9,18 @@ char *readLine(char * NameFile)
 
 	if( !file )
 	{
-		puts("error in template file"); 	 
+		DEBUG("error in template file"); 	 
 		exit(1);
 	}
 
-	char *lineBuffer=(char *)xmalloc(sizeof(char)*256), line[256];
-	memset(lineBuffer,0,255);
+	char *lineBuffer=xcalloc(1,1), line[256];
+//	memset(lineBuffer,0,1);
 
 
 
 	if( !lineBuffer )
 	{
-		fprintf(stdout,"error in readLine() at %s",NameFile);
+		DEBUG("error in readLine() at %s",NameFile);
 		exit(1);
 	}
 
@@ -29,7 +29,7 @@ char *readLine(char * NameFile)
 		lineBuffer=xrealloc(lineBuffer,strlen(lineBuffer)+strlen(line)+1);
 		if( !lineBuffer )
 		{
-			fprintf(stdout,"error in readLine() at %s",NameFile);
+			DEBUG("error in readLine() at %s",NameFile);
 			exit(1);
 		}
 		strncat(lineBuffer,line,strlen(lineBuffer)-1);
@@ -55,7 +55,7 @@ WriteFile(char *file,char *str)
 
 	if ( !arq ) 
 	{
-		fprintf(stdout,"error in WriteFile() %s",file); 
+		DEBUG("error in WriteFile() %s",file); 
 		exit(1);
 	}
 
@@ -74,7 +74,7 @@ long FileSize(const char *file)
 
 	if ( !fh )
 	{
-		fprintf(stdout,"error in file");
+		DEBUG("error in file");
 		return 0;
 	}
 

@@ -105,7 +105,7 @@ main(int argc, char ** argv)
  if(argc < 7) 
  {
   init();
-  fprintf(stderr, " requires more arguments.\n");
+  DEBUG(" Need more arguments.\n");
   exit(0);
  }
  
@@ -171,7 +171,7 @@ main(int argc, char ** argv)
     {
      init();
      puts(RED);
-     fprintf(stderr, "Option -%c requires an argument.\n", optopt); 
+     DEBUG("Option -%c requires an argument.\n", optopt); 
      puts(LAST);
      exit(1);
     }

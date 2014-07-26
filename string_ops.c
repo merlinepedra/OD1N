@@ -88,7 +88,7 @@ strstr_regex(char *string, char *expression)
 	reti = regcomp(&regex, expression, 0);
 
 	if(reti) 
-		fprintf(stdout, "Could not compile regex\n at match_regex() function \n");
+		DEBUG("Could not compile regex ! \n");
 
 	reti = regexec(&regex, string, 0, NULL, 0);
 

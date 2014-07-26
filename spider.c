@@ -12,10 +12,10 @@ void spider(void *pack,char *line,char * pathtable)
 
 	bool match_string=false;
 	long status=0;
-	int old=0,counter=0,POST=0,sum_size=0,mem_size=0; 
-	char *make=NULL,*pathsource=NULL,*response_template=NULL;
+	int old=0,counter=0,POST=0,sum_size=0,mem_size=0,size_log=0,size_tabledata=0; 
+	char *make=NULL,*pathsource=NULL,*response_template=NULL,*log=NULL,*tabledata=NULL;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
-	char tabledata[6660],randname[16],log[5025],line2[1024],randname2[16];
+	char randname[16],line2[1024],randname2[16];
 
 	pathsource=(char *)xmalloc(sizeof(char)*64);
 	memset(pathsource,0,sizeof(char)*63);
@@ -151,15 +151,27 @@ void spider(void *pack,char *line,char * pathtable)
 					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
 
 					strncat(pathsource,".html",6);
-					snprintf(log,5023,"[%lu] Payload: %s  Grep: %s Params: %s \n Path Response Source: %s\n",status,line,line2,make,pathsource);
+					size_log=strlen(line)+strlen(line2)+strlen(make)+strlen(pathsource)+256;
+					log=(char *)xmalloc(sizeof(char)*size_log);
+					snprintf(log,size_log-1,"[%lu] Payload: %s  Grep: %s Params: %s \n Path Response Source: %s\n",status,line,line2,make,pathsource);
 					WriteFile(arg[5],log);
+					if(log)
+					{
+						xfree(log);
+						log=NULL;
+					}
 					WriteFile(pathsource,readLine(TEMPLATE));
 					WriteFile(pathsource,html_entities(chunk.memory));
 					WriteFile(pathsource,"</pre></html>");
-
-					snprintf(tabledata,6659,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),
-					html_entities(line2),html_entities(line));
+					size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line))+strlen(html_entities(line2))+256;
+					tabledata=(char *)xmalloc(sizeof(char)*size_tabledata);
+					snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line2),html_entities(line));
       					WriteFile(pathtable,tabledata);
+					if(tabledata) 
+					{
+						xfree(tabledata);
+						tabledata=NULL;
+					}
 					memset(pathsource,0,strlen(pathsource)-1);
 					if(pathsource)
 						xfree(pathsource);
@@ -199,8 +211,16 @@ void spider(void *pack,char *line,char * pathtable)
 		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
 
 		strncat(pathsource,".html",6);
-		snprintf(log,5023,"[%lu] Payload: %s Params: %s \n Path Response Source: %s\n",status,line,make,pathsource);
+		size_log=strlen(line)+strlen(make)+strlen(pathsource)+128;
+		log=(char *)xmalloc(sizeof(char)*size_log);
+		snprintf(log,size_log-1,"[%lu] Payload: %s Params: %s \n Path Response Source: %s\n",status,line,make,pathsource);
 		WriteFile(arg[5],log);
+		if(log)
+		{
+			xfree(log);
+			log=NULL;
+		}
+
                 response_template=(char *)xmalloc(sizeof(char)*FileSize(TEMPLATE)+200);
                 response_template=readLine(TEMPLATE);
 		WriteFile(pathsource,response_template);
@@ -209,9 +229,15 @@ void spider(void *pack,char *line,char * pathtable)
                // response_template=NULL;
 		WriteFile(pathsource,html_entities(chunk.memory));
 		WriteFile(pathsource,"</pre></html>");
-		snprintf(tabledata,3659,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),
-		html_entities(line2),html_entities(line));
-		WriteFile(pathtable,tabledata);
+                size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line2))+strlen(html_entities(line))+128;
+		tabledata=(char *)xmalloc(sizeof(char)*size_tabledata);
+		snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line2),html_entities(line));
+		WriteFile(pathtable,tabledata);	
+		if(tabledata)
+		{
+			xfree(tabledata);
+			tabledata=NULL;
+		}
                 memset(pathsource,0,strlen(pathsource)-1);
 		xfree(pathsource);
                 pathsource=NULL;
@@ -251,7 +277,7 @@ void scan(void *arguments)
 
  	if ( !fp )
 	{ 
-		puts("error to open Payload list"); 
+		DEBUG("error to open Payload list"); 
 		exit(1);
 	}
         num1=FileSize(TEMPLATE2);

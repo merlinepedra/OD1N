@@ -2,18 +2,15 @@
 #include <sys/types.h>
 #include <string.h>		
 #include <stdlib.h>
- 
-struct MemoryStruct {
-  char *memory;
-  size_t size;
-};
+#include "mem_ops.h"
+
 
 static void *xmalloc_fatal(size_t size) 
 {
 	if ( size == 0 ) 
 		return NULL;
 
-	fprintf(stderr, "\n Out of memory...\n");
+	DEBUG("\n Memory FAILURE...\n");
 
 	exit(1);
 }
