@@ -89,7 +89,7 @@ void spider(void *pack,char *line,char * pathtable)
 		curl_easy_cleanup(curl);
 
 // arg[10]  list to find with regex , arg[2] list without regex
-		if( (arg[2] || arg[10] ) && status != 0 )
+		if( (arg[2]) || (arg[10]) )
 		{
 
 
@@ -106,13 +106,14 @@ void spider(void *pack,char *line,char * pathtable)
 			while ( fgets(line2,1023,fp) != NULL) 
 			{
 				chomp(line2);
+				if(status != 0)
+				{
+					if ( arg[2] != NULL )
+						match_string=strstr(chunk.memory,line2)?true:false;
 
-				if ( arg[2] != NULL )
-					match_string=strstr(chunk.memory,line2)?true:false;
-
-				if ( arg[10] != NULL )
-					match_string=strstr_regex(chunk.memory,line2)?true:false;
-
+					if ( arg[10] != NULL )
+						match_string=strstr_regex(chunk.memory,line2)?true:false;
+				}
 				if(chunk.memory && (match_string == true) ) 
 				{
 					fprintf(stdout,"%s [ %s %lu %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);

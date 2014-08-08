@@ -1,10 +1,10 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -Os
+CFLAGS=-Wall -Wextra -lcurl -Ofast -fstack-protector-all
 BINDIR=/usr/bin
 
 0d1n: 0d1n.c 
-	$(CC) $(CFLAGS) -g -c *.c 
-	$(CC) $(CFLAGS) -g -o 0d1n *.o -lcurl -Ofast 
+	$(CC) $(CFLAGS) -c *.c 
+	$(CC) $(CFLAGS) -o 0d1n *.o 
 	rm *.o
 
 clean:
