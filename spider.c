@@ -174,8 +174,10 @@ void spider(void *pack,char *line,char * pathtable)
 					}
 					memset(pathsource,0,strlen(pathsource)-1);
 					if(pathsource)
+					{
 						xfree(pathsource);
-					pathsource=NULL;
+						pathsource=NULL;
+					}
 				}
 			}
  		fclose(fp);
@@ -225,8 +227,11 @@ void spider(void *pack,char *line,char * pathtable)
                 response_template=readLine(TEMPLATE);
 		WriteFile(pathsource,response_template);
                 response_template=xcalloc(1,1);
+		if(response_template)
+		{
            		xfree(response_template);
-               // response_template=NULL;
+			response_template=NULL;
+		}
 		WriteFile(pathsource,html_entities(chunk.memory));
 		WriteFile(pathsource,"</pre></html>");
                 size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line2))+strlen(html_entities(line))+128;
@@ -238,18 +243,31 @@ void spider(void *pack,char *line,char * pathtable)
 			xfree(tabledata);
 			tabledata=NULL;
 		}
-                memset(pathsource,0,strlen(pathsource)-1);
-		xfree(pathsource);
-                pathsource=NULL;
+		if(pathsource)
+		{
+                	memset(pathsource,0,strlen(pathsource)-1);
+			xfree(pathsource);
+                	pathsource=NULL;
+		}
 	}
 	if( make )
+	{
 		xfree(make);
+		make=NULL;
+	}
 
-	if( chunk.size < 10 ) 
+	if( chunk.size ) 
+	{
 		xfree(chunk.memory);
+		chunk.memory=NULL;
+	}
 
 	if(pathsource)
+	{
 		xfree(pathsource);
+		pathsource=NULL;
+	}
+
 	old--;
 
 	}

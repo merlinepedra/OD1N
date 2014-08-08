@@ -4,7 +4,7 @@ BINDIR=/usr/bin
 
 0d1n: 0d1n.c 
 	$(CC) $(CFLAGS) -g -c *.c 
-	$(CC) $(CFLAGS) -g -o 0d1n *.o -lcurl -Os 
+	$(CC) $(CFLAGS) -g -o 0d1n *.o -lcurl -Ofast 
 	rm *.o
 
 clean:
