@@ -17,7 +17,7 @@ void spider(void *pack,char *line,char * pathtable)
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
 	char randname[16],line2[1024],randname2[16];
 
-	pathsource=(char *)xmalloc(sizeof(char)*64);
+	pathsource=xmalloc(sizeof(char)*64);
 	memset(pathsource,0,sizeof(char)*63);
 
 
@@ -93,7 +93,7 @@ void spider(void *pack,char *line,char * pathtable)
 		{
 
 
-			pathsource=(char *)xmalloc(sizeof(char)*64);
+			pathsource=xmalloc(sizeof(char)*64);
 			memset(pathsource,0,sizeof(char)*63);
 
 			fp = fopen((arg[2]!=NULL)?arg[2]:arg[10], "r");
@@ -119,7 +119,7 @@ void spider(void *pack,char *line,char * pathtable)
 					fprintf(stdout,"%s [ %s %lu %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
 
 
-					pathsource=(char *)xmalloc(sizeof(char)*64);
+					pathsource=xmalloc(sizeof(char)*64);
 					memset(pathsource,0,sizeof(char)*63);
 
 			//		pathsource=realloc(pathsource,sizeof(char)*64);
@@ -153,39 +153,29 @@ void spider(void *pack,char *line,char * pathtable)
 
 					strncat(pathsource,".html",6);
 					size_log=strlen(line)+strlen(line2)+strlen(make)+strlen(pathsource)+256;
-					log=(char *)xmalloc(sizeof(char)*size_log);
+					log=xmalloc(sizeof(char)*size_log);
 					snprintf(log,size_log-1,"[%lu] Payload: %s  Grep: %s Params: %s \n Path Response Source: %s\n",status,line,line2,make,pathsource);
 					WriteFile(arg[5],log);
-					if(log)
-					{
-						xfree(log);
-						log=NULL;
-					}
+					
+					xfree((void **)&log);
+					
 					WriteFile(pathsource,readLine(TEMPLATE));
 					WriteFile(pathsource,html_entities(chunk.memory));
 					WriteFile(pathsource,"</pre></html>");
 					size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line))+strlen(html_entities(line2))+256;
-					tabledata=(char *)xmalloc(sizeof(char)*size_tabledata);
+					tabledata=xmalloc(sizeof(char)*size_tabledata);
 					snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line2),html_entities(line));
       					WriteFile(pathtable,tabledata);
-					if(tabledata) 
-					{
-						xfree(tabledata);
-						tabledata=NULL;
-					}
+					xfree((void **)&tabledata);
 					memset(pathsource,0,strlen(pathsource)-1);
-					if(pathsource)
-					{
-						xfree(pathsource);
-						pathsource=NULL;
-					}
+					xfree((void **)&pathsource);
 				}
 			}
  		fclose(fp);
 	} else {
 		fprintf(stdout,"%s [ %s %lu %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
 		
-		pathsource=(char *)xmalloc(sizeof(char)*64);
+		pathsource=xmalloc(sizeof(char)*64);
 		memset(pathsource,0,sizeof(char)*63);
 		sum_size=64;
 		sum_size+=18;
@@ -215,59 +205,31 @@ void spider(void *pack,char *line,char * pathtable)
 
 		strncat(pathsource,".html",6);
 		size_log=strlen(line)+strlen(make)+strlen(pathsource)+128;
-		log=(char *)xmalloc(sizeof(char)*size_log);
+		log=xmalloc(sizeof(char)*size_log);
 		snprintf(log,size_log-1,"[%lu] Payload: %s Params: %s \n Path Response Source: %s\n",status,line,make,pathsource);
 		WriteFile(arg[5],log);
-		if(log)
-		{
-			xfree(log);
-			log=NULL;
-		}
+		xfree((void **)&log);
 
-                response_template=(char *)xmalloc(sizeof(char)*FileSize(TEMPLATE)+200);
+                response_template=xmalloc(sizeof(char)*FileSize(TEMPLATE)+200);
                 response_template=readLine(TEMPLATE);
 		WriteFile(pathsource,response_template);
                 response_template=xcalloc(1,1);
-		if(response_template)
-		{
-           		xfree(response_template);
-			response_template=NULL;
-		}
+           	xfree((void **)&response_template);
 		WriteFile(pathsource,html_entities(chunk.memory));
 		WriteFile(pathsource,"</pre></html>");
                 size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line2))+strlen(html_entities(line))+128;
-		tabledata=(char *)xmalloc(sizeof(char)*size_tabledata);
+		tabledata=xmalloc(sizeof(char)*size_tabledata);
 		snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line2),html_entities(line));
 		WriteFile(pathtable,tabledata);	
-		if(tabledata)
-		{
-			xfree(tabledata);
-			tabledata=NULL;
-		}
-		if(pathsource)
-		{
-                	memset(pathsource,0,strlen(pathsource)-1);
-			xfree(pathsource);
-                	pathsource=NULL;
-		}
+		xfree((void **)&tabledata);
+		tabledata=NULL;
+		
+                memset(pathsource,0,strlen(pathsource)-1);
+		xfree((void **)&pathsource);
 	}
-	if( make )
-	{
-		xfree(make);
-		make=NULL;
-	}
-
-	if( chunk.size ) 
-	{
-		xfree(chunk.memory);
-		chunk.memory=NULL;
-	}
-
-	if(pathsource)
-	{
-		xfree(pathsource);
-		pathsource=NULL;
-	}
+	xfree((void **)&make);
+	xfree((void **)&chunk.memory);
+	xfree((void **)&pathsource);
 
 	old--;
 
@@ -287,7 +249,7 @@ void scan(void *arguments)
 	char line[2048]; 
         char *template2=NULL,*template3=NULL;
  
-	pathtable=(char *)xmalloc(sizeof(char)*64);
+	pathtable=xmalloc(sizeof(char)*64);
 	memset(pathtable,0, sizeof(char)*63);
 	strncat(pathtable,"tables/",8);
 	strncat(pathtable,arg[5],16);
@@ -302,22 +264,22 @@ void scan(void *arguments)
         num1=FileSize(TEMPLATE2);
         num2=FileSize(TEMPLATE3); 
 
-	view=(char *)xmalloc(sizeof(char)*(num1+num2+42));
+	view=xmalloc(sizeof(char)*(num1+num2+42));
 	memset(view,0,sizeof(char)*(num1+num2+1));
 
-        template2=(char *)xmalloc(sizeof(char)*num1+1);
+        template2=xmalloc(sizeof(char)*num1+1);
         template2=readLine(TEMPLATE2);
 	strncat(view,template2,num1+1);
 	strncat(view,"\"sAjaxSource\": \"",23);
 	strncat(view,arg[5],16);
 	strncat(view,".txt\" \n",9);
 
-        template3=(char *)xmalloc(sizeof(char)*num2+1);
+        template3=xmalloc(sizeof(char)*num2+1);
         template3=readLine(TEMPLATE3);
 
 	strncat(view,template3,num2);
 
-	pathhammer=(char *)xmalloc(sizeof(char)*64);
+	pathhammer=xmalloc(sizeof(char)*64);
 	memset(pathhammer,0,sizeof(char)*63);
 	strncat(pathhammer,"tables/hammer_",15);
 	strncat(pathhammer,arg[5],16);
@@ -337,19 +299,12 @@ void scan(void *arguments)
 
 	
 
-	memset(pathtable,0,sizeof(char)*strlen(pathtable));
-	if(pathtable)
-		xfree(pathtable);
-
-
-	memset(pathhammer,0,sizeof(char)*strlen(pathhammer));
-	if(pathhammer)
-		xfree(pathhammer);
-
-	memset(view,0,sizeof(char)*strlen(view));
-
-	if(view)
-		xfree(view);
+	memset(pathtable,0,sizeof(char)*strlen(pathtable)-1);
+	xfree((void **)&pathtable);
+	memset(pathhammer,0,sizeof(char)*strlen(pathhammer)-1);
+	xfree((void **)&pathhammer);
+	memset(view,0,sizeof(char)*strlen(view)-1);
+	xfree((void **)&view);
 
 	fclose(fp);
 

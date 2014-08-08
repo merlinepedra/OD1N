@@ -50,7 +50,7 @@ void chomp(char * str)
 
 char *payload_injector(char * ptr,char * payload,int counter)
 {
-	char *new=(char *)xmalloc((strlen(ptr)+strlen(payload)+2)*sizeof(char));
+	char *new=xmalloc((strlen(ptr)+strlen(payload)+2)*sizeof(char));
 	short i=0,x=1;
 	memset(new, 0,sizeof(char)*(strlen(ptr)+strlen(payload)+1));
 

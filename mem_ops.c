@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <string.h>		
 #include <stdlib.h>
+#include <assert.h>
 #include "mem_ops.h"
 
 
@@ -45,9 +46,15 @@ void *xrealloc (void *ptr, size_t size)
 	return p;
 }
 
-void xfree(void *ptr) 
+void xfree(void **ptr) 
 {
-	return free(ptr);
+	assert(ptr);
+	if( ptr != NULL )
+        {
+		free(*ptr);
+		*ptr=NULL;	
+        }
+	
 }
 
 size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data) 

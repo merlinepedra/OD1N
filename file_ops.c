@@ -35,8 +35,8 @@ char *readLine(char * NameFile)
 		strncat(lineBuffer,line,strlen(lineBuffer)-1);
 	}
 
-	if(lineBuffer)
-		xfree(lineBuffer);
+	if(lineBuffer!=NULL)
+		free(lineBuffer);
 
 
  
