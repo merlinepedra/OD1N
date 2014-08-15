@@ -39,8 +39,18 @@ $./0d1n
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/resource.h>
 #include "spider.h"
 
+void no_write_coredump (void) 
+{
+  struct rlimit rlim;
+   
+  rlim.rlim_cur = 0; 
+  rlim.rlim_max = 0; 
+  setrlimit(RLIMIT_CORE, &rlim);
+
+}
 
 void init()
 {
@@ -99,6 +109,7 @@ static struct option long_options[] =
 int 
 main(int argc, char ** argv)
 {
+ no_write_coredump ();
  char c;
  char *pack[11]; 
 
