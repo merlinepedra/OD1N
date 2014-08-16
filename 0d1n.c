@@ -247,7 +247,7 @@ main(int argc, char ** argv)
 				{	
     					pack[9] = optarg;
 				} else {	
-					DEBUG("Error \nArgument SSL version one digit example 1,2,3 or 4 : %s \n",pack[8]);
+					DEBUG("Error \nArgument SSL version one digit example 1,2,3 or 4 : %s \n",pack[9]);
 					exit(1);
 				}
 
