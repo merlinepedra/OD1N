@@ -44,11 +44,11 @@ $./0d1n
 
 void no_write_coredump (void) 
 {
-  struct rlimit rlim;
+  	struct rlimit rlim;
    
-  rlim.rlim_cur = 0; 
-  rlim.rlim_max = 0; 
-  setrlimit(RLIMIT_CORE, &rlim);
+	rlim.rlim_cur = 0; 
+	rlim.rlim_max = 0; 
+	setrlimit(RLIMIT_CORE, &rlim);
 
 }
 
@@ -113,86 +113,161 @@ main(int argc, char ** argv)
  char c;
  char *pack[11]; 
 
- if(argc < 7) 
- {
-  init();
-  DEBUG(" Need more arguments.\n");
-  exit(0);
- }
+	if(argc < 7) 
+	{
+		init();
+		DEBUG(" Need more arguments.\n");
+		exit(0);
+	}
  
- short y=10;
- while(y)
- {
-  pack[y]=NULL;
-  y--;
- }
+ 	short y=10;
 
- opterr = 0;
+ 	while(y)
+ 	{
+  		pack[y]=NULL;
+  		y--;
+ 	}
 
- while((c = getopt_long(argc, argv, "h:p:f:z:c:P:o:u:s:T:V:",long_options,NULL)) != -1)
-  switch(c) 
-  {
-   case 'h':
-    pack[0] = optarg;
-    printf("Host: %s \n",optarg);
-    break;
+ 	opterr = 0;
 
-   case 'p':
-    pack[1]=optarg;
-    printf("Payloads: %s \n",optarg);
-    break;
+ 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:o:u:s:T:V:",long_options,NULL)) != -1)
+  		switch(c) 
+  		{
+// Host
+   			case 'h':
+    				
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[0] = optarg;
+    					printf("Host: %s \n",pack[0]);
+    					
+				} else {
+					DEBUG("Error \nArgument Host very large : %s \n",optarg);
+					exit(1);
+				}
+				break;
+// payload list
+			case 'p':
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[1] = optarg;
+    					printf("Payloads: %s \n",optarg);
+    					
+				} else {
+					DEBUG("Error \nArgument Payloads very large : %s \n",pack[1]);
+					exit(1);
+				}
+				break;
 
-   case 'f':
-    pack[2]=optarg;
-    printf("Find list: %s \n",optarg);
-    break;
+   			case 'f':    				
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[2] = optarg;
+    					printf("Find list: %s \n",optarg);
+    				} else {
+			
+					DEBUG("Error \nArgument Find list very large : %s \n",pack[2]);
+					exit(1);
+				}
+				break;
 
-   case 'z':
-    pack[10]=optarg;
-    printf("Regex list: %s \n",optarg);
-    break;
+   			case 'z':			
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[10] = optarg;
+    					printf("Regex list: %s \n",optarg);
+    				} else {
+					DEBUG("Error \nArgument Regex very large : %s \n",pack[10]);
+					exit(1);
+				}
+				break;
 
-   case 'c':
-    pack[3]=optarg;
-    break;
+   			case 'c':
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[3] = optarg;
+				} else {
 
-   case 'P':
-    pack[4]=optarg;
-    break;
+					DEBUG("Error \nArgument cookie jar file is very large : %s \n",pack[3]);
+					exit(1);
+				}
+    				break;
 
-   case 'o':
-    pack[5]=optarg;
-    printf("Log file: %s \n",optarg);
-    break;
+   			case 'P':
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[4] = optarg;
+				} else {
+					DEBUG("Error \nArgument POST very large : %s \n",pack[4]);
+					exit(1);
+				}
+    				break;
+
+   			case 'o':
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[5] = optarg;
+    					printf("Log file: %s \n",optarg);
+    				} else {
+					DEBUG("Error \nArgument Log file very large : %s \n",pack[5]);
+					exit(1);
+				}
+				break;
    
-   case 'u':
-    pack[6]=optarg;
+   			case 'u':
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[6] = optarg;
+    				} else {	
+					DEBUG("Error \nArgument user agent is very large : %s \n",pack[6]);
+					exit(1);
+				}
  
-   case 's':
-    pack[7]=optarg;
+   			case 's':
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[7] = optarg;
+				} else {	
+					DEBUG("Error \nArgument ca cert file name is very large : %s \n",pack[7]);
+					exit(1);
+				}
  
-   case 'T':
-    pack[8]=optarg;
+   			case 'T':
+				if ( strnlen(optarg,4)<= 3 )
+				{	
+    					pack[8] = optarg;
+				} else {	
+					DEBUG("Error \nArgument timeout is very large need 3 digit : %s \n",pack[8]);
+					exit(1);
+				}
+				
  
-   case 'V':
-    pack[9]=optarg;
+   			case 'V':
+				if ( strnlen(optarg,3)<= 2 )
+				{	
+    					pack[9] = optarg;
+				} else {	
+					DEBUG("Error \nArgument SSL version one digit example 1,2,3 or 4 : %s \n",pack[8]);
+					exit(1);
+				}
 
-   case '?':
-    if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s') 
-    {
-     init();
-     puts(RED);
-     DEBUG("Option -%c requires an argument.\n", optopt); 
-     puts(LAST);
-     exit(1);
-    }
-  }
+   			case '?':
+    				if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s') 
+    				{
+     					init();
+     					puts(RED);
+     					DEBUG("Option -%c requires an argument.\n", optopt); 
+     					puts(LAST);
+     					exit(1);
+    				}
+  		}
 
- srand(time(NULL));
+	srand(time(NULL));
  
- if(strlen(pack[0]))
-  scan((void *)pack);
+
+	if(strlen(pack[0]))
+		scan((void *)pack);
 
 
- exit(0);
+ 	exit(0);
 }
