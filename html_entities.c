@@ -60,11 +60,11 @@ char* html_entities(char* text)
 
 			retsize += strlen(repl_str);
 			ret = xrealloc(ret, retsize);
-			sprintf(ret, "%s%s", ret, repl_str); // safe, repl_str não vem do usuário
+			strcat(ret, repl_str); // safe, repl_str não vem do usuário
 		} else {
 			retsize++;
 			ret = xrealloc(ret, retsize);
-			sprintf(ret, "%s%c", ret, c); // safe, buffer foi aumentado
+			strcat(ret,&c); // safe, buffer foi aumentado
 		}		
 		ptr++;
 	}

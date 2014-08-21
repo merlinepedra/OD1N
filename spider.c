@@ -116,7 +116,7 @@ void spider(void *pack,char *line,char * pathtable)
 				}
 				if(chunk.memory && (match_string == true) ) 
 				{
-					fprintf(stdout,"%s [ %s %lu %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
+					fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
 
 
 					pathsource=xmalloc(sizeof(char)*64);
@@ -154,7 +154,7 @@ void spider(void *pack,char *line,char * pathtable)
 					strncat(pathsource,".html",6);
 					size_log=strlen(line)+strlen(line2)+strlen(make)+strlen(pathsource)+256;
 					log=xmalloc(sizeof(char)*size_log);
-					snprintf(log,size_log-1,"[%lu] Payload: %s  Grep: %s Params: %s \n Path Response Source: %s\n",status,line,line2,make,pathsource);
+					snprintf(log,size_log-1,"[%ld] Payload: %s  Grep: %s Params: %s \n Path Response Source: %s\n",status,line,line2,make,pathsource);
 					WriteFile(arg[5],log);
 					
 					xfree((void **)&log);
@@ -164,7 +164,7 @@ void spider(void *pack,char *line,char * pathtable)
 					WriteFile(pathsource,"</pre></html>");
 					size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line))+strlen(html_entities(line2))+256;
 					tabledata=xmalloc(sizeof(char)*size_tabledata);
-					snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line2),html_entities(line));
+					snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line2),html_entities(line));
       					WriteFile(pathtable,tabledata);
 					xfree((void **)&tabledata);
 					memset(pathsource,0,strlen(pathsource)-1);
@@ -173,7 +173,7 @@ void spider(void *pack,char *line,char * pathtable)
 			}
  		fclose(fp);
 	} else {
-		fprintf(stdout,"%s [ %s %lu %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
+		fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
 		
 		pathsource=xmalloc(sizeof(char)*64);
 		memset(pathsource,0,sizeof(char)*63);
@@ -206,11 +206,11 @@ void spider(void *pack,char *line,char * pathtable)
 		strncat(pathsource,".html",6);
 		size_log=strlen(line)+strlen(make)+strlen(pathsource)+128;
 		log=xmalloc(sizeof(char)*size_log);
-		snprintf(log,size_log-1,"[%lu] Payload: %s Params: %s \n Path Response Source: %s\n",status,line,make,pathsource);
+		snprintf(log,size_log-1,"[%ld Payload: %s Params: %s \n Path Response Source: %s\n",status,line,make,pathsource);
 		WriteFile(arg[5],log);
 		xfree((void **)&log);
 
-                response_template=xmalloc(sizeof(char)*FileSize(TEMPLATE)+200);
+                response_template=xmalloc(sizeof(char)*FileSize(TEMPLATE)+500);
                 response_template=readLine(TEMPLATE);
 		WriteFile(pathsource,response_template);
                 response_template=xcalloc(1,1);
@@ -219,7 +219,7 @@ void spider(void *pack,char *line,char * pathtable)
 		WriteFile(pathsource,"</pre></html>");
                 size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line2))+strlen(html_entities(line))+128;
 		tabledata=xmalloc(sizeof(char)*size_tabledata);
-		snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%lu </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line2),html_entities(line));
+		snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%s\",\"\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line));
 		WriteFile(pathtable,tabledata);	
 		xfree((void **)&tabledata);
 		tabledata=NULL;
