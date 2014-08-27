@@ -81,7 +81,7 @@ long FileSize(const char *file)
 	if( fclose(fh) == EOF )
 	{
   		DEBUG("error in close() file %s",file);
-		exit(1)
+		exit(1);
 	}
 
 	return ret;
