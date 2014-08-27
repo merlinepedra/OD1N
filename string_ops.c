@@ -1,17 +1,31 @@
 #include "string_ops.h"
 #include "mem_ops.h"
 
+void *entropy_clock(void)
+{
+	double cpu_time;
+	struct timeval tv;
+
+	cpu_time = ((double) clock()) / CLOCKS_PER_SEC;
+	gettimeofday(&tv, NULL);
+	srandom((getpid() << 16) ^ tv.tv_sec ^ tv.tv_usec ^ (int)cpu_time);
+  	return NULL;	
+}
+
+
 char *rand_str(char *dst, int size)
 {
 	static const char text[] =	"abcdefghijklmnopqrstuvwxyz"                     
 					"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	int i, len = rand() % (size - 1);
+	entropy_clock();
+
+	int i, len = random() % (size - 1);
   
 	if( !len ) 
 		len=8;
  
 	for ( i=0; i<len; ++i )
-		dst[i] = text[rand() % (sizeof text - 1)];
+		dst[i] = text[random() % (sizeof text - 1)];
 
    	dst[i] = '\0';
 
