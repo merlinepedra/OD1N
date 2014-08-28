@@ -14,13 +14,7 @@ char* repl_tbl[] = {
 	"&lt;",
 	"&gt;",
 	"&quot;",
-        "\\\\"
-/*	"&aacute;",  TODO: Para implementar isso tem que usar strings unicode (wchar_t)
-	"&eacute;",
-	"&iacute;",
-	"&oacute;",
-	"&uacute;"*/
-	
+        "\\\\"	
 };
 
 

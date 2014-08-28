@@ -13,7 +13,7 @@ void spider(void *pack,char *line,char * pathtable)
 	bool match_string=false;
 	long status=0;
 	int old=0,counter=0,POST=0,sum_size=0,mem_size=0,size_log=0,size_tabledata=0; 
-	char *make=NULL,*pathsource=NULL,*response_template=NULL,*log=NULL,*tabledata=NULL;
+	char *make=NULL,*pathsource=NULL,*responsetemplate=NULL,*log=NULL,*tabledata=NULL;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
 	char randname[16],line2[1024],randname2[16];
 
@@ -152,16 +152,21 @@ void spider(void *pack,char *line,char * pathtable)
 					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
 
 					strncat(pathsource,".html",6);
+// write log file
 					size_log=strlen(line)+strlen(line2)+strlen(make)+strlen(pathsource)+256;
 					log=xmalloc(sizeof(char)*size_log);
 					snprintf(log,size_log-1,"[%ld] Payload: %s  Grep: %s Params: %s \n Path Response Source: %s\n",status,line,line2,make,pathsource);
-					WriteFile(arg[5],log);
-					
+					WriteFile(arg[5],log);		
 					xfree((void **)&log);
 					
-					WriteFile(pathsource,readLine(TEMPLATE));
+// write highlights response
+                			responsetemplate=malloc(sizeof(char)*FileSize(TEMPLATE)+1);
+                			responsetemplate=readLine(TEMPLATE);
+					WriteFile(pathsource,responsetemplate);
+          				xfree((void **)&responsetemplate);
 					WriteFile(pathsource,html_entities(chunk.memory));
 					WriteFile(pathsource,"</pre></html>");
+// write table to use datatables
 					size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line))+strlen(html_entities(line2))+256;
 					tabledata=xmalloc(sizeof(char)*size_tabledata);
 					snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line2),html_entities(line));
@@ -204,17 +209,17 @@ void spider(void *pack,char *line,char * pathtable)
 		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
 
 		strncat(pathsource,".html",6);
+//write logs
 		size_log=strlen(line)+strlen(make)+strlen(pathsource)+128;
 		log=xmalloc(sizeof(char)*size_log);
 		snprintf(log,size_log-1,"[%ld Payload: %s Params: %s \n Path Response Source: %s\n",status,line,make,pathsource);
 		WriteFile(arg[5],log);
 		xfree((void **)&log);
-
-                response_template=xmalloc(sizeof(char)*FileSize(TEMPLATE)+500);
-                response_template=readLine(TEMPLATE);
-		WriteFile(pathsource,response_template);
-                response_template=xcalloc(1,1);
-           	xfree((void **)&response_template);
+// write response source with highlights
+                responsetemplate=malloc(sizeof(char)*FileSize(TEMPLATE)+1);
+                responsetemplate=readLine(TEMPLATE);
+		WriteFile(pathsource,responsetemplate);
+          	xfree((void **)&responsetemplate);
 		WriteFile(pathsource,html_entities(chunk.memory));
 		WriteFile(pathsource,"</pre></html>");
                 size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line2))+strlen(html_entities(line))+128;
