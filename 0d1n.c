@@ -262,7 +262,6 @@ main(int argc, char ** argv)
     				}
   		}
 
-	srand(time(NULL));
  
 
 	if(strlen(pack[0]))
