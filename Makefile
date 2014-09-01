@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -lcurl -Ofast -fstack-protector-all -march=native -D_FORTIFY_SOURCE=2 -Wl,-z,relro,-z,now 
+CFLAGS=-Wall -Wextra -lcurl -Ofast -fstack-protector-all -Wl,-z,relro,-z,now -D_FORTIFY_SOURCE=fast
 BINDIR=/usr/bin
 
 0d1n: 0d1n.c 

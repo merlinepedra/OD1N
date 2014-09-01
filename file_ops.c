@@ -4,34 +4,36 @@
 //read lines of file
 char *readLine(char * NameFile)
 {
-	FILE * file;
-	file = fopen(NameFile, "rx");
+	FILE * arq;
+	arq = fopen(NameFile, "rx");
 
-	if( file == NULL )
+	if( arq == NULL )
 	{
 		DEBUG("error in to open() file"); 	 
 		exit(1);
 	}
 
-	char *lineBuffer=xcalloc(1,1), line[256];
-//	memset(lineBuffer,0,1);
+	char *lineBuffer=xcalloc(1,1), line[512];
 
-	while( fgets(line,sizeof line,file) )  
+	while( fgets(line,sizeof line,arq) )  
 	{
 		lineBuffer=xrealloc(lineBuffer,strlen(lineBuffer)+strlen(line)+1);
 		strncat(lineBuffer,line,strlen(lineBuffer)-1);
 	}
 
-//	if( lineBuffer != NULL )
-//		free(lineBuffer);
-
-
  
-	if( fclose(file) == EOF )
+	if( fclose(arq) == EOF )
 	{
 		DEBUG("Error in close() file %s",NameFile);
 		exit(1);
 	}
+	arq=NULL;
+
+/*	if(lineBuffer != NULL)
+	{
+		free(lineBuffer);
+	}
+*/
 
 	return lineBuffer;
 }
@@ -57,6 +59,7 @@ WriteFile(char *file,char *str)
 		DEBUG("error in Write() file %s",file);
 		exit(1);
 	}
+	arq=NULL;
  
 
 	return 1;
@@ -66,23 +69,25 @@ WriteFile(char *file,char *str)
 long FileSize(const char *file)
 {
 	long ret;
-	FILE *fh; 
-        fh = fopen(file, "rx");
+	FILE *arq; 
 
-	if ( fh == NULL )
+        arq = fopen(file, "rx");
+
+	if ( arq == NULL )
 	{
 		DEBUG("error in file");
 		return 0;
 	}
 
-	fseek(fh, 0, SEEK_END);
-	ret = ftell(fh);
+	fseek(arq, 0, SEEK_END);
+	ret = ftell(arq);
 
-	if( fclose(fh) == EOF )
+	if( fclose(arq) == EOF )
 	{
   		DEBUG("error in close() file %s",file);
 		exit(1);
 	}
+	arq=NULL;
 
 	return ret;
 }

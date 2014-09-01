@@ -9,29 +9,25 @@ void spider(void *pack,char *line,char * pathtable)
 {
 	struct MemoryStruct chunk;
 	FILE *fp=NULL;
-
 	bool match_string=false;
 	long status=0;
-	int old=0,counter=0,POST=0,sum_size=0,mem_size=0,size_log=0,size_tabledata=0; 
-	char *make=NULL,*pathsource=NULL,*responsetemplate=NULL,*log=NULL,*tabledata=NULL;
+	int old=0,counter=0,POST=0,sum_size=0,mem_size=0,size_log=0; 
+	char *make=NULL,*pathsource=NULL,*responsetemplate=NULL,*log=NULL,*tabledata=NULL,*tmp_response=NULL,*tmp_make=NULL,*tmp_line=NULL,*tmp_line2=NULL;;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
 	char randname[16],line2[1024],randname2[16];
 
 	pathsource=xmalloc(sizeof(char)*64);
 	memset(pathsource,0,sizeof(char)*63);
-
-
-	CURL *curl;  
-	curl_global_init(CURL_GLOBAL_ALL); 
-
 	POST=(arg[4]==NULL)?0:1;
-   
 	counter=char_type_counter(POST?arg[4]:arg[0],'!');
 	old=counter;  
 	chomp(line);
 
 	while ( old )
 	{
+		CURL *curl;  
+		curl_global_init(CURL_GLOBAL_ALL); 
+
 		chunk.memory=NULL; 
 		chunk.size = 0;  
 
@@ -77,19 +73,17 @@ void spider(void *pack,char *line,char * pathtable)
 			curl_easy_setopt(curl,CURLOPT_TIMEOUT,atoi(arg[8])); 
 
 		if ( arg[9] != NULL ) 
-			curl_easy_setopt(curl,CURLOPT_SSLVERSION,atoi(arg[9])); 
-   
-
+			curl_easy_setopt(curl,CURLOPT_SSLVERSION,atoi(arg[9]));
 
         //       curl_easy_setopt(curl,CURLOPT_VERBOSE,1); 
  
 		curl_easy_setopt(curl,CURLOPT_HEADER,1);  
 		curl_easy_perform(curl);
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
-		curl_easy_cleanup(curl);
+//		curl_easy_cleanup(curl);
 
 // arg[10]  list to find with regex , arg[2] list without regex
-		if( (arg[2]) || (arg[10]) )
+		if(  (arg[2]) || (arg[10])  )
 		{
 
 
@@ -118,39 +112,25 @@ void spider(void *pack,char *line,char * pathtable)
 				{
 					fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
 
-
+// create responses path
 					pathsource=xmalloc(sizeof(char)*64);
 					memset(pathsource,0,sizeof(char)*63);
-
-			//		pathsource=realloc(pathsource,sizeof(char)*64);
-			//		memset(pathsource,0,sizeof(char)*63);
 					mem_size=64;
 					mem_size+=18;
-
 					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
 					strncat(pathsource,"response_sources/",18);
 					mem_size+=16;
-
 					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
 					strncat(pathsource,rand_str(randname2, sizeof randname2),16);
 					mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
-
 					mem_size+=2;
-
 					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-
 					strncat(pathsource,"/",2);
-
 					mem_size+=17;
-
 					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-
 					strncat(pathsource,rand_str(randname, sizeof randname),16);
-
 					mem_size+=7;
-
 					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-
 					strncat(pathsource,".html",6);
 // write log file
 					size_log=strlen(line)+strlen(line2)+strlen(make)+strlen(pathsource)+256;
@@ -158,25 +138,42 @@ void spider(void *pack,char *line,char * pathtable)
 					snprintf(log,size_log-1,"[%ld] Payload: %s  Grep: %s Params: %s \n Path Response Source: %s\n",status,line,line2,make,pathsource);
 					WriteFile(arg[5],log);		
 					xfree((void **)&log);
-					
+			
 // write highlights response
-                			responsetemplate=malloc(sizeof(char)*FileSize(TEMPLATE)+1);
+                			responsetemplate=xmalloc(sizeof(char)*FileSize(TEMPLATE)*8);
                 			responsetemplate=readLine(TEMPLATE);
 					WriteFile(pathsource,responsetemplate);
           				xfree((void **)&responsetemplate);
-					WriteFile(pathsource,html_entities(chunk.memory));
+					tmp_response=xmalloc(sizeof(char)*(strlen(chunk.memory)+1));
+					tmp_response=html_entities(chunk.memory);
+					WriteFile(pathsource,tmp_response);
+					xfree((void **)&tmp_response);
 					WriteFile(pathsource,"</pre></html>");
-// write table to use datatables
-					size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line))+strlen(html_entities(line2))+256;
-					tabledata=xmalloc(sizeof(char)*size_tabledata);
-					snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line2),html_entities(line));
+// create datatables	
+					tabledata=xmalloc(sizeof(char)*4548);
+ 					tmp_make=xmalloc((strlen(make)*sizeof(char))+1);
+					tmp_line2=xmalloc(1050);
+					tmp_line=xmalloc(2090);
+					tmp_make=html_entities(make);
+					tmp_line2=html_entities(line2);
+					tmp_line=html_entities(line);
+					snprintf(tabledata,4547,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,tmp_make,tmp_line2,tmp_line);
       					WriteFile(pathtable,tabledata);
+					xfree((void **)&tmp_make);
+					xfree((void **)&tmp_line);
+					xfree((void **)&tmp_line2);
 					xfree((void **)&tabledata);
-					memset(pathsource,0,strlen(pathsource)-1);
 					xfree((void **)&pathsource);
 				}
 			}
- 		fclose(fp);
+ 
+		if( fclose(fp) == EOF )
+		{
+			DEBUG("Error in close()");
+			exit(1);
+		}
+		fp=NULL;
+
 	} else {
 		fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
 		
@@ -184,30 +181,20 @@ void spider(void *pack,char *line,char * pathtable)
 		memset(pathsource,0,sizeof(char)*63);
 		sum_size=64;
 		sum_size+=18;
-
 		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-
 		strncat(pathsource,"response_sources/",17);
 		sum_size+=16;
-
 		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-
 		strncat(pathsource,rand_str(randname2, sizeof randname2),15);
 		mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
 		sum_size+=2;
-
 		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-
 		strncat(pathsource,"/",2);
 		sum_size+=16;
-
 		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-
 		strncat(pathsource,rand_str(randname, sizeof randname),16);
 		sum_size+=6;
-
 		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-
 		strncat(pathsource,".html",6);
 //write logs
 		size_log=strlen(line)+strlen(make)+strlen(pathsource)+128;
@@ -216,27 +203,35 @@ void spider(void *pack,char *line,char * pathtable)
 		WriteFile(arg[5],log);
 		xfree((void **)&log);
 // write response source with highlights
-                responsetemplate=malloc(sizeof(char)*FileSize(TEMPLATE)+1);
+                responsetemplate=xmalloc(sizeof(char)*FileSize(TEMPLATE)*8);
                 responsetemplate=readLine(TEMPLATE);
 		WriteFile(pathsource,responsetemplate);
           	xfree((void **)&responsetemplate);
-		WriteFile(pathsource,html_entities(chunk.memory));
+		tmp_response=xmalloc(sizeof(char)*(strlen(chunk.memory)+1));
+		tmp_response=html_entities(chunk.memory);
+		WriteFile(pathsource,tmp_response);
+		xfree((void **)&tmp_response);
 		WriteFile(pathsource,"</pre></html>");
-                size_tabledata=strlen(pathsource)+strlen(html_entities(make))+strlen(html_entities(line2))+strlen(html_entities(line))+128;
-		tabledata=xmalloc(sizeof(char)*size_tabledata);
-		snprintf(tabledata,size_tabledata-1,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%s\",\"\",\"%s\"],\n",pathsource,status,html_entities(make),html_entities(line));
-		WriteFile(pathtable,tabledata);	
+// create datatables
+		tabledata=xmalloc(sizeof(char)*4048);
+ 		tmp_make=xmalloc((strlen(make)*sizeof(char))+1);
+		tmp_line=xmalloc(2090);
+		tmp_make=html_entities(make);
+		tmp_line=html_entities(line);
+		snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%s\",\"\",\"%s\"],\n",pathsource,status,tmp_make,tmp_line);
+      		WriteFile(pathtable,tabledata);
+		xfree((void **)&tmp_make);
+		xfree((void **)&tmp_line);
 		xfree((void **)&tabledata);
-		tabledata=NULL;
-		
-                memset(pathsource,0,strlen(pathsource)-1);
 		xfree((void **)&pathsource);
 	}
+
 	xfree((void **)&make);
 	xfree((void **)&chunk.memory);
 	xfree((void **)&pathsource);
-
 	old--;
+	curl_easy_cleanup(curl);
+        curl_global_cleanup();
 
 	}
 
@@ -250,9 +245,8 @@ void scan(void *arguments)
         int num1=0,num2=0;
 
 	char **arg = (char **)arguments;
-	char *pathtable=NULL,*pathhammer=NULL,*view=NULL;
+	char *pathtable=NULL,*pathhammer=NULL,*view=NULL,*template2=NULL,*template3=NULL;
 	char line[2048]; 
-        char *template2=NULL,*template3=NULL;
  
 	pathtable=xmalloc(sizeof(char)*64);
 	memset(pathtable,0, sizeof(char)*63);
@@ -302,8 +296,6 @@ void scan(void *arguments)
 	fprintf(stdout,"end scan \n look the file %s\n \n",pathhammer);
 	puts(LAST);
 
-	
-
 	memset(pathtable,0,sizeof(char)*strlen(pathtable)-1);
 	xfree((void **)&pathtable);
 	memset(pathhammer,0,sizeof(char)*strlen(pathhammer)-1);
@@ -311,7 +303,12 @@ void scan(void *arguments)
 	memset(view,0,sizeof(char)*strlen(view)-1);
 	xfree((void **)&view);
 
-	fclose(fp);
+	if( fclose(fp) == EOF )
+	{
+		DEBUG("Error in close()");
+		exit(1);
+	}
+	fp=NULL;
 
 	exit(0);
 }

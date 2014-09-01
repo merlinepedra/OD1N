@@ -166,7 +166,7 @@ main(int argc, char ** argv)
     					printf("Find list: %s \n",optarg);
     				} else {
 			
-					DEBUG("Error \nArgument Find list very large : %s \n",pack[2]);
+					DEBUG("Error \nArgument Find list file is very large : %s \n",pack[2]);
 					exit(1);
 				}
 				break;
@@ -177,13 +177,13 @@ main(int argc, char ** argv)
     					pack[10] = optarg;
     					printf("Regex list: %s \n",optarg);
     				} else {
-					DEBUG("Error \nArgument Regex very large : %s \n",pack[10]);
+					DEBUG("Error \nArgument Regex file is very large : %s \n",pack[10]);
 					exit(1);
 				}
 				break;
 
    			case 'c':
-				if ( strnlen(optarg,256)<= 128 )
+				if ( strnlen(optarg,256)<= 64 )
 				{
     					pack[3] = optarg;
 				} else {
@@ -194,7 +194,7 @@ main(int argc, char ** argv)
     				break;
 
    			case 'P':
-				if ( strnlen(optarg,256)<= 128 )
+				if ( strnlen(optarg,512)<= 256 )
 				{
     					pack[4] = optarg;
 				} else {
@@ -243,11 +243,11 @@ main(int argc, char ** argv)
 				
  
    			case 'V':
-				if ( strnlen(optarg,3)<= 2 )
+				if ( strnlen(optarg,3)<= 1 )
 				{	
     					pack[9] = optarg;
 				} else {	
-					DEBUG("Error \nArgument SSL version one digit example 1,2,3 or 4 : %s \n",pack[9]);
+					DEBUG("Error \nArgument SSL version one digit example 1,2 or 3 : %s \n1 is TLSv1\n2 is SSLv2\n 3 is SSLv3 \n 0 is default\n",pack[9]);
 					exit(1);
 				}
 
