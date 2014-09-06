@@ -22,6 +22,8 @@ void spider(void *pack,char *line,char * pathtable)
 	counter=char_type_counter(POST?arg[4]:arg[0],'!');
 	old=counter;  
 	chomp(line);
+// goto to fix signal stop if user do ctrl+c
+	try_again:
 
 	while ( old )
 	{
@@ -82,6 +84,8 @@ void spider(void *pack,char *line,char * pathtable)
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
 //		curl_easy_cleanup(curl);
 
+		if(status==0)
+			goto try_again;
 // arg[10]  list to find with regex , arg[2] list without regex
 		if(  (arg[2]) || (arg[10])  )
 		{

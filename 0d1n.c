@@ -39,8 +39,17 @@ $./0d1n
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <sys/resource.h>
 #include "spider.h"
+
+// block ctrl+c 
+void No_Pause_Scan ()
+{
+	DEBUG("\n When start Scan\n You Cannot be terminated using Ctrl+C or Ctrl+Z...\n Wait task ends... press <enter> to continue... \n");
+	getchar();
+	fflush(stdout);
+}
 
 void no_write_coredump (void) 
 {
@@ -52,7 +61,42 @@ void no_write_coredump (void)
 
 }
 
-void init()
+void load_signal_alarm (void)
+{
+ 	struct sigaction sigIntHandler;
+
+   	sigIntHandler.sa_handler = No_Pause_Scan;
+   	sigemptyset(&sigIntHandler.sa_mask);
+   	sigIntHandler.sa_flags = 0;
+
+	if(sigemptyset(&sigIntHandler.sa_mask)!=0)
+	{
+		DEBUG("Error at signal");
+		exit(1);
+	}
+
+   	if(sigaction(SIGINT, &sigIntHandler, NULL)!=0)
+	{
+		DEBUG("Error at signal");
+		exit(1);
+	}
+
+   	if(sigaction(SIGTSTP, &sigIntHandler, NULL)!=0)
+	{
+		DEBUG("Error at signal");
+		exit(1);
+	}
+
+   	if(sigaction(SIGQUIT, &sigIntHandler, NULL)!=0)
+	{
+		DEBUG("Error at signal");
+		exit(1);
+	}
+
+}
+
+
+void init_banner_odin()
 {
  puts(
  CYAN
@@ -79,7 +123,7 @@ void init()
  "--log :	output of result\n"
  "--UserAgent :	custom UserAgent\n"
  "--CA_certificate :	Load CA certificate to work with SSL\n"
- "--SSL_version :	choice SSL version 2 or 3\n"
+ "--SSL_version :	choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3 \n "
  "--timeout_response :	timeout of response\n"
  YELLOW
  "example:\n./odin --host 'http://site.com/view/1!/product/!/' --payloads sqli.txt --find_string_list response_sqli.txt --log site \n"
@@ -109,18 +153,23 @@ static struct option long_options[] =
 int 
 main(int argc, char ** argv)
 {
- no_write_coredump ();
  char c;
  char *pack[11]; 
+ short y=10;
+
+ 	no_write_coredump ();
+ 	load_signal_alarm ();
+
+
+
 
 	if(argc < 7) 
 	{
-		init();
+		init_banner_odin();
 		DEBUG(" Need more arguments.\n");
 		exit(0);
 	}
  
- 	short y=10;
 
  	while(y)
  	{
@@ -254,7 +303,7 @@ main(int argc, char ** argv)
    			case '?':
     				if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s') 
     				{
-     					init();
+     					init_banner_odin();
      					puts(RED);
      					DEBUG("Option -%c requires an argument.\n", optopt); 
      					puts(LAST);
@@ -266,7 +315,6 @@ main(int argc, char ** argv)
 
 	if(strlen(pack[0]))
 		scan((void *)pack);
-
 
  	exit(0);
 }
