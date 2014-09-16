@@ -191,7 +191,7 @@ main(int argc, char ** argv)
     					printf("Host: %s \n",pack[0]);
     					
 				} else {
-					DEBUG("Error \nArgument Host very large : %s \n",optarg);
+					DEBUG("Error \nArgument Host very large \n");
 					exit(1);
 				}
 				break;
@@ -203,7 +203,7 @@ main(int argc, char ** argv)
     					printf("Payloads: %s \n",optarg);
     					
 				} else {
-					DEBUG("Error \nArgument Payloads very large : %s \n",pack[1]);
+					DEBUG("Error \nArgument Payloads very large  \n");
 					exit(1);
 				}
 				break;
@@ -215,7 +215,7 @@ main(int argc, char ** argv)
     					printf("Find list: %s \n",optarg);
     				} else {
 			
-					DEBUG("Error \nArgument Find list file is very large : %s \n",pack[2]);
+					DEBUG("Error \nArgument Find list file is very large  \n");
 					exit(1);
 				}
 				break;
@@ -226,7 +226,7 @@ main(int argc, char ** argv)
     					pack[10] = optarg;
     					printf("Regex list: %s \n",optarg);
     				} else {
-					DEBUG("Error \nArgument Regex file is very large : %s \n",pack[10]);
+					DEBUG("Error \nArgument Regex file is very large  \n");
 					exit(1);
 				}
 				break;
@@ -237,7 +237,7 @@ main(int argc, char ** argv)
     					pack[3] = optarg;
 				} else {
 
-					DEBUG("Error \nArgument cookie jar file is very large : %s \n",pack[3]);
+					DEBUG("Error \nArgument cookie jar file is very large  \n");
 					exit(1);
 				}
     				break;
@@ -247,7 +247,7 @@ main(int argc, char ** argv)
 				{
     					pack[4] = optarg;
 				} else {
-					DEBUG("Error \nArgument POST very large : %s \n",pack[4]);
+					DEBUG("Error \nArgument POST very large  \n");
 					exit(1);
 				}
     				break;
@@ -258,7 +258,7 @@ main(int argc, char ** argv)
     					pack[5] = optarg;
     					printf("Log file: %s \n",optarg);
     				} else {
-					DEBUG("Error \nArgument Log file very large : %s \n",pack[5]);
+					DEBUG("Error \nArgument Log file very large \n");
 					exit(1);
 				}
 				break;
@@ -268,7 +268,7 @@ main(int argc, char ** argv)
 				{
     					pack[6] = optarg;
     				} else {	
-					DEBUG("Error \nArgument user agent is very large : %s \n",pack[6]);
+					DEBUG("Error \nArgument user agent is very large  \n");
 					exit(1);
 				}
  
@@ -277,7 +277,7 @@ main(int argc, char ** argv)
 				{
     					pack[7] = optarg;
 				} else {	
-					DEBUG("Error \nArgument ca cert file name is very large : %s \n",pack[7]);
+					DEBUG("Error \nArgument ca cert file name is very large  \n");
 					exit(1);
 				}
  
@@ -286,7 +286,7 @@ main(int argc, char ** argv)
 				{	
     					pack[8] = optarg;
 				} else {	
-					DEBUG("Error \nArgument timeout is very large need 3 digit : %s \n",pack[8]);
+					DEBUG("Error \nArgument timeout is very large need 3 digit  \n");
 					exit(1);
 				}
 				
@@ -296,7 +296,7 @@ main(int argc, char ** argv)
 				{	
     					pack[9] = optarg;
 				} else {	
-					DEBUG("Error \nArgument SSL version one digit example 1,2 or 3 : %s \n1 is TLSv1\n2 is SSLv2\n 3 is SSLv3 \n 0 is default\n",pack[9]);
+					DEBUG("Error \nArgument SSL version one digit example 1,2 or 3 : \n1 is TLSv1\n2 is SSLv2\n 3 is SSLv3 \n 0 is default\n");
 					exit(1);
 				}
 
