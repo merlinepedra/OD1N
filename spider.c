@@ -4,22 +4,34 @@
 #define TEMPLATE2 "hammer1.conf"
 #define TEMPLATE3 "hammer2.conf"
 
+int threadss=4;
 
 void spider(void *pack,char *line,char * pathtable)
 {
 	struct MemoryStruct chunk;
 	FILE *fp=NULL;
-	bool match_string=false;
+	bool match_string=false,save_response=false;
 	long status=0;
-	int old=0,counter=0,POST=0,sum_size=0,mem_size=0,size_log=0; 
+	int old=0,counter=0,POST=0,sum_size=0,mem_size=0,size_log=0,timeout=0; 
 	char *make=NULL,*pathsource=NULL,*responsetemplate=NULL,*log=NULL,*tabledata=NULL,*tmp_response=NULL,*tmp_make=NULL,*tmp_line=NULL,*tmp_line2=NULL;;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
-	char randname[16],line2[1024],randname2[16];
+	char randname[16],line2[1024];
+
+	if(arg[12]!=NULL)
+		save_response=true;
+
+	if(arg[8]!=NULL)
+		timeout=atoi(arg[8]);
 
 	pathsource=xmalloc(sizeof(char)*64);
 	memset(pathsource,0,sizeof(char)*63);
+
+	if(save_response==false)
+	{
+		pathsource="0";
+	}
 	POST=(arg[4]==NULL)?0:1;
-	counter=char_type_counter(POST?arg[4]:arg[0],'!');
+	counter=char_type_counter(POST?arg[4]:arg[0],'^');
 	old=counter;  
 	chomp(line);
 // goto to fix signal stop if user do ctrl+c
@@ -71,8 +83,8 @@ void spider(void *pack,char *line,char * pathtable)
 			curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0); 
 		}
 
-		if ( arg[8] != NULL ) 
-			curl_easy_setopt(curl,CURLOPT_TIMEOUT,atoi(arg[8])); 
+		if(timeout) 
+			curl_easy_setopt(curl,CURLOPT_TIMEOUT,timeout); 
 
 		if ( arg[9] != NULL ) 
 			curl_easy_setopt(curl,CURLOPT_SSLVERSION,atoi(arg[9]));
@@ -89,21 +101,24 @@ void spider(void *pack,char *line,char * pathtable)
 // arg[10]  list to find with regex , arg[2] list without regex
 		if(  (arg[2]) || (arg[10])  )
 		{
-
-
-			pathsource=xmalloc(sizeof(char)*64);
-			memset(pathsource,0,sizeof(char)*63);
+			
+			if(save_response==true)
+			{
+				pathsource=xmalloc(sizeof(char)*64);
+				memset(pathsource,0,sizeof(char)*63);
+			}
 
 			fp = fopen((arg[2]!=NULL)?arg[2]:arg[10], "r");
 			if ( !fp )
 			{ 
 				puts("error to open response list"); 
-				exit(0);
+				exit(1);
 			}
 
 			while ( fgets(line2,1023,fp) != NULL) 
 			{
 				chomp(line2);
+
 				if(status != 0)
 				{
 					if ( arg[2] != NULL )
@@ -112,30 +127,34 @@ void spider(void *pack,char *line,char * pathtable)
 					if ( arg[10] != NULL )
 						match_string=strstr_regex(chunk.memory,line2)?true:false;
 				}
+
 				if(chunk.memory && (match_string == true) ) 
 				{
 					fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
 
+					if(save_response==true)
+					{
 // create responses path
-					pathsource=xmalloc(sizeof(char)*64);
-					memset(pathsource,0,sizeof(char)*63);
-					mem_size=64;
-					mem_size+=18;
-					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-					strncat(pathsource,"response_sources/",18);
-					mem_size+=16;
-					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-					strncat(pathsource,rand_str(randname2, sizeof randname2),16);
-					mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
-					mem_size+=2;
-					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-					strncat(pathsource,"/",2);
-					mem_size+=17;
-					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-					strncat(pathsource,rand_str(randname, sizeof randname),16);
-					mem_size+=7;
-					pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-					strncat(pathsource,".html",6);
+						pathsource=xmalloc(sizeof(char)*64);
+						memset(pathsource,0,sizeof(char)*63);
+						mem_size=64;
+						mem_size+=18;
+						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
+						strncat(pathsource,"response_sources/",18);
+						mem_size+=16;
+						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
+						strncat(pathsource,arg[5], 15);
+						mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
+						mem_size+=2;
+						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
+						strncat(pathsource,"/",2);
+						mem_size+=17;
+						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
+						strncat(pathsource,rand_str(randname, sizeof randname),16);
+						mem_size+=7;
+						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
+						strncat(pathsource,".html",6);
+					}
 // write log file
 					size_log=strlen(line)+strlen(line2)+strlen(make)+strlen(pathsource)+256;
 					log=xmalloc(sizeof(char)*size_log);
@@ -143,16 +162,19 @@ void spider(void *pack,char *line,char * pathtable)
 					WriteFile(arg[5],log);		
 					xfree((void **)&log);
 			
+					if(save_response==true)
+					{
 // write highlights response
-                			responsetemplate=xmalloc(sizeof(char)*FileSize(TEMPLATE)*8);
-                			responsetemplate=readLine(TEMPLATE);
-					WriteFile(pathsource,responsetemplate);
-          				xfree((void **)&responsetemplate);
-					tmp_response=xmalloc(sizeof(char)*(strlen(chunk.memory)+1));
-					tmp_response=html_entities(chunk.memory);
-					WriteFile(pathsource,tmp_response);
-					xfree((void **)&tmp_response);
-					WriteFile(pathsource,"</pre></html>");
+                				responsetemplate=xmalloc(sizeof(char)*FileSize(TEMPLATE)*8);
+                				responsetemplate=readLine(TEMPLATE);
+						WriteFile(pathsource,responsetemplate);
+          					xfree((void **)&responsetemplate);
+						tmp_response=xmalloc(sizeof(char)*(strlen(chunk.memory)+1));
+						tmp_response=html_entities(chunk.memory);
+						WriteFile(pathsource,tmp_response);
+						xfree((void **)&tmp_response);
+						WriteFile(pathsource,"</pre></html>");
+					}
 // create datatables	
 					tabledata=xmalloc(sizeof(char)*4548);
  					tmp_make=xmalloc((strlen(make)*sizeof(char))+1);
@@ -180,42 +202,49 @@ void spider(void *pack,char *line,char * pathtable)
 
 	} else {
 		fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
-		
-		pathsource=xmalloc(sizeof(char)*64);
-		memset(pathsource,0,sizeof(char)*63);
-		sum_size=64;
-		sum_size+=18;
-		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-		strncat(pathsource,"response_sources/",17);
-		sum_size+=16;
-		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-		strncat(pathsource,rand_str(randname2, sizeof randname2),15);
-		mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
-		sum_size+=2;
-		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-		strncat(pathsource,"/",2);
-		sum_size+=16;
-		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-		strncat(pathsource,rand_str(randname, sizeof randname),16);
-		sum_size+=6;
-		pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-		strncat(pathsource,".html",6);
+
+		if(save_response==true)
+		{		
+			pathsource=xmalloc(sizeof(char)*64);
+			memset(pathsource,0,sizeof(char)*63);
+			sum_size=64;
+			sum_size+=18;
+			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
+			strncat(pathsource,"response_sources/",17);
+			sum_size+=16;
+			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
+			strncat(pathsource,arg[5], 15);
+			mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
+			sum_size+=2;
+			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
+			strncat(pathsource,"/",2);
+			sum_size+=16;
+			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
+			strncat(pathsource,rand_str(randname, sizeof randname),16);
+			sum_size+=6;
+			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
+			strncat(pathsource,".html",6);
+		}
 //write logs
 		size_log=strlen(line)+strlen(make)+strlen(pathsource)+128;
 		log=xmalloc(sizeof(char)*size_log);
 		snprintf(log,size_log-1,"[%ld Payload: %s Params: %s \n Path Response Source: %s\n",status,line,make,pathsource);
 		WriteFile(arg[5],log);
 		xfree((void **)&log);
+
+		if(save_response==true)
+		{
 // write response source with highlights
-                responsetemplate=xmalloc(sizeof(char)*FileSize(TEMPLATE)*8);
-                responsetemplate=readLine(TEMPLATE);
-		WriteFile(pathsource,responsetemplate);
-          	xfree((void **)&responsetemplate);
-		tmp_response=xmalloc(sizeof(char)*(strlen(chunk.memory)+1));
-		tmp_response=html_entities(chunk.memory);
-		WriteFile(pathsource,tmp_response);
-		xfree((void **)&tmp_response);
-		WriteFile(pathsource,"</pre></html>");
+              	  	responsetemplate=xmalloc(sizeof(char)*FileSize(TEMPLATE)*8);
+               		responsetemplate=readLine(TEMPLATE);
+			WriteFile(pathsource,responsetemplate);
+          		xfree((void **)&responsetemplate);
+			tmp_response=xmalloc(sizeof(char)*(strlen(chunk.memory)+1));
+			tmp_response=html_entities(chunk.memory);
+			WriteFile(pathsource,tmp_response);
+			xfree((void **)&tmp_response);
+			WriteFile(pathsource,"</pre></html>");
+		}
 // create datatables
 		tabledata=xmalloc(sizeof(char)*4048);
  		tmp_make=xmalloc((strlen(make)*sizeof(char))+1);
@@ -251,6 +280,19 @@ void scan(void *arguments)
 	char **arg = (char **)arguments;
 	char *pathtable=NULL,*pathhammer=NULL,*view=NULL,*template2=NULL,*template3=NULL;
 	char line[2048]; 
+
+	pid_t pid;
+
+	if(arg[11]!=NULL)
+		threadss=atoi(arg[11]);
+
+	int old_thread=threadss;
+	int status=-1;
+
+ 	int timeout=3;
+
+	if(arg[8]!=NULL)
+		timeout=atoi(arg[8]);
  
 	pathtable=xmalloc(sizeof(char)*64);
 	memset(pathtable,0, sizeof(char)*63);
@@ -290,10 +332,58 @@ void scan(void *arguments)
 	WriteFile(pathhammer,view);
 	WriteFile(pathtable,"{ \"aaData\": [ \n");
 
+	puts("start...");
 
 	while ( fgets(line,2047,fp) != NULL ) 
-		spider(arguments,line,pathtable);
-  
+	{
+
+		pid=fork();
+ 
+		if(pid==-1)
+		{
+			DEBUG("error in fork()");
+			exit(1);
+		}
+		if(!pid)
+		{
+			threadss--;
+			spider(arguments,line,pathtable);
+			exit(0);
+		}
+		
+		if(threadss<=0)
+		{
+				while(1)
+				{
+					pid=wait(&status);	
+
+						if (errno == ECHILD)
+						{
+							break;
+						}
+						
+				}
+
+				threadss=old_thread;							
+		}
+
+  	}
+
+	threadss=0;
+
+
+	while(1)
+	{
+		pid=wait(&status);	
+
+		if (errno == ECHILD)
+		{
+			break;
+		}
+	}				
+
+	sleep(timeout);
+
 	WriteFile(pathtable," [\"\",\"\",\"\",\"\"] \n ] }");
 
 	puts(RED);

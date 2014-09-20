@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 #include <curl/curl.h>
 //#include <curl/types.h>
@@ -23,6 +25,7 @@
 #define CYAN "\033[22;36m"
 #define GREEN "\033[22;32m"
 #define LAST "\033[0m"
+
  
 void spider(void *arg,char *line,char * pathtable);
 void scan(void *arg);

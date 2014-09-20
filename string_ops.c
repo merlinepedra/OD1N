@@ -70,7 +70,7 @@ char *payload_injector(char * ptr,char * payload,int counter)
 
 	while(*ptr != '\0')
 	{
-		if(*ptr == '!')
+		if(*ptr == '^')
 		{
 			if(counter==x)
 			{

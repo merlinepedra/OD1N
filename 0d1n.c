@@ -104,30 +104,34 @@ void init_banner_odin()
    "         01...___|__..10.              \n" 
    "          1010   101   101             \n" 
    "           0101  :Bug  :Sec   `.oo'   \n"
-   "           :101  |666  |101  ( (`-'   \n"
+   "           :101  |010  |101  ( (`-'   \n"
    " .---.    1010  ;110  ;010   `.`.     \n"
    "/ .-._)  111-\"\"\"|\"\"\"'-000      `.`.   \n"
    "( (`._) .-.  .-. |.-.  .-.  .-. ) ) \n"
    " \\ `---( 1 )( 0 )( 1 )( 1 )( 0 )-' /  \n"
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
-   "   `---------------------------'     \n"
+   "   `---------------------------' by Cooler_    \n"
  YELLOW
- "Odin simple http inputs tester v 1.3 STABLE\n"
+ "0d1n Web Hacking Tool 1.5 STABLE\n"
  LAST
- "--host :	host to scan\n"
+ "--host :	host to scan and GET method  site.com/page.jsp?var=^&var2=^\n"
+ "--post :	POST method params  ex: 'var=^&x=^...'\n"
  "--payloads :	payload list to inject\n"
  "--find_string_list :	strings list to find on response\n"
- "--find_regex_list :	regex list to find on response\n"
+ "--find_regex_list :	regex list to find on response(this regex is posix)\n"
  "--cookie_jar :	 cookie jar file to load\n"
- "--post :	post method params  ex: 'var=!&x=!...'\n"
  "--log :	output of result\n"
  "--UserAgent :	custom UserAgent\n"
  "--CA_certificate :	Load CA certificate to work with SSL\n"
- "--SSL_version :	choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3 \n "
- "--timeout_response :	timeout of response\n"
+ "--SSL_version :	choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3\n"
+ "--theads : Number of threads to use, default is 4\n"
+ "--timeout :	timeout of response\n"
+ "--save_response :   save response to view in output \n"
  YELLOW
- "example:\n./odin --host 'http://site.com/view/1!/product/!/' --payloads sqli.txt --find_string_list response_sqli.txt --log site \n"
- CYAN
+ "example 1 to find SQL-injection:\n./odin --host 'http://site.com/view/1^/product/^/' --payloads payloads/sqli_list.txt --find_string_list sqli_str2find_list.txt --log log1337 --threads 5 --timeout 3 --save_response\n"
+ "example 2 to Bruteforce in simple auth:\n./odin --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads payloads/wordlist.txt --log log007 --threads 10 --timeout 3\n"
+"Look the character '^', is lexical char to change to payload list lines...\n"
+CYAN
  "Coded by Cooler_\n c00f3r[at]gmail[dot]com\n "
  );
  puts(LAST);
@@ -145,7 +149,9 @@ static struct option long_options[] =
     {"UserAgent", required_argument, NULL, 'u'},
     {"CA_certificate", required_argument, NULL, 's'},
     {"SSL_version", required_argument, NULL, 'V'},
-    {"timeout_response", required_argument, NULL, 'T'},
+    {"threads", required_argument, NULL, 't'},
+    {"timeout", required_argument, NULL, 'T'},
+    {"save_response", no_argument, 0, 'k'},
     {NULL, 0, NULL, 0}
 };
 
@@ -154,13 +160,11 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[11]; 
- short y=10;
+ char *pack[13]; 
+ short y=12;
 
  	no_write_coredump ();
  	load_signal_alarm ();
-
-
 
 
 	if(argc < 7) 
@@ -179,7 +183,7 @@ main(int argc, char ** argv)
 
  	opterr = 0;
 
- 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:o:u:s:T:V:",long_options,NULL)) != -1)
+ 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:o:u:s:t:T:k:V",long_options,NULL)) != -1)
   		switch(c) 
   		{
 // Host
@@ -271,6 +275,7 @@ main(int argc, char ** argv)
 					DEBUG("Error \nArgument user agent is very large  \n");
 					exit(1);
 				}
+				break;
  
    			case 's':
 				if ( strnlen(optarg,256)<= 128 )
@@ -280,6 +285,18 @@ main(int argc, char ** argv)
 					DEBUG("Error \nArgument ca cert file name is very large  \n");
 					exit(1);
 				}
+				break;
+
+ 
+   			case 't':
+				if ( strnlen(optarg,4)<= 2 )
+				{
+    					pack[11] = optarg;
+				} else {	
+					DEBUG("Error \nArgument threads is very large  \n");
+					exit(1);
+				}
+				break;
  
    			case 'T':
 				if ( strnlen(optarg,4)<= 3 )
@@ -289,16 +306,22 @@ main(int argc, char ** argv)
 					DEBUG("Error \nArgument timeout is very large need 3 digit  \n");
 					exit(1);
 				}
-				
- 
+				break;
+ // save response
+   			case 'k':
+    				pack[12] = "1";
+				break;
+ 			
+ 				
    			case 'V':
 				if ( strnlen(optarg,3)<= 1 )
 				{	
     					pack[9] = optarg;
 				} else {	
-					DEBUG("Error \nArgument SSL version one digit example 1,2 or 3 : \n1 is TLSv1\n2 is SSLv2\n 3 is SSLv3 \n 0 is default\n");
+					DEBUG("Error \nArgument SSL version one digit example 1,2 or 3 : \n1 is TLSv1\n2 is SSLv2\n3 is SSLv3\n 0 is default\n");
 					exit(1);
 				}
+				break;
 
    			case '?':
     				if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s') 
@@ -309,6 +332,7 @@ main(int argc, char ** argv)
      					puts(LAST);
      					exit(1);
     				}
+				break;
   		}
 
  
