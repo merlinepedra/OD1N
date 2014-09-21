@@ -42,59 +42,7 @@ $./0d1n
 #include <signal.h>
 #include <sys/resource.h>
 #include "spider.h"
-
-// block ctrl+c 
-void No_Pause_Scan ()
-{
-	DEBUG("\n When start Scan\n You Cannot be terminated using Ctrl+C or Ctrl+Z...\n Wait task ends... press <enter> to continue... \n");
-	getchar();
-	fflush(stdout);
-}
-
-void no_write_coredump (void) 
-{
-  	struct rlimit rlim;
-   
-	rlim.rlim_cur = 0; 
-	rlim.rlim_max = 0; 
-	setrlimit(RLIMIT_CORE, &rlim);
-
-}
-
-void load_signal_alarm (void)
-{
- 	struct sigaction sigIntHandler;
-
-   	sigIntHandler.sa_handler = No_Pause_Scan;
-   	sigemptyset(&sigIntHandler.sa_mask);
-   	sigIntHandler.sa_flags = 0;
-
-	if(sigemptyset(&sigIntHandler.sa_mask)!=0)
-	{
-		DEBUG("Error at signal");
-		exit(1);
-	}
-
-   	if(sigaction(SIGINT, &sigIntHandler, NULL)!=0)
-	{
-		DEBUG("Error at signal");
-		exit(1);
-	}
-
-   	if(sigaction(SIGTSTP, &sigIntHandler, NULL)!=0)
-	{
-		DEBUG("Error at signal");
-		exit(1);
-	}
-
-   	if(sigaction(SIGQUIT, &sigIntHandler, NULL)!=0)
-	{
-		DEBUG("Error at signal");
-		exit(1);
-	}
-
-}
-
+#include "validate.h"
 
 void init_banner_odin()
 {
@@ -116,6 +64,7 @@ void init_banner_odin()
  LAST
  "--host :	host to scan and GET method  site.com/page.jsp?var=^&var2=^\n"
  "--post :	POST method params  ex: 'var=^&x=^...'\n"
+ "--cookie :      COOKIE  params  ex: 'var=^&var2=^...'\n"
  "--payloads :	payload list to inject\n"
  "--find_string_list :	strings list to find on response\n"
  "--find_regex_list :	regex list to find on response(this regex is posix)\n"
@@ -126,7 +75,7 @@ void init_banner_odin()
  "--SSL_version :	choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3\n"
  "--theads : Number of threads to use, default is 4\n"
  "--timeout :	timeout of response\n"
- "--save_response :   save response to view in output \n"
+ "--save_response :   save response to view in output \n\n"
  YELLOW
  "example 1 to find SQL-injection:\n./odin --host 'http://site.com/view/1^/product/^/' --payloads payloads/sqli_list.txt --find_string_list sqli_str2find_list.txt --log log1337 --threads 5 --timeout 3 --save_response\n"
  "example 2 to Bruteforce in simple auth:\n./odin --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads payloads/wordlist.txt --log log007 --threads 10 --timeout 3\n"
@@ -139,20 +88,21 @@ CYAN
 
 static struct option long_options[] =
 {
-    {"host", required_argument, NULL, 'h'},
-    {"payloads", required_argument, NULL, 'p'},
-    {"find_string_list", required_argument, NULL, 'f'},
-    {"find_regex_list", required_argument, NULL, 'z'},
-    {"cookie_jar", required_argument, NULL, 'c'},
-    {"post", required_argument, NULL, 'P'},
-    {"log", required_argument, NULL, 'o'},
-    {"UserAgent", required_argument, NULL, 'u'},
-    {"CA_certificate", required_argument, NULL, 's'},
-    {"SSL_version", required_argument, NULL, 'V'},
-    {"threads", required_argument, NULL, 't'},
-    {"timeout", required_argument, NULL, 'T'},
-    {"save_response", no_argument, 0, 'k'},
-    {NULL, 0, NULL, 0}
+	{"host", required_argument, NULL, 'h'},
+	{"payloads", required_argument, NULL, 'p'},
+	{"find_string_list", required_argument, NULL, 'f'},
+	{"find_regex_list", required_argument, NULL, 'z'},
+	{"cookie_jar", required_argument, NULL, 'c'},
+	{"cookie", required_argument, NULL, 'i'},
+	{"post", required_argument, NULL, 'P'},
+	{"log", required_argument, NULL, 'o'},
+	{"UserAgent", required_argument, NULL, 'u'},
+	{"CA_certificate", required_argument, NULL, 's'},
+	{"SSL_version", required_argument, NULL, 'V'},
+	{"threads", required_argument, NULL, 't'},
+ 	{"timeout", required_argument, NULL, 'T'},
+	{"save_response", no_argument, 0, 'k'},
+	{NULL, 0, NULL, 0}
 };
 
 
@@ -160,8 +110,8 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[13]; 
- short y=12;
+ char *pack[14]; 
+ short y=13;
 
  	no_write_coredump ();
  	load_signal_alarm ();
@@ -192,6 +142,7 @@ main(int argc, char ** argv)
 				if ( strnlen(optarg,256)<= 128 )
 				{
     					pack[0] = optarg;
+					validate_hostname(pack[0]);
     					printf("Host: %s \n",pack[0]);
     					
 				} else {
@@ -242,6 +193,19 @@ main(int argc, char ** argv)
 				} else {
 
 					DEBUG("Error \nArgument cookie jar file is very large  \n");
+					exit(1);
+				}
+    				break;
+
+
+
+   			case 'i':
+				if ( strnlen(optarg,256)<= 64 )
+				{
+    					pack[13] = optarg;
+				} else {
+
+					DEBUG("Error \nArgument cookie is very large  \n");
 					exit(1);
 				}
     				break;
