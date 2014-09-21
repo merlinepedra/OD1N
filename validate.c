@@ -89,7 +89,7 @@ void load_signal_alarm (void)
 
 void validate_hostname(char *hostname)
 {
-	CURL *curl=NULL;;
+	CURL *curl=NULL;
 	CURLcode res;
  
 	curl = curl_easy_init();
