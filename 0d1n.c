@@ -60,7 +60,7 @@ void init_banner_odin()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "0d1n Manual Web Hacking Tool 1.9 RELEASE\n"
+ "0d1n Web Hacking Manual Tool 1.9 RELEASE\n"
  LAST
  "--host :	host to scan and GET method  site.com/page.jsp?var=^&var2=^\n"
  "--post :	POST method params  ex: 'var=^&x=^...'\n"
