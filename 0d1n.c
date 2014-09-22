@@ -58,13 +58,15 @@ void init_banner_odin()
    "( (`._) .-.  .-. |.-.  .-.  .-. ) ) \n"
    " \\ `---( 1 )( 0 )( 1 )( 1 )( 0 )-' /  \n"
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
-   "   `---------------------------' by Cooler_    \n"
+   "   `---------------------------'     \n"
  YELLOW
- "0d1n Web Hacking Tool 1.5 STABLE\n"
+ "0d1n Manual Web Hacking Tool 1.9 RELEASE\n"
  LAST
  "--host :	host to scan and GET method  site.com/page.jsp?var=^&var2=^\n"
  "--post :	POST method params  ex: 'var=^&x=^...'\n"
  "--cookie :      COOKIE  params  ex: 'var=^&var2=^...'\n"
+ "--method :      Custom http method like DELETE, PUT, TRACE, CONNECT... \n"
+ "--header :      Add line on http header \n"
  "--payloads :	payload list to inject\n"
  "--find_string_list :	strings list to find on response\n"
  "--find_regex_list :	regex list to find on response(this regex is posix)\n"
@@ -75,10 +77,24 @@ void init_banner_odin()
  "--SSL_version :	choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3\n"
  "--theads : Number of threads to use, default is 4\n"
  "--timeout :	timeout of response\n"
- "--save_response :   save response to view in output \n\n"
+YELLOW
+ "\nEnable-options-args:\n"
+LAST
+ "--save_response :   Enable save response highlights view when you click at http status code in datatables \n"
+ "--json_headers :   Enable add JSON headers in Request \n\n"
  YELLOW
- "example 1 to find SQL-injection:\n./odin --host 'http://site.com/view/1^/product/^/' --payloads payloads/sqli_list.txt --find_string_list sqli_str2find_list.txt --log log1337 --threads 5 --timeout 3 --save_response\n"
- "example 2 to Bruteforce in simple auth:\n./odin --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads payloads/wordlist.txt --log log007 --threads 10 --timeout 3\n"
+ "example 1 to find SQL-injection:\n"
+LAST
+"./odin --host 'http://site.com/view/1^/product/^/' --payloads payloads/sqli_list.txt --find_string_list sqli_str2find_list.txt --log log1337 --threads 5 --timeout 3 --save_response\n"
+"\n"
+YELLOW
+ "example 2 to Bruteforce in simple auth:\n"
+LAST
+"./odin --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads payloads/wordlist.txt --log log007 --threads 10 --timeout 3\n"
+"\n"
+YELLOW
+"Notes:\n"
+LAST
 "Look the character '^', is lexical char to change to payload list lines...\n"
 CYAN
  "Coded by Cooler_\n c00f3r[at]gmail[dot]com\n "
@@ -95,13 +111,16 @@ static struct option long_options[] =
 	{"cookie_jar", required_argument, NULL, 'c'},
 	{"cookie", required_argument, NULL, 'i'},
 	{"post", required_argument, NULL, 'P'},
+	{"method", required_argument, NULL, 'b'},
+	{"header", required_argument, NULL, 'd'},
 	{"log", required_argument, NULL, 'o'},
 	{"UserAgent", required_argument, NULL, 'u'},
 	{"CA_certificate", required_argument, NULL, 's'},
 	{"SSL_version", required_argument, NULL, 'V'},
 	{"threads", required_argument, NULL, 't'},
  	{"timeout", required_argument, NULL, 'T'},
-	{"save_response", no_argument, 0, 'k'},
+	{"save_response", no_argument, 0, 'k'},	
+	{"json_headers", no_argument, 0, 'j'},
 	{NULL, 0, NULL, 0}
 };
 
@@ -110,8 +129,8 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[14]; 
- short y=13;
+ char *pack[17]; 
+ short y=16;
 
  	no_write_coredump ();
  	load_signal_alarm ();
@@ -133,7 +152,7 @@ main(int argc, char ** argv)
 
  	opterr = 0;
 
- 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:o:u:s:t:T:k:V",long_options,NULL)) != -1)
+ 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:b:d:o:u:s:t:T:k:j:V",long_options,NULL)) != -1)
   		switch(c) 
   		{
 // Host
@@ -220,6 +239,26 @@ main(int argc, char ** argv)
 				}
     				break;
 
+   			case 'b':
+				if ( strnlen(optarg,14)<= 12 )
+				{
+    					pack[15] = optarg;
+				} else {
+					DEBUG("Error \nArgument method is very large  \n");
+					exit(1);
+				}
+    				break;
+
+   			case 'd':
+				if ( strnlen(optarg,129)<= 128 )
+				{
+    					pack[14] = optarg;
+				} else {
+					DEBUG("Error \nArgument header is very large  \n");
+					exit(1);
+				}
+    				break;
+
    			case 'o':
 				if ( strnlen(optarg,256)<= 128 )
 				{
@@ -275,6 +314,11 @@ main(int argc, char ** argv)
    			case 'k':
     				pack[12] = "1";
 				break;
+ 	
+		
+   			case 'j':
+    				pack[16] = "1";
+				break;
  			
  				
    			case 'V':
@@ -306,3 +350,4 @@ main(int argc, char ** argv)
 
  	exit(0);
 }
+

@@ -71,6 +71,34 @@ void spider(void *pack,char *line,char * pathtable)
 		} else {
 			curl_easy_setopt(curl,  CURLOPT_USERAGENT, "Mozilla/5.0 (0d1n v0.1) ");
 		}
+
+		if(arg[14]!=NULL)
+		{
+			struct curl_slist *headers = NULL;
+			curl_slist_append(headers, arg[14]);
+			if(arg[16]!=NULL)
+			{
+				curl_slist_append(headers, "Accept: application/json");
+				curl_slist_append(headers, "Content-Type: application/json");
+			}
+			curl_easy_setopt(curl,  CURLOPT_HTTPHEADER, headers);
+			curl_slist_free_all(headers);
+		} else {
+			if(arg[16] != NULL)
+			{
+				struct curl_slist *headers = NULL;
+
+				curl_slist_append(headers, "Accept: application/json");
+				curl_slist_append(headers, "Content-Type: application/json");
+				curl_easy_setopt(curl,  CURLOPT_HTTPHEADER, headers);
+				curl_slist_free_all(headers);
+			}
+		}
+	
+		if(arg[15]!=NULL)
+		{
+			curl_easy_setopt(curl,  CURLOPT_CUSTOMREQUEST, arg[15]);
+		}
  
 		curl_easy_setopt(curl,  CURLOPT_ENCODING,"gzip,deflate");
 
