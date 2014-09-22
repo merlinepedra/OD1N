@@ -15,9 +15,7 @@
 
 > other things...
 
-I explain in portuguese language here:
-
-http://coolerlab.wordpress.com/2012/09/02/0d1n/                                
+                             
 
 
 ## to run:
@@ -42,19 +40,6 @@ $./0d1n
 
 
 
-Examples:
-
-
-Brute path:
-$ ./0d1n --host 'http://host/find.php?search=!&type=!' --payloads payloads/xss-rsnake.txt -find_string_list response2find/find.txt  --log out_data22
-
-
-Brute GET n Find string:
-
-$ ./0d1n --host 'http://coolerlab.wordpress.com/!' --payloads test_list1 --find_string_list find_list_one --log thunder27
-
-
-$ firefox tables/hammer_thunder27.html
 
 
 
