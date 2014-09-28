@@ -1,4 +1,7 @@
 <script>alert("XSS")</script>
+";alert(1)//
+'-alert(1)-'
+"<script>alert(1)</script>
 %22%3E%3Cscript%3Ealert%28%27XSS%27%29%3C/script%3E
 <SCRIPT>alert('XSS');</SCRIPT>
 '';!--"<XSS>=&{()}
