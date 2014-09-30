@@ -12,7 +12,8 @@
 
 
 #dt_example #container {
-	width: 800px;
+        width:100%;
+        float:left;
 	margin: 30px auto;
 	padding: 0;
 }
