@@ -87,7 +87,7 @@ void load_signal_alarm (void)
 
 }
 
-void validate_hostname(char *hostname)
+void validate_hostname(const char *hostname)
 {
 	CURL *curl=NULL;
 	CURLcode res;
@@ -101,13 +101,14 @@ void validate_hostname(char *hostname)
  
 		if(CURLE_OK != res) 
 		{
-			char choice[1];
+			char choice;
 
-			DEBUG("Error to validate hostname");
-			puts("Do you continue ? y/n");
-			scanf("%1c",&choice[0]);
+			DEBUG("Error validating hostname");
+			printf("Do you want to continue (y/N)? ");
+			if(scanf("%1c", &choice) == EOF)
+				choice = 'n';
 
-			if(choice[0]!='y' || choice[0]!='Y')
+			if(choice != 'y' && choice != 'Y')
 			{
 				curl_easy_cleanup(curl);
 				exit(1);

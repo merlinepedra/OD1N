@@ -1,11 +1,11 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -lcurl -Ofast -fstack-protector-all -Wl,-z,relro,-z,now -D_FORTIFY_SOURCE=fast
-BINDIR=/usr/bin
+CFLAGS=-W -Wall -Wextra -Ofast -fstack-protector-all
+DFLAGS=-D_FORTIFY_SOURCE=2
+LDFLAGS=-Wl,-z,relro,-z,now -lcurl
 
 0d1n: 0d1n.c 
-	$(CC) $(CFLAGS) -c *.c 
-	$(CC) $(CFLAGS) -o 0d1n *.o 
-	rm *.o
+	$(CC) $(CFLAGS) $(DFLAGS) -c *.c
+	$(CC) -o 0d1n *.o $(LDFLAGS)
 
 clean:
-	rm 0d1n
+	rm -f *.o 0d1n
