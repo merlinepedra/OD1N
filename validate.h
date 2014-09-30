@@ -39,4 +39,4 @@ $./0d1n
 void No_Pause_Scan ();
 void no_write_coredump (void); 
 void load_signal_alarm (void);
-void validate_hostname(char *hostname);
+void validate_hostname(const char *hostname);
