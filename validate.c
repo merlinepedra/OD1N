@@ -97,6 +97,9 @@ void validate_hostname(const char *hostname)
 	if(curl) 
 	{
 		curl_easy_setopt(curl, CURLOPT_URL, hostname);
+		curl_easy_setopt(curl, CURLOPT_HEADER, 1 );
+                curl_easy_setopt(curl, CURLOPT_NOBODY, 1 );
+                curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1 );
 		res = curl_easy_perform(curl);
  
 		if(CURLE_OK != res) 
