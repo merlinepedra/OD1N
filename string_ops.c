@@ -99,7 +99,7 @@ strstr_regex(char *string, char *expression)
 	int reti;
 
 // Compile regular expression
-	reti = regcomp(&regex, expression, 0);
+	reti = regcomp(&regex, expression, REG_EXTENDED);
 
 	if(reti) 
 		DEBUG("Could not compile regex ! \n");
