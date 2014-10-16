@@ -132,7 +132,7 @@ void spider(void *pack,char *line,char * pathtable)
 			curl_easy_setopt(curl,CURLOPT_TIMEOUT,timeout); 
 
 		if ( arg[9] != NULL ) 
-			curl_easy_setopt(curl,CURLOPT_SSLVERSION,atoi(arg[9]));
+			curl_easy_setopt(curl,CURLOPT_SSLVERSION,(long)atoi(arg[9]));
 
                 curl_easy_setopt(curl,CURLOPT_VERBOSE,0); 
 		curl_easy_setopt(curl,CURLOPT_HEADER,1);  
