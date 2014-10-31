@@ -131,6 +131,12 @@ void spider(void *pack,char *line,char * pathtable)
 		if(timeout) 
 			curl_easy_setopt(curl,CURLOPT_TIMEOUT,timeout); 
 
+		if(arg[17] != NULL)
+		{
+			curl_easy_setopt(curl, CURLOPT_PROXY, arg[17]);
+			curl_easy_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 1);
+		}
+
 		if ( arg[9] != NULL ) 
 			curl_easy_setopt(curl,CURLOPT_SSLVERSION,(long)atoi(arg[9]));
 

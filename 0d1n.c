@@ -62,7 +62,7 @@ void init_banner_odin()
  YELLOW
  "0d1n Web Hacking Tool 1.9 RELEASE\n"
  LAST
- "--host :	host to scan and GET method  site.com/page.jsp?var=^&var2=^\n"
+ "--host :	host to scan or GET method  site.com/page.jsp?var=^&var2=^\n"
  "--post :	POST method params  ex: 'var=^&x=^...'\n"
  "--cookie :      COOKIE  params  ex: 'var=^&var2=^...'\n"
  "--method :      Custom http method like DELETE, PUT, TRACE, CONNECT... \n"
@@ -76,7 +76,8 @@ void init_banner_odin()
  "--CA_certificate :	Load CA certificate to work with SSL\n"
  "--SSL_version :	choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3\n"
  "--theads : Number of threads to use, default is 4\n"
- "--timeout :	timeout of response\n"
+ "--timeout :	timeout to wait Response\n"
+ "--proxy :   proxy_address:port to use single proxy tunnel\n	example: format [protocol://][user:password@]machine[:port]\n"
 YELLOW
  "\nEnable-options-args:\n"
 LAST
@@ -118,7 +119,8 @@ static struct option long_options[] =
 	{"CA_certificate", required_argument, NULL, 's'},
 	{"SSL_version", required_argument, NULL, 'V'},
 	{"threads", required_argument, NULL, 't'},
- 	{"timeout", required_argument, NULL, 'T'},
+ 	{"timeout", required_argument, NULL, 'T'}, 
+ 	{"proxy", required_argument, NULL, '1'},
 	{"save_response", no_argument, 0, 'k'},	
 	{"json_headers", no_argument, 0, 'j'},
 	{NULL, 0, NULL, 0}
@@ -129,8 +131,8 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[17]; 
- short y=16;
+ char *pack[18]; 
+ short y=17;
 
  	no_write_coredump ();
  	load_signal_alarm ();
@@ -152,7 +154,7 @@ main(int argc, char ** argv)
 
  	opterr = 0;
 
- 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:b:d:o:u:s:t:T:k:j:V",long_options,NULL)) != -1)
+ 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:b:d:o:u:s:t:T:1:k:j:V",long_options,NULL)) != -1)
   		switch(c) 
   		{
 // Host
@@ -307,6 +309,17 @@ main(int argc, char ** argv)
     					pack[8] = optarg;
 				} else {	
 					DEBUG("Error \nArgument timeout is very large need 3 digit  \n");
+					exit(1);
+				}
+				break;
+
+// proxy single
+   			case '1':
+				if ( strnlen(optarg,47)<= 48 )
+				{	
+    					pack[17] = optarg;
+				} else {	
+					DEBUG("Error \nArgument proxy is very large \n");
 					exit(1);
 				}
 				break;
