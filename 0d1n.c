@@ -75,7 +75,7 @@ void init_banner_odin()
  "--UserAgent :	custom UserAgent\n"
  "--CA_certificate :	Load CA certificate to work with SSL\n"
  "--SSL_version :	choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3\n"
- "--theads : Number of threads to use, default is 4\n"
+ "--threads : Number of threads to use, default is 4\n"
  "--timeout :	timeout to wait Response\n"
  "--proxy :   proxy_address:port to use single proxy tunnel\n	example: format [protocol://][user:password@]machine[:port]\n"
  "--proxy-rand :   Use proxy list to use random proxy per Request\n	example: format [protocol://][user:password@]machine[:port]\n"
