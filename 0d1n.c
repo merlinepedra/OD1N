@@ -157,7 +157,7 @@ main(int argc, char ** argv)
 
  	opterr = 0;
 
- 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:b:d:o:u:s:t:T:1:k:j:V",long_options,NULL)) != -1)
+ 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:b:d:o:u:s:t:T:1:2:k:j:V",long_options,NULL)) != -1)
   		switch(c) 
   		{
 // Host
