@@ -78,6 +78,8 @@ void init_banner_odin()
  "--theads : Number of threads to use, default is 4\n"
  "--timeout :	timeout to wait Response\n"
  "--proxy :   proxy_address:port to use single proxy tunnel\n	example: format [protocol://][user:password@]machine[:port]\n"
+ "--proxy-rand :   Use proxy list to use random proxy per Request\n	example: format [protocol://][user:password@]machine[:port]\n"
+YELLOW
 YELLOW
  "\nEnable-options-args:\n"
 LAST
@@ -120,7 +122,8 @@ static struct option long_options[] =
 	{"SSL_version", required_argument, NULL, 'V'},
 	{"threads", required_argument, NULL, 't'},
  	{"timeout", required_argument, NULL, 'T'}, 
- 	{"proxy", required_argument, NULL, '1'},
+ 	{"proxy", required_argument, NULL, '1'}, 
+ 	{"proxy-rand", required_argument, NULL, '2'},
 	{"save_response", no_argument, 0, 'k'},	
 	{"json_headers", no_argument, 0, 'j'},
 	{NULL, 0, NULL, 0}
@@ -131,8 +134,8 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[18]; 
- short y=17;
+ char *pack[19]; 
+ short y=18;
 
  	no_write_coredump ();
  	load_signal_alarm ();
@@ -323,6 +326,17 @@ main(int argc, char ** argv)
 					exit(1);
 				}
 				break;
+//proxy list
+   			case '2':
+				if ( strnlen(optarg,63)<= 64 )
+				{	
+    					pack[18] = optarg;
+				} else {	
+					DEBUG("Error \nArgument proxy list is very large \n");
+					exit(1);
+				}
+				break;
+
  // save response
    			case 'k':
     				pack[12] = "1";

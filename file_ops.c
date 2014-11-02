@@ -1,12 +1,14 @@
 #include "file_ops.h"
 #include "mem_ops.h"
+#include "string_ops.h"
 
 //read lines of file
 char *readLine(char * NameFile)
 {
 	FILE * arq;
-	arq = fopen(NameFile, "rx");
 
+	arq = fopen(NameFile, "rx");
+// todo think implement fcntl() ,toctou mitigation...
 	if( arq == NULL )
 	{
 		DEBUG("error in to open() file"); 	 
@@ -38,7 +40,7 @@ char *readLine(char * NameFile)
 	return lineBuffer;
 }
 
-
+// write line in file
 int 
 WriteFile(char *file,char *str)
 {
@@ -90,4 +92,51 @@ long FileSize(const char *file)
 	arq=NULL;
 
 	return ret;
+}
+
+
+
+// returns random line from file
+char *Random_linefile(char * namefile)
+{
+	FILE *f;
+	int nLines = 0;
+	static char line[1024];   // think recv space to nullbyte 1023
+	int randLine=0,i=0;
+ 
+	entropy_clock();  // i set entropy seed here
+
+	memset(line,0x0,1023);
+
+	f = fopen(namefile, "rx");
+
+	if ( f == NULL )
+	{
+		DEBUG("error in file");
+		exit(1);
+	}
+
+	while ( !feof(f) )
+	{
+		if(fgets(line, 1023, f)!=NULL) 
+			nLines++;
+	}
+
+	randLine = rand() % nLines;
+
+	fseek(f, 0, SEEK_SET);
+
+	while (!feof(f) && i <= randLine)
+		if(fgets(line, 1023, f)!=NULL)
+			i++;
+				
+	if( fclose(f) == EOF )
+	{
+  		DEBUG("error in close() file %s",namefile);
+		exit(1);
+	}
+
+	f=NULL;
+
+    	return line;
 }

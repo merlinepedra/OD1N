@@ -30,7 +30,7 @@ $ make
 $ ./0d1n
 
  What this IT ?
-  this is another Web POST,GET test tool lol
+  this is another Web fuzzer tool...
   
  need libcurl to run
   
@@ -49,7 +49,8 @@ $ ./0d1n --host 'http://host/find.php?search=!&type=!' --payloads payloads/xss-r
 Brute GET n Find string:
 $ ./0d1n --host 'http://coolerlab.wordpress.com/!' --payloads test_list1 --find_string_list find_list_one --log thunder27
 
-
+Lists of proxy: payloads/proxy_list.txt
+http://www.freeproxylists.net/
 
 
 

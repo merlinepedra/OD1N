@@ -41,6 +41,7 @@ void spider(void *pack,char *line,char * pathtable)
 
 // goto to fix signal stop if user do ctrl+c
 	try_again:
+
 	while ( old > 0 || counter_cookie > 0)
 	{
 		CURL *curl;  
@@ -64,13 +65,16 @@ void spider(void *pack,char *line,char * pathtable)
       
 		curl_easy_setopt(curl,  CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
 		curl_easy_setopt(curl,  CURLOPT_WRITEDATA, (void *)&chunk);
-    
+
+// load user agent     
 		if ( arg[6]!=NULL )
 		{
 			curl_easy_setopt(curl,  CURLOPT_USERAGENT, arg[6]);
 		} else {
 			curl_easy_setopt(curl,  CURLOPT_USERAGENT, "Mozilla/5.0 (0d1n v0.1) ");
 		}
+
+// json headers to use JSON
 
 		if(arg[14]!=NULL)
 		{
@@ -95,6 +99,7 @@ void spider(void *pack,char *line,char * pathtable)
 			}
 		}
 	
+//use custom method PUT,DELETE...
 		if(arg[15]!=NULL)
 		{
 			curl_easy_setopt(curl,  CURLOPT_CUSTOMREQUEST, arg[15]);
@@ -102,6 +107,7 @@ void spider(void *pack,char *line,char * pathtable)
  
 		curl_easy_setopt(curl,  CURLOPT_ENCODING,"gzip,deflate");
 
+// load cookie jar
 		if ( arg[3] != NULL )
 		{
 			curl_easy_setopt(curl,CURLOPT_COOKIEFILE,arg[3]);
@@ -109,7 +115,7 @@ void spider(void *pack,char *line,char * pathtable)
 		} else {
 			curl_easy_setopt(curl,CURLOPT_COOKIEJAR,"odin_cookiejar.txt");
 		}
-
+// LOAD cookie
 
 		if(arg[13]!=NULL)
 		{
@@ -118,7 +124,7 @@ void spider(void *pack,char *line,char * pathtable)
 
 
 		curl_easy_setopt(curl,CURLOPT_FOLLOWLOCATION,1);
-
+// Load cacert
 		if ( arg[7] != NULL ) 
 		{
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
@@ -131,11 +137,22 @@ void spider(void *pack,char *line,char * pathtable)
 		if(timeout) 
 			curl_easy_setopt(curl,CURLOPT_TIMEOUT,timeout); 
 
+// load single proxy
 		if(arg[17] != NULL)
 		{
 			curl_easy_setopt(curl, CURLOPT_PROXY, arg[17]);
-			curl_easy_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 1);
+	//		curl_easy_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 1);
 		}
+
+// load proxy list 
+		if(arg[18] != NULL)
+		{
+			char *randproxy=Random_linefile(arg[18]);
+	//		printf("PROXY LOAD: %s\n",randproxy);
+			curl_easy_setopt(curl, CURLOPT_PROXY, randproxy);
+	//		curl_easy_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 1);
+		}
+
 
 		if ( arg[9] != NULL ) 
 			curl_easy_setopt(curl,CURLOPT_SSLVERSION,(long)atoi(arg[9]));
@@ -175,6 +192,7 @@ void spider(void *pack,char *line,char * pathtable)
 			{
 				chomp(line2);
 
+// find a string in response
 				if(status != 0)
 				{
 					if ( arg[2] != NULL )
@@ -245,6 +263,7 @@ void spider(void *pack,char *line,char * pathtable)
 					tmp_make=html_entities(make);
 					tmp_line2=html_entities(line2);
 					tmp_line=html_entities(line);
+
 					if(make_cookie!=NULL)
 					{
 						tmp_make_cookie=xmalloc((strlen(make)*sizeof(char))+1);
@@ -254,6 +273,7 @@ void spider(void *pack,char *line,char * pathtable)
 					} else {
 						snprintf(tabledata,4547,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,tmp_make,tmp_line2,tmp_line);
       					}
+
 					WriteFile(pathtable,tabledata);
 					xfree((void **)&tmp_make);
 					xfree((void **)&tmp_make_cookie);
@@ -328,6 +348,7 @@ void spider(void *pack,char *line,char * pathtable)
 		tmp_line=xmalloc(2090);
 		tmp_make=html_entities(make);
 		tmp_line=html_entities(line);
+
 		if(counter_cookie)
 		{
 				
@@ -346,13 +367,17 @@ void spider(void *pack,char *line,char * pathtable)
 	}
 
 	xfree((void **)&make);
+
 	if(make_cookie!=NULL)
 		xfree((void **)&make_cookie);
+
 	xfree((void **)&chunk.memory);
 	xfree((void **)&pathsource);
+
 	old--;
 	counter_cookie--;
 	debug_host=3;
+
 	curl_easy_cleanup(curl);
         curl_global_cleanup();
 
@@ -394,6 +419,7 @@ void scan(void *arguments)
 		DEBUG("error to open Payload list"); 
 		exit(1);
 	}
+
         num1=FileSize(TEMPLATE2);
         num2=FileSize(TEMPLATE3); 
 
@@ -490,6 +516,7 @@ void scan(void *arguments)
 		DEBUG("Error in close()");
 		exit(1);
 	}
+
 	fp=NULL;
 
 	exit(0);
