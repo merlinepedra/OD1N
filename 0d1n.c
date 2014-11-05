@@ -64,9 +64,9 @@ void init_banner_odin()
  LAST
  "--host :	host to scan or GET method  site.com/page.jsp?var=^&var2=^\n"
  "--post :	POST method params  ex: 'var=^&x=^...'\n"
- "--cookie :      COOKIE  params  ex: 'var=^&var2=^...'\n"
- "--method :      Custom http method like DELETE, PUT, TRACE, CONNECT... \n"
- "--header :      Add line on http header \n"
+ "--cookie :    COOKIE  params  ex: 'var=^&var2=^...'\n"
+ "--method :    Custom http method like DELETE, PUT, TRACE, CONNECT... \n"
+ "--header :    Add line on http header \n"
  "--payloads :	payload list to inject\n"
  "--find_string_list :	strings list to find on response\n"
  "--find_regex_list :	regex list to find on response(this regex is posix)\n"
