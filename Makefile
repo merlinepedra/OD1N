@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-W -Wall -Wextra -Ofast -fstack-protector-all
 DFLAGS=-D_FORTIFY_SOURCE=1
-LDFLAGS=-Wl,-z,relro,-z,now -lcurl -g
+LDFLAGS=-Wl,-z,relro,-z,now -lcurl
 
 0d1n: 0d1n.c 
 	$(CC) $(CFLAGS) $(DFLAGS) -c *.c
