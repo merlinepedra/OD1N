@@ -149,7 +149,7 @@ main(int argc, char ** argv)
 	}
  
 
- 	while(y)
+ 	while(y>-1)
  	{
   		pack[y]=NULL;
   		y--;
@@ -371,9 +371,9 @@ main(int argc, char ** argv)
   		}
 
  
-
-	if(strlen(pack[0]))
-		scan((void *)pack);
+	if(pack[0]!=NULL)
+		if(strlen(pack[0]))
+			scan((void *)pack);
 
  	exit(0);
 }
