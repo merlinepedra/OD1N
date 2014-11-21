@@ -248,7 +248,7 @@ void spider(void *pack,char *line,char * pathtable)
 					log=xmalloc(sizeof(char)*size_log);
 					snprintf(log,size_log-1,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s \n Path Response Source: %s\n",status,line,line2,make,(make_cookie!=NULL)?make_cookie:" ",pathsource);
 					WriteFile(arg[5],log);
-					memset(log,strlen(log)-1,'0');		
+					memset(log,0,strlen(log)-1);		
 //					xfree((void **)&log);
 			
 					if(save_response==true)
@@ -259,12 +259,12 @@ void spider(void *pack,char *line,char * pathtable)
                 				responsetemplate=readLine(TEMPLATE);
 						WriteFile(pathsource,responsetemplate);
   //        					xfree((void **)&responsetemplate);
-						memset(responsetemplate,strlen(responsetemplate)-1,'0');
+						memset(responsetemplate,0,strlen(responsetemplate)-1);
 						tmp_response=NULL;
 				//		tmp_response=xmalloc(sizeof(char)*(strlen(chunk.memory)+1));
 						tmp_response=html_entities(chunk.memory);
 						WriteFile(pathsource,tmp_response);
-						memset(tmp_response,strlen(tmp_response)-1,'0');
+						memset(tmp_response,0,strlen(tmp_response)-1);
 //						xfree((void **)&tmp_response);
 						WriteFile(pathsource,"</pre></html>");
 					}
@@ -283,7 +283,7 @@ void spider(void *pack,char *line,char * pathtable)
 						tmp_make_cookie=html_entities(make_cookie);
 						snprintf(tabledata,4547,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s cookie: %s\",\"%s\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_make_cookie,tmp_line2,tmp_line);
 //						xfree((void **)&tmp_make_cookie);
-						memset(tmp_make_cookie,strlen(tmp_make_cookie)-1,'0');
+						memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
 					} else {
 						snprintf(tabledata,4547,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"%s\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_line2,tmp_line);
       					}
@@ -296,12 +296,12 @@ void spider(void *pack,char *line,char * pathtable)
 					xfree((void **)&tabledata);
 					xfree((void **)&pathsource);
 */
-					memset(tmp_make,strlen(tmp_make)-1,'0');
-					memset(tmp_make_cookie,strlen(tmp_make_cookie)-1,'0');
-					memset(tmp_line,strlen(tmp_line)-1,'0');
-					memset(tmp_line2,strlen(tmp_line2)-1,'0');
-					memset(tabledata,strlen(tabledata)-1,'0');
-					memset(pathsource,strlen(pathsource)-1,'0');
+					memset(tmp_make,0,strlen(tmp_make)-1);
+					memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
+					memset(tmp_line,0,strlen(tmp_line)-1);
+					memset(tmp_line2,0,strlen(tmp_line2)-1);
+					memset(tabledata,0,strlen(tabledata)-1);
+					memset(pathsource,0,strlen(pathsource)-1);
 
 
 				}
@@ -351,7 +351,7 @@ void spider(void *pack,char *line,char * pathtable)
 		log=xmalloc(sizeof(char)*size_log);
 		snprintf(log,size_log-1,"[%ld Payload: %s Params: %s Cookie: %s\n Path Response Source: %s\n",status,line,make,(make_cookie!=NULL)?make_cookie:" ",pathsource);
 		WriteFile(arg[5],log);
-		memset(log,strlen(log)-1,'0');
+		memset(log,0,strlen(log)-1);
 //		xfree((void **)&log);
 
 		if(save_response==true)
@@ -360,14 +360,14 @@ void spider(void *pack,char *line,char * pathtable)
              // 	  	responsetemplate=xmalloc(sizeof(char)*FileSize(TEMPLATE)*8);
                		responsetemplate=readLine(TEMPLATE);
 			WriteFile(pathsource,responsetemplate);
-			memset(responsetemplate,strlen(responsetemplate)-1,'0');
+			memset(responsetemplate,0,strlen(responsetemplate)-1);
 
   //        		xfree((void **)&responsetemplate);
 		//	tmp_response=xmalloc(sizeof(char)*(strlen(chunk.memory)+1));
 			tmp_response=html_entities(chunk.memory);
 			WriteFile(pathsource,tmp_response);
 //			xfree((void **)&tmp_response);
-			memset(tmp_response,strlen(tmp_response)-1,'0');
+			memset(tmp_response,0,strlen(tmp_response)-1);
 
 			WriteFile(pathsource,"</pre></html>");
 		}
@@ -385,15 +385,15 @@ void spider(void *pack,char *line,char * pathtable)
 			tmp_make_cookie=html_entities(make_cookie);
 			snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  cookie: %s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_make_cookie,tmp_line);
 //			xfree((void **)&tmp_make_cookie);
-			memset(tmp_make_cookie,strlen(tmp_make_cookie)-1,'0');
+			memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
 		} else {
 			snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_line);
 		}
       		WriteFile(pathtable,tabledata);
-		memset(tmp_make,strlen(tmp_make)-1,'0');
-		memset(tmp_line,strlen(tmp_line)-1,'0');
-		memset(tabledata,strlen(tabledata)-1,'0');
-		memset(pathsource,strlen(pathsource)-1,'0');
+		memset(tmp_make,0,strlen(tmp_make)-1);
+		memset(tmp_line,0,strlen(tmp_line)-1);
+		memset(tabledata,0,strlen(tabledata)-1);
+		memset(pathsource,0,strlen(pathsource)-1);
 /*
 		xfree((void **)&tmp_make);
 		xfree((void **)&tmp_line);
@@ -402,14 +402,14 @@ void spider(void *pack,char *line,char * pathtable)
 */
 	}
 
-	memset(make,strlen(make)-1,'0');
+	memset(make,0,strlen(make)-1);
 //	xfree((void **)&make);
 
-	memset(make_cookie,strlen(make_cookie)-1,'0');
+	memset(make_cookie,0,strlen(make_cookie)-1);
 //	if(make_cookie!=NULL)
 //		xfree((void **)&make_cookie);
 
-	memset(pathsource,strlen(pathsource)-1,'0');
+	memset(pathsource,0,strlen(pathsource)-1);
 	xfree((void **)&chunk.memory);
 //	xfree((void **)&pathsource);
 

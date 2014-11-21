@@ -88,12 +88,12 @@ LAST
  YELLOW
  "example 1 to find SQL-injection:\n"
 LAST
-"./odin --host 'http://site.com/view/1^/product/^/' --payloads payloads/sqli_list.txt --find_string_list sqli_str2find_list.txt --log log1337 --threads 5 --timeout 3 --save_response\n"
+"./0d1n --host 'http://site.com/view/1^/product/^/' --payloads payloads/sqli_list.txt --find_string_list sqli_str2find_list.txt --log log1337 --threads 5 --timeout 3 --save_response\n"
 "\n"
 YELLOW
  "example 2 to Bruteforce in simple auth:\n"
 LAST
-"./odin --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads payloads/wordlist.txt --log log007 --threads 10 --timeout 3\n"
+"./0d1n --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads payloads/wordlist.txt --log log007 --threads 10 --timeout 3\n"
 "\n"
 YELLOW
 "Notes:\n"
