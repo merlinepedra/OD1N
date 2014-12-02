@@ -12,10 +12,10 @@ void spider(void *pack,char *line,char * pathtable)
 	FILE *fp=NULL;
 	bool match_string=false,save_response=false;
 	long status=0,length=0;
-	int old=0,counter=0,counter_cookie=0,POST=0,sum_size=0,mem_size=0,timeout=0,debug_host=3; 
-	char *make=NULL,*make_cookie=NULL,*pathsource=NULL,*responsetemplate=NULL,*tmp_response=NULL,*tmp_make=NULL,*tmp_make_cookie=NULL,*tmp_line=NULL,*tmp_line2=NULL;
+	int old=0,counter=0,counter_cookie=0,POST=0,timeout=0,debug_host=3; 
+	char *make=NULL,*make_cookie=NULL,*responsetemplate=NULL,*tmp_response=NULL,*tmp_make=NULL,*tmp_make_cookie=NULL,*tmp_line=NULL,*tmp_line2=NULL;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
-	char randname[16],line2[1024],log[2048],tabledata[4086];
+	char randname[16],line2[1024],log[2048],tabledata[4086],pathsource[1024];
 
 	if(arg[12]!=NULL)
 		save_response=true;
@@ -23,12 +23,12 @@ void spider(void *pack,char *line,char * pathtable)
 	if(arg[8]!=NULL)
 		timeout=atoi(arg[8]);
 
-	pathsource=xmalloc(sizeof(char)*64);
-	memset(pathsource,0,sizeof(char)*63);
+
+	memset(pathsource,0,sizeof(char)*1023);
 
 	if(save_response==false)
 	{
-		pathsource="0";
+		strcat(pathsource,"0");
 	}
 
 // brute POST/GET/COOKIES
@@ -184,7 +184,7 @@ void spider(void *pack,char *line,char * pathtable)
 		{
 			if(save_response==true)
 			{
-				memset(pathsource,0,sizeof(char)*63);
+				memset(pathsource,0,sizeof(char)*1023);
 			}
 
 			fp = fopen((arg[2]!=NULL)?arg[2]:arg[10], "r");
@@ -221,24 +221,11 @@ void spider(void *pack,char *line,char * pathtable)
 					if(save_response==true)
 					{
 // create responses path
-						memset(pathsource,0,sizeof(char)*63);
-						mem_size=64;
-						mem_size+=18;
-						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
+						memset(pathsource,0,sizeof(char)*1023);
 						strncat(pathsource,"response_sources/",18);
-						mem_size+=16;
-						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
 						strncat(pathsource,arg[5], 15);
 						mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
-						mem_size+=2;
-						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-						strncat(pathsource,"/",2);
-						mem_size+=17;
-						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-						strncat(pathsource,rand_str(randname, sizeof randname),16);
-						mem_size+=7;
-						pathsource=xrealloc(pathsource,sizeof(char)*mem_size);
-						strncat(pathsource,".html",6);
+						snprintf(pathsource,986,"response_sources/%s/%s.html",arg[5],rand_str(randname, sizeof randname));
 					}
 // write log file
 					snprintf(log,2047,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s \n Path Response Source: %s\n",status,line,line2,make,(make_cookie!=NULL)?make_cookie:" ",pathsource);
@@ -303,24 +290,11 @@ void spider(void *pack,char *line,char * pathtable)
 
 		if(save_response==true)
 		{		
-			memset(pathsource,0,sizeof(char)*63);
-			sum_size=64;
-			sum_size+=18;
-			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-			strncat(pathsource,"response_sources/",17);
-			sum_size+=16;
-			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
+			memset(pathsource,0,sizeof(char)*1023);
+			strncat(pathsource,"response_sources/",18);
 			strncat(pathsource,arg[5], 15);
 			mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
-			sum_size+=2;
-			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-			strncat(pathsource,"/",2);
-			sum_size+=16;
-			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-			strncat(pathsource,rand_str(randname, sizeof randname),16);
-			sum_size+=6;
-			pathsource=xrealloc(pathsource,sizeof(char)*sum_size);
-			strncat(pathsource,".html",6);
+			snprintf(pathsource,986,"response_sources/%s/%s.html",arg[5],rand_str(randname, sizeof randname));
 		}
 //write logs
 		snprintf(log,2047,"[%ld Payload: %s Params: %s Cookie: %s\n Path Response Source: %s\n",status,line,make,(make_cookie!=NULL)?make_cookie:" ",pathsource);
@@ -376,12 +350,13 @@ void spider(void *pack,char *line,char * pathtable)
 
 	}
 
+
+	xfree((void **)&make_cookie);
 	xfree((void **)&make);
 	xfree((void **)&tmp_make);
 	xfree((void **)&tmp_make_cookie);
 	xfree((void **)&tmp_line);
 	xfree((void **)&tmp_line2);
-	xfree((void **)&pathsource);
 	xfree((void **)&responsetemplate);
 	xfree((void **)&tmp_response);	
 }
@@ -512,6 +487,12 @@ void scan(void *arguments)
 	xfree((void **)&pathhammer);
 	memset(view,0,sizeof(char)*strlen(view)-1);
 	xfree((void **)&view);
+
+
+	xfree((void **)&template2);
+	xfree((void **)&template3);
+
+
 
 	if( fclose(fp) == EOF )
 	{
