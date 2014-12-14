@@ -15,12 +15,12 @@ char *readLine(char * NameFile)
 		exit(1);
 	}
 
-	char *lineBuffer=xcalloc(1,1), line[512];
+	char *lineBuffer=xcalloc(1,1), line[4096];
 
 	while( fgets(line,sizeof line,arq) )  
 	{
 		lineBuffer=xrealloc(lineBuffer,strlen(lineBuffer)+strlen(line)+1);
-		strncat(lineBuffer,line,strlen(lineBuffer)-1);
+		strncat(lineBuffer,line,strlen(line)-1);
 	}
 
  
