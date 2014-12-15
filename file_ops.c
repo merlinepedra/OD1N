@@ -7,7 +7,7 @@ char *readLine(char * NameFile)
 {
 	FILE * arq;
 
-	arq = fopen(NameFile, "rx");
+	arq = fopen(NameFile, "r");
 // todo think implement fcntl() ,toctou mitigation...
 	if( arq == NULL )
 	{
@@ -75,7 +75,7 @@ long FileSize(const char *file)
 	long ret;
 	FILE *arq; 
 
-        arq = fopen(file, "rx");
+        arq = fopen(file, "r");
 
 	if ( arq == NULL )
 	{
@@ -111,7 +111,7 @@ char *Random_linefile(char * namefile)
 
 	memset(line,0x0,1023);
 
-	f = fopen(namefile, "rx");
+	f = fopen(namefile, "r");
 
 	if ( f == NULL )
 	{
