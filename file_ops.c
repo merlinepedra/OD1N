@@ -115,7 +115,7 @@ char *Random_linefile(char * namefile)
 
 	if ( f == NULL )
 	{
-		fclose(arq);
+		fclose(f);
 		DEBUG("error in file");
 		exit(1);
 	}
