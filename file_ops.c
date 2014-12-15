@@ -11,6 +11,7 @@ char *readLine(char * NameFile)
 // todo think implement fcntl() ,toctou mitigation...
 	if( arq == NULL )
 	{
+		fclose(arq);
 		DEBUG("error in to open() file"); 	 
 		exit(1);
 	}
@@ -50,6 +51,7 @@ WriteFile(char *file,char *str)
 
 	if ( arq == NULL ) 
 	{
+		fclose(arq);
 		DEBUG("error in WriteFile() %s",file); 
 		exit(1);
 	}
@@ -77,6 +79,7 @@ long FileSize(const char *file)
 
 	if ( arq == NULL )
 	{
+		fclose(arq);
 		DEBUG("error in file");
 		return 0;
 	}
@@ -112,6 +115,7 @@ char *Random_linefile(char * namefile)
 
 	if ( f == NULL )
 	{
+		fclose(arq);
 		DEBUG("error in file");
 		exit(1);
 	}
