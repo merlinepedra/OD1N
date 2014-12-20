@@ -60,12 +60,13 @@ void init_banner_odin()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "0d1n Web Hacking Tool 1.9 RELEASE\n"
+ "0d1n Web Hacking Tool 2.0 BeTa\n"
  LAST
- "--host :	host to scan or GET method  site.com/page.jsp?var=^&var2=^\n"
- "--post :	POST method params  ex: 'var=^&x=^...'\n"
- "--cookie :    COOKIE  params  ex: 'var=^&var2=^...'\n"
- "--method :    Custom http method like DELETE, PUT, TRACE, CONNECT... \n"
+ "--host :	host to scan or  GET method fuzz  site.com/page.jsp?var=^&var2=^\n"
+ "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
+ "--cookie :    COOKIE  fuzz params  ex: 'var=^&var2=^...'\n" 
+ "--agent :    UserAgent fuzz  params  ex: 'firefox version ^...'\n"
+ "--method :    Change method to Custom http method like DELETE, PUT, TRACE, CONNECT... \n"
  "--header :    Add line on http header \n"
  "--payloads :	payload list to inject\n"
  "--find_string_list :	strings list to find on response\n"
@@ -113,6 +114,7 @@ static struct option long_options[] =
 	{"find_regex_list", required_argument, NULL, 'z'},
 	{"cookie_jar", required_argument, NULL, 'c'},
 	{"cookie", required_argument, NULL, 'i'},
+	{"agent", required_argument, NULL, 'a'},
 	{"post", required_argument, NULL, 'P'},
 	{"method", required_argument, NULL, 'b'},
 	{"header", required_argument, NULL, 'd'},
@@ -134,8 +136,8 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[19]; 
- short y=18;
+ char *pack[20]; 
+ short y=19;
 
  	no_write_coredump ();
  	load_signal_alarm ();
@@ -157,7 +159,7 @@ main(int argc, char ** argv)
 
  	opterr = 0;
 
- 	while((c = getopt_long(argc, argv, "h:p:f:z:c:P:b:d:o:u:s:t:T:1:2:k:j:V",long_options,NULL)) != -1)
+ 	while((c = getopt_long(argc, argv, "h:p:f:z:c:i:a:P:b:d:o:u:s:t:T:1:2:k:j:V",long_options,NULL)) != -1)
   		switch(c) 
   		{
 // Host
@@ -221,6 +223,17 @@ main(int argc, char ** argv)
 				}
     				break;
 
+   			case 'a':
+				if ( strnlen(optarg,256)<= 64 )
+				{
+    					pack[19] = optarg;
+				} else {
+
+					DEBUG("Error \nArgument Useragent fuzz is very large  \n");
+					exit(1);
+				
+				}
+    				break;
 
 
    			case 'i':

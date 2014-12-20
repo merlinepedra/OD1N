@@ -21,7 +21,7 @@ char *readLine(char * NameFile)
 	while( fgets(line,sizeof line,arq) )  
 	{
 		lineBuffer=xrealloc(lineBuffer,strlen(lineBuffer)+strlen(line)+1);
-		strncat(lineBuffer,line,strlen(line)-1);
+		strncat(lineBuffer,line,strlen(line));
 	}
 
  
