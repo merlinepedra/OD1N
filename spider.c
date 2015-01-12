@@ -299,9 +299,9 @@ void spider(void *pack,char *line,char * pathtable)
       					}
 
 					WriteFile(pathtable,tabledata);
-					memset(tmp_make,0,strlen(tmp_make)-1);
-					memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
-					memset(tmp_make_agent,0,strlen(tmp_make_agent)-1);
+				//	memset(tmp_make,0,strlen(tmp_make)-1);
+				//	memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
+				//	memset(tmp_make_agent,0,strlen(tmp_make_agent)-1);
 					memset(tmp_line,0,strlen(tmp_line)-1);
 					memset(tmp_line2,0,strlen(tmp_line2)-1);
 					memset(tabledata,0,4085);
@@ -311,14 +311,15 @@ void spider(void *pack,char *line,char * pathtable)
 				}
 			}
  
+			
 			if( fclose(fp) == EOF )
 			{
 				DEBUG("Error in close()");
 				exit(1);
 			}
-			fp=NULL;
-//DEBUG("part A");
 
+			
+			fp=NULL;
 
 		} else {
 
@@ -400,14 +401,15 @@ void spider(void *pack,char *line,char * pathtable)
 		curl_easy_cleanup(curl);
         	curl_global_cleanup();
 
-		old--;
+		if(old > 0)
+			old--;
+
 		if(counter_cookie > 0)
 			counter_cookie--;
 
 		if(counter_agent > 0)
 			counter_agent--;
 		debug_host=3;
-//DEBUG("%d old\n",old);
 	}
 
 
