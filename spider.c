@@ -36,23 +36,32 @@ void spider(void *pack,char *line,char * pathtable)
 	counter=char_type_counter(POST?arg[4]:arg[0],'^');
 	counter_cookie=char_type_counter(arg[13]!=NULL?arg[13]:"",'^');
 	counter_agent=char_type_counter(arg[19]!=NULL?arg[19]:"",'^');
+/*
+	if(counter > 0)
+	{
+		if( !counter_cookie )
+			counter_cookie=counter;
 
-
+		if( !counter_agent )
+			counter_agent=counter;
+	}
+*/
 	old=counter;  
 	chomp(line);
 
 // goto to fix signal stop if user do ctrl+c
 	try_again:
 
-	while ( old > 0 || counter_cookie > 0 || counter_agent >  0)
+	while ( old > 0 || counter_cookie > 0  || counter_agent > 0 )
 	{
+
 		CURL *curl;  
 		curl_global_init(CURL_GLOBAL_ALL); 
 
 		chunk.memory=NULL; 
 		chunk.size = 0;  
 
-	
+// DEBUG("counts ^ : %d \n",old);	
 		make=payload_injector( (POST?arg[4]:arg[0]),line,old);
 		 		
 		if(arg[13]!=NULL)
@@ -61,7 +70,6 @@ void spider(void *pack,char *line,char * pathtable)
 		if(arg[19]!=NULL)
 			make_agent=payload_injector( arg[19],line,counter_agent);	
 //DEBUG("%s\n",make_agent);	
-
 		curl = curl_easy_init();
 		curl_easy_setopt(curl,  CURLOPT_URL, POST?arg[0]:make);
  
@@ -174,6 +182,7 @@ void spider(void *pack,char *line,char * pathtable)
 		curl_easy_perform(curl);
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
 
+
 // length of response
 		if(chunk.size<=0)
 			length=0.0;
@@ -191,6 +200,8 @@ void spider(void *pack,char *line,char * pathtable)
 			goto try_again;
 			
 		}
+
+
 // arg[10]  list to find with regex , arg[2] list without regex
 		if(  (arg[2]) || (arg[10])  )
 		{
@@ -200,6 +211,7 @@ void spider(void *pack,char *line,char * pathtable)
 			}
 
 			fp = fopen((arg[2]!=NULL)?arg[2]:arg[10], "r");
+
 			if ( !fp )
 			{ 
 				puts("error to open response list"); 
@@ -299,95 +311,103 @@ void spider(void *pack,char *line,char * pathtable)
 				}
 			}
  
-		if( fclose(fp) == EOF )
-		{
-			DEBUG("Error in close()");
-			exit(1);
-		}
-		fp=NULL;
+			if( fclose(fp) == EOF )
+			{
+				DEBUG("Error in close()");
+				exit(1);
+			}
+			fp=NULL;
+//DEBUG("part A");
 
-	} else {
 
-		if(counter_cookie)
-		{
-			fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n Cookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_cookie,LAST);
-		}
-		if(counter_agent)
-		{
-			fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n UserAgent: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_agent,LAST);
 		} else {
-			fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
-		}
 
-		if(save_response==true)
-		{		
-			memset(pathsource,0,sizeof(char)*1023);
-			strncat(pathsource,"response_sources/",18);
-			strncat(pathsource,arg[5], 15);
-			mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
-			snprintf(pathsource,986,"response_sources/%s/%s.html",arg[5],rand_str(randname, sizeof randname));
-		}
+			if(counter_cookie)
+			{
+				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n Cookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_cookie,LAST);
+			}
+			if(counter_agent)
+			{
+				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n UserAgent: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_agent,LAST);
+			} else {
+				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
+			}
+	
+			if(save_response==true)
+			{		
+				memset(pathsource,0,sizeof(char)*1023);
+				strncat(pathsource,"response_sources/",18);
+				strncat(pathsource,arg[5], 15);
+				mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
+				snprintf(pathsource,986,"response_sources/%s/%s.html",arg[5],rand_str(randname, sizeof randname));
+			}
 //write logs
-		snprintf(log,2047,"[%ld Payload: %s Params: %s Cookie: %s UserAgent: %s \n Path Response Source: %s\n",status,line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
-		WriteFile(arg[5],log);
-		memset(log,0,2047);
+			snprintf(log,2047,"[%ld Payload: %s Params: %s Cookie: %s UserAgent: %s \n Path Response Source: %s\n",status,line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
+			WriteFile(arg[5],log);
+			memset(log,0,2047);
 
-		if(save_response==true)
-		{
+			if(save_response==true)
+			{
 // write response source with highlights
-               		responsetemplate=readLine(TEMPLATE);
-			WriteFile(pathsource,responsetemplate);
-			memset(responsetemplate,0,strlen(responsetemplate)-1);
-
-			tmp_response=html_entities(chunk.memory);
-			WriteFile(pathsource,tmp_response);
-			memset(tmp_response,0,strlen(tmp_response)-1);
-
-			WriteFile(pathsource,"</pre></html>");
-		}
+              	 		responsetemplate=readLine(TEMPLATE);
+				WriteFile(pathsource,responsetemplate);
+				memset(responsetemplate,0,strlen(responsetemplate)-1);
+	
+				tmp_response=html_entities(chunk.memory);
+				WriteFile(pathsource,tmp_response);
+				memset(tmp_response,0,strlen(tmp_response)-1);
+	
+				WriteFile(pathsource,"</pre></html>");
+			}
 // create datatables
-		tmp_make=html_entities(make);
-		tmp_line=html_entities(line);
+			tmp_make=html_entities(make);
+			tmp_line=html_entities(line);
 
-		if(counter_cookie)
-		{
+			if(counter_cookie)
+			{
 				
-			tmp_make_cookie=html_entities(make_cookie);
-			snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  cookie: %s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_make_cookie,tmp_line);
-			memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
-		}
-		if(counter_agent)
-		{
+				tmp_make_cookie=html_entities(make_cookie);
+				snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  cookie: %s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_make_cookie,tmp_line);
+				memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
+			}
+			if(counter_agent)
+			{
 				
-			tmp_make_agent=html_entities(make_agent);
-			snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  UserAgent: %s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_make_agent,tmp_line);
+				tmp_make_agent=html_entities(make_agent);
+				snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  UserAgent: %s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_make_agent,tmp_line);
 
-		} else {
-			snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_line);
+			} else {
+				snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_line);
+			}
+      			WriteFile(pathtable,tabledata);
+			memset(tmp_make,0,strlen(tmp_make)-1);
+			memset(tmp_line,0,strlen(tmp_line)-1);
+			memset(tabledata,0,4085);
+			memset(pathsource,0,strlen(pathsource)-1);
+
+
+//DEBUG("part B");
+
 		}
-      		WriteFile(pathtable,tabledata);
-		memset(tmp_make,0,strlen(tmp_make)-1);
-		memset(tmp_line,0,strlen(tmp_line)-1);
-		memset(tabledata,0,4085);
-		memset(pathsource,0,strlen(pathsource)-1);
-	}
 
-	memset(make,0,strlen(make)-1);
+//DEBUG("END PARTS");
+//		memset(make,0,strlen(make)-1);
+//		memset(make_cookie,0,strlen(make_cookie)-1);
+//		memset(make_agent,0,strlen(make_agent)-1);
+//		memset(pathsource,0,strlen(pathsource)-1);
+		xfree((void **)&chunk.memory);
+	
+		curl_easy_cleanup(curl);
+        	curl_global_cleanup();
 
-	memset(make_cookie,0,strlen(make_cookie)-1);
-	memset(make_agent,0,strlen(make_agent)-1);
+		old--;
+		if(counter_cookie > 0)
+			counter_cookie--;
 
-	memset(pathsource,0,strlen(pathsource)-1);
-	xfree((void **)&chunk.memory);
-
-	old--;
-	counter_cookie--;
-	counter_agent--;
-	debug_host=3;
-
-	curl_easy_cleanup(curl);
-        curl_global_cleanup();
-
+		if(counter_agent > 0)
+			counter_agent--;
+		debug_host=3;
+//DEBUG("%d old\n",old);
 	}
 
 
@@ -400,7 +420,8 @@ void spider(void *pack,char *line,char * pathtable)
 	xfree((void **)&tmp_line);
 	xfree((void **)&tmp_line2);
 	xfree((void **)&responsetemplate);
-	xfree((void **)&tmp_response);	
+	xfree((void **)&tmp_response);
+
 }
 
 

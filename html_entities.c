@@ -1,55 +1,60 @@
 #include "html_entities.h"
 #include "mem_ops.h"
 
-char* html_tbl = "<>\"\\'";    
-char* repl_tbl[] = { "&lt;", "&gt;", "&quot;", "\\\\", "&lsquo;" };
-
-int get_entity(char c) 
+char *html_entities(const char *str) 
 {
-	char* ptr = html_tbl;
-	unsigned idx = 0;
 
-	while (*ptr) 
-	{
- 		if (*ptr == c)
- 			return idx;
-		ptr++;
-		idx++;
-	}
-	
- 	return -1;
-}
+  char *result = NULL;
+  size_t n = 0, len = 0;
+  const char *p=str;
+  int i = 0;
 
-char* html_entities(char* text) 
-{
-	char* ptr = text, *ret=NULL;
-	unsigned retsize = 1;
-	
- 	ret = xrealloc(ret, retsize);
-	
-	memset(ret, 0, retsize);
-	
-	while (*ptr) 
-	{
-		char c = *ptr;
-		int repl_idx = 0;
 
-		if((repl_idx = get_entity(c)) != -1) 
-		{
- 			char* repl_str = repl_tbl[repl_idx];
+  while (*p != '\0') 
+  {
+    const char *change;
+    char buf[32];
 
-			retsize += strlen(repl_str)+1;
-			ret = xrealloc(ret, retsize);
-			strncat(ret, repl_str,retsize); 
-		} else {
-			retsize++;
-			ret = xrealloc(ret, retsize+1);
-			sprintf(ret,"%s%c",ret,c); 
-		}		
-		ptr++;
-	}
-	
-	return ret;
+    if (*p == '<')
+      change = "&lt;";
+    else if (*p == '>')
+      change = "&gt;";
+    else if (*p == '&')
+      change = "&amp;";
+    else if (*p == '"')
+      change = "&quot;";
+    else if (*p == '\'')
+      change = "&apos;";
+    else if (*p == '-' && p > str && *(p - 1) == '-') {
+
+      change = "&#45;";
+    } else if (*p < 0x20 || (unsigned char) *p > 0x7F) {
+      snprintf(buf, sizeof(buf), "&#x%x;", (unsigned char) *p);
+      change = buf;
+    } else {
+
+      buf[0] = *p;
+      buf[1] = '\0';
+      change = buf;
+    }
+
+    len = strlen(change);
+
+    if ( !i || i + len > n) 
+    {
+      n = (i + len) << 1;
+      result = xrealloc(result, n + 1);
+    }
+
+    memcpy(result + i, change, len);
+    i += len;
+    p++;
+  }
+
+  result = xrealloc(result, i + 1);
+  result[i] = '\0';
+
+  return result;
 }
 
 
