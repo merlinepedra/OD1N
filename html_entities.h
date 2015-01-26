@@ -2,4 +2,4 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *html_entities(const char *str);  
+char *html_entities(const char *str); 

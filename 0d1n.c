@@ -30,6 +30,7 @@ need libcurl to run
 $ sudo apt-get install libcurl-dev
 if rpm distro
 $ sudo yum install libcurl-devel
+
 $ make
 $./0d1n
 
@@ -80,6 +81,7 @@ void init_banner_odin()
  "--timeout :	timeout to wait Response\n"
  "--proxy :   proxy_address:port to use single proxy tunnel\n	example: format [protocol://][user:password@]machine[:port]\n"
  "--proxy-rand :   Use proxy list to use random proxy per Request\n	example: format [protocol://][user:password@]machine[:port]\n"
+ "--tamper : Payload tamper to try bypass filters\n    encode64 : to encode payload to 64 \n    randcase : to use lower and upper case random position in string"
 YELLOW
 YELLOW
  "\nEnable-options-args:\n"
@@ -126,6 +128,7 @@ static struct option long_options[] =
  	{"timeout", required_argument, NULL, 'T'}, 
  	{"proxy", required_argument, NULL, '1'}, 
  	{"proxy-rand", required_argument, NULL, '2'},
+ 	{"tamper", required_argument, NULL, 'w'},
 	{"save_response", no_argument, 0, 'k'},	
 	{"json_headers", no_argument, 0, 'j'},
 	{NULL, 0, NULL, 0}
@@ -136,8 +139,8 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[20]; 
- short y=19;
+ char *pack[21]; 
+ short y=20;
 
  	no_write_coredump ();
  	load_signal_alarm ();
@@ -159,7 +162,7 @@ main(int argc, char ** argv)
 
  	opterr = 0;
 
- 	while((c = getopt_long(argc, argv, "h:p:f:z:c:i:a:P:b:d:o:u:s:t:T:1:2:k:j:V",long_options,NULL)) != -1)
+ 	while((c = getopt_long(argc, argv, "h:p:f:z:c:i:a:P:b:d:o:u:s:t:T:1:2:w:k:j:V",long_options,NULL)) != -1)
   		switch(c) 
   		{
 // Host
@@ -346,6 +349,17 @@ main(int argc, char ** argv)
     					pack[18] = optarg;
 				} else {	
 					DEBUG("Error \nArgument proxy list is very large \n");
+					exit(1);
+				}
+				break;
+
+// tamper
+   			case 'w':
+				if ( strnlen(optarg,10)<= 9 )
+				{	
+    					pack[20] = optarg;
+				} else {	
+					DEBUG("Error \nArgument tamper is very large \n");
 					exit(1);
 				}
 				break;

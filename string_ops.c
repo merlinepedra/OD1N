@@ -87,6 +87,9 @@ char *payload_injector(char * ptr,char * payload,int counter)
 		ptr++;
 	}
 
+
+	//free(new);
+
 	return new;
 }
 

@@ -18,6 +18,7 @@
 #include "html_entities.h" 
 #include "string_ops.h"
 #include "file_ops.h"
+#include "tamper.h"
 
 // colors macro
 #define RED "\033[22;31m"

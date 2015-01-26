@@ -54,7 +54,11 @@ char *html_entities(const char *str)
   result = xrealloc(result, i + 1);
   result[i] = '\0';
 
+//  if(result != NULL)
+ ///  free(result);
+
   return result;
 }
+
 
 

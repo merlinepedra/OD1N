@@ -10,7 +10,7 @@ void spider(void *pack,char *line,char * pathtable)
 {
 	struct MemoryStruct chunk;
 	FILE *fp=NULL;
-	bool match_string=false,save_response=false;
+	bool match_string=false,save_response=false,test_tamper=false;
 	long status=0,length=0;
 	int old=0,counter=0,counter_cookie=0,counter_agent=0,POST=0,timeout=0,debug_host=3; 
 	char *make=NULL,*make_cookie=NULL,*make_agent=NULL,*responsetemplate=NULL,*tmp_response=NULL,*tmp_make=NULL,*tmp_make_cookie=NULL,*tmp_make_agent=NULL,*tmp_line=NULL,*tmp_line2=NULL;
@@ -22,6 +22,30 @@ void spider(void *pack,char *line,char * pathtable)
 
 	if(arg[8]!=NULL)
 		timeout=atoi(arg[8]);
+
+// payload tamper 
+	if(arg[20]!=NULL)
+	{
+		
+		if(strstr(arg[20],"encode64"))
+		{
+			line=encode64(line,strlen(line)-1);
+			test_tamper=true;
+		}
+
+		if(strstr(arg[20],"randcase"))
+		{
+			line=rand_case(line);
+			test_tamper=true;
+		}
+
+		if(test_tamper==false)
+		{
+			DEBUG("error at tamper argument\n");
+			exit(0);
+		}
+		
+	}
 
 
 	memset(pathsource,0,sizeof(char)*1023);
@@ -36,16 +60,6 @@ void spider(void *pack,char *line,char * pathtable)
 	counter=char_type_counter(POST?arg[4]:arg[0],'^');
 	counter_cookie=char_type_counter(arg[13]!=NULL?arg[13]:"",'^');
 	counter_agent=char_type_counter(arg[19]!=NULL?arg[19]:"",'^');
-/*
-	if(counter > 0)
-	{
-		if( !counter_cookie )
-			counter_cookie=counter;
-
-		if( !counter_agent )
-			counter_agent=counter;
-	}
-*/
 	old=counter;  
 	chomp(line);
 
@@ -336,7 +350,7 @@ void spider(void *pack,char *line,char * pathtable)
 	
 			if(save_response==true)
 			{		
-				memset(pathsource,0,sizeof(char)*1023);
+			//	memset(pathsource,0,sizeof(char)*1023);
 				strncat(pathsource,"response_sources/",18);
 				strncat(pathsource,arg[5], 15);
 				mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
@@ -352,11 +366,11 @@ void spider(void *pack,char *line,char * pathtable)
 // write response source with highlights
               	 		responsetemplate=readLine(TEMPLATE);
 				WriteFile(pathsource,responsetemplate);
-				memset(responsetemplate,0,strlen(responsetemplate)-1);
+				//memset(responsetemplate,0,strlen(responsetemplate)-1);
 	
 				tmp_response=html_entities(chunk.memory);
 				WriteFile(pathsource,tmp_response);
-				memset(tmp_response,0,strlen(tmp_response)-1);
+				//memset(tmp_response,0,strlen(tmp_response)-1);
 	
 				WriteFile(pathsource,"</pre></html>");
 			}
@@ -369,8 +383,9 @@ void spider(void *pack,char *line,char * pathtable)
 				
 				tmp_make_cookie=html_entities(make_cookie);
 				snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  cookie: %s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_make_cookie,tmp_line);
-				memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
+			//	memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
 			}
+
 			if(counter_agent)
 			{
 				
@@ -380,12 +395,11 @@ void spider(void *pack,char *line,char * pathtable)
 			} else {
 				snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"\",\"%s\"],\n",pathsource,status,length,tmp_make,tmp_line);
 			}
-      			WriteFile(pathtable,tabledata);
+  			WriteFile(pathtable,tabledata);
 			memset(tmp_make,0,strlen(tmp_make)-1);
 			memset(tmp_line,0,strlen(tmp_line)-1);
 			memset(tabledata,0,4085);
 			memset(pathsource,0,strlen(pathsource)-1);
-
 
 //DEBUG("part B");
 
@@ -401,7 +415,7 @@ void spider(void *pack,char *line,char * pathtable)
 		curl_easy_cleanup(curl);
         	curl_global_cleanup();
 
-		if(old > 0)
+		if(old>0)
 			old--;
 
 		if(counter_cookie > 0)
@@ -409,21 +423,28 @@ void spider(void *pack,char *line,char * pathtable)
 
 		if(counter_agent > 0)
 			counter_agent--;
-		debug_host=3;
-	}
 
+		debug_host=3;
+
+	
+	
+	}
 
 	xfree((void **)&make_agent);
 	xfree((void **)&make_cookie);
 	xfree((void **)&make);
 	xfree((void **)&tmp_make);
 	xfree((void **)&tmp_make_cookie);
-	xfree((void **)&tmp_make_agent);
+	xfree((void **)&tmp_make_agent); 
 	xfree((void **)&tmp_line);
 	xfree((void **)&tmp_line2);
 	xfree((void **)&responsetemplate);
 	xfree((void **)&tmp_response);
 
+	if(arg[20] != NULL)
+		xfree((void **)&line);
+//	DEBUG("GOOO3");
+ 
 }
 
 
@@ -501,6 +522,7 @@ void scan(void *arguments)
 			DEBUG("error in fork()");
 			exit(1);
 		}
+
 		if(!pid)
 		{
 			threadss--;
