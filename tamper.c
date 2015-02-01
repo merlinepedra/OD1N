@@ -94,7 +94,7 @@ char *urlencode( char *str )
 	char *buf=NULL,*ptr=NULL;
 	char hex[] = "0123456789ABCDEF";
   
-	buf = malloc( strlen(str) << 2 );
+	buf = xmalloc( strlen(str) << 2 );
 	ptr = buf;
   
 	while(*str)
@@ -122,7 +122,7 @@ char *double_urlencode( char *str )
 
 	char hex[] = "0123456789ABCDEF";
   
-	buf = malloc( strlen(str) << 2 );
+	buf = xmalloc( strlen(str) << 2 );
 	ptr = buf;
   
 	while(*str)
@@ -140,8 +140,8 @@ char *double_urlencode( char *str )
 	}
 
 	*ptr = '\0';
-	buf2 = malloc( strlen(buf) << 2 );
-	buf2=urlencode(buf);
+	buf2 = xmalloc( strlen(buf) << 2 );
+	buf2 = urlencode(buf);
 
 	if(buf!=NULL)
 	{
