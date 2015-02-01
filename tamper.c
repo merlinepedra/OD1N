@@ -88,7 +88,8 @@ char *rand_case(char *str)
 	return str_new;
 
 }
- 
+
+//  http://en.wikipedia.org/wiki/Percent-encoding
 char *urlencode( char *str )
 {
 	char *buf=NULL,*ptr=NULL;
