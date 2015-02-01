@@ -88,5 +88,67 @@ char *rand_case(char *str)
 	return str_new;
 
 }
+ 
+char *urlencode( char *str )
+{
+	char *buf=NULL,*ptr=NULL;
+	char hex[] = "0123456789ABCDEF";
+  
+	buf = malloc( strlen(str) << 2 );
+	ptr = buf;
+  
+	while(*str)
+	{
+		if( isalnum(*str) || *str == '-' || *str == '_' || *str == '.' || *str == '~' )
+			*ptr++ = *str;
+		else if( *str == ' ' )
+			*ptr++ = '+';
+         	else {
+			*ptr++ = '%';
+			*ptr++ = hex [(*str >> 4)&15];
+       			*ptr++ = hex [(*str & 15)&15];
+         	}
+		str++;
+	}
 
+	*ptr = '\0';
+
+	return buf;
+}
+  
+char *double_urlencode( char *str )
+{
+	char *buf=NULL,*buf2=NULL,*ptr=NULL;
+
+	char hex[] = "0123456789ABCDEF";
+  
+	buf = malloc( strlen(str) << 2 );
+	ptr = buf;
+  
+	while(*str)
+	{
+		if( isalnum(*str) || *str == '-' || *str == '_' || *str == '~' )
+			*ptr++ = *str;
+		else if( *str == ' ' )
+			*ptr++ = '+';
+         	else {
+			*ptr++ = '%'; // i think optimize change this to %25
+			*ptr++ = hex [(*str >> 4)&15];
+       			*ptr++ = hex [(*str & 15)&15];
+         	}
+		str++;
+	}
+
+	*ptr = '\0';
+	buf2 = malloc( strlen(buf) << 2 );
+	buf2=urlencode(buf);
+
+	if(buf!=NULL)
+	{
+		free(buf);
+		buf=NULL;
+	}
+
+	return buf2;
+}
 

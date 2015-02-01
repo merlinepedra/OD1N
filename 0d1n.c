@@ -63,25 +63,26 @@ void init_banner_odin()
  YELLOW
  "0d1n Web Hacking Tool 2.0 BeTa\n"
  LAST
- "--host :	host to scan or  GET method fuzz  site.com/page.jsp?var=^&var2=^\n"
+ "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^\n"
  "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
  "--cookie :    COOKIE  fuzz params  ex: 'var=^&var2=^...'\n" 
  "--agent :    UserAgent fuzz  params  ex: 'firefox version ^...'\n"
  "--method :    Change method to Custom http method like DELETE, PUT, TRACE, CONNECT... \n"
  "--header :    Add line on http header \n"
- "--payloads :	payload list to inject\n"
- "--find_string_list :	strings list to find on response\n"
- "--find_regex_list :	regex list to find on response(this regex is posix)\n"
- "--cookie_jar :	 cookie jar file to load\n"
- "--log :	output of result\n"
- "--UserAgent :	custom UserAgent\n"
+ "--payloads :	Payload list to inject\n"
+ "--find_string_list :	Strings list to find on response\n"
+ "--find_regex_list :	Regex list to find on response(this regex is posix)\n"
+ "--cookie_jar :	 Load cookie jar file\n"
+ "--log :	Create text output of result\n"
+ "--UserAgent :	Custom UserAgent\n"
  "--CA_certificate :	Load CA certificate to work with SSL\n"
- "--SSL_version :	choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3\n"
+ "--SSL_version :	Choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3\n"
  "--threads : Number of threads to use, default is 4\n"
- "--timeout :	timeout to wait Response\n"
- "--proxy :   proxy_address:port to use single proxy tunnel\n	example: format [protocol://][user:password@]machine[:port]\n"
+ "--timeout :	Timeout to wait Response\n"
+ "--proxy :   Proxy_address:port to use single proxy tunnel\n	example: format [protocol://][user:password@]machine[:port]\n"
  "--proxy-rand :   Use proxy list to use random proxy per Request\n	example: format [protocol://][user:password@]machine[:port]\n"
- "--tamper : Payload tamper to try bypass filters\n    encode64 : to encode payload to 64 \n    randcase : to use lower and upper case random position in string"
+ "--tamper : Payload tamper to try bypass filters\n   Choice one option :\n    encode64 : to encode payload to 64 \n    randcase : to use lower and upper case random position in string\n"
+ "    urlencode :  converts characters into a format that can be transmitted over the Internet, percent encoding\n    double_urlencode : converts payload two times with urlencode\n\n"
 YELLOW
 YELLOW
  "\nEnable-options-args:\n"
@@ -91,7 +92,7 @@ LAST
  YELLOW
  "example 1 to find SQL-injection:\n"
 LAST
-"./0d1n --host 'http://site.com/view/1^/product/^/' --payloads payloads/sqli_list.txt --find_string_list sqli_str2find_list.txt --log log1337 --threads 5 --timeout 3 --save_response\n"
+"./0d1n --host 'http://site.com/view/1^/product/^/' --payloads payloads/sqli_list.txt --find_string_list sqli_str2find_list.txt --log log1337 --tamper randcase --threads 5 --timeout 3 --save_response\n"
 "\n"
 YELLOW
  "example 2 to Bruteforce in simple auth:\n"

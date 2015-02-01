@@ -39,6 +39,19 @@ void spider(void *pack,char *line,char * pathtable)
 			test_tamper=true;
 		}
 
+
+		if(strstr(arg[20],"urlencode"))
+		{
+			line=urlencode(line);
+			test_tamper=true;
+		}
+
+		if(strstr(arg[20],"double_urlencode"))
+		{
+			line=double_urlencode(line);
+			test_tamper=true;
+		}
+
 		if(test_tamper==false)
 		{
 			DEBUG("error at tamper argument\n");
