@@ -52,6 +52,33 @@ void spider(void *pack,char *line,char * pathtable)
 			test_tamper=true;
 		}
 
+		if(strstr(arg[20],"spaces2comment"))
+		{
+			line=spaces2comment(line);
+			test_tamper=true;
+		}
+
+		if(strstr(arg[20],"unmagicquote"))
+		{
+			line=unmagicquote(line);
+			test_tamper=true;
+		}
+
+
+		if(strstr(arg[20],"apostrophe2nullencode"))
+		{
+			line=apostrophe2nullencode(line);
+			test_tamper=true;
+		}
+
+
+		if(strstr(arg[20],"rand_comment"))
+		{
+			line=rand_comment(line);
+			test_tamper=true;
+		}
+
+
 		if(test_tamper==false)
 		{
 			DEBUG("error at tamper argument\n");

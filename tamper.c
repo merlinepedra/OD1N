@@ -1,5 +1,6 @@
 #include "tamper.h"
 #include "mem_ops.h"
+#include "string_ops.h"
 
 inline char* encode64(char* str, unsigned long len) 
 {
@@ -88,8 +89,7 @@ char *rand_case(char *str)
 	return str_new;
 
 }
-
-//  http://en.wikipedia.org/wiki/Percent-encoding
+ 
 char *urlencode( char *str )
 {
 	char *buf=NULL,*ptr=NULL;
@@ -153,3 +153,77 @@ char *double_urlencode( char *str )
 	return buf2;
 }
 
+
+char *spaces2comment(char *str)
+{
+ char *out=replace(str," ","/**/");
+ 
+ return out;
+}
+
+
+
+char *unmagicquote(char *str)
+{
+ char *out=replace(str,"'","%bf%27");
+ 
+ return out;
+}
+
+
+char *apostrophe2nullencode(char *str)
+{
+ char *out=replace(str,"'","%00%27");
+ 
+ return out;
+}
+
+
+char *rand_comment(char *str)
+{
+	int i=0,mem_size=strlen(str)+1;
+	char *str_new=xmalloc(sizeof(char)*mem_size);
+		
+	while(*str != '\0')
+	{
+		
+		if(!test_letter( *str ) )
+		{
+			entropy_clock();
+
+			if( (rand()%16) < 4)
+			{
+				mem_size+=4;
+				str_new=xrealloc(str_new,sizeof(char)*mem_size);
+				*(str_new+i)=*str;
+				i++;
+				*(str_new+i)='/';
+				i++;
+				*(str_new+i)='*';
+				i++;
+				*(str_new+i)='*';
+				i++;
+				*(str_new+i)='/';
+			} else {
+				*(str_new+i)=*str;
+			}
+			i++;
+		} else {
+			*(str_new+i)=*str;
+			i++;
+		}
+
+	
+		str++;	
+	}
+
+	printf("%s \n",str_new);
+
+	if(str_new != NULL)
+	{
+		free(str_new);
+	}
+
+	return str_new;
+
+}

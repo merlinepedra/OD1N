@@ -15,4 +15,4 @@ int char_type_counter(char *string,char type);
 void chomp(char * str);
 char *payload_injector(char * ptr,char * payload,int counter);
 int strstr_regex(char *string, char *expression);
-
+char *replace(char *instring,char *old,char *new);
