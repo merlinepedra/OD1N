@@ -232,7 +232,7 @@ char *rand_comment(char *str)
 char *rand_space(char *str)
 {
 	int i=0,mem_size=strlen(str)+1;
-	char *str_new=malloc(sizeof(char)*mem_size);
+	char *str_new=xmalloc(sizeof(char)*mem_size);
 		
 	while(*str != '\0')
 	{
@@ -244,7 +244,7 @@ char *rand_space(char *str)
 			if( (rand()%4) <= 2)
 			{
 				mem_size+=4;
-				str_new=realloc(str_new,sizeof(char)*mem_size);
+				str_new=xrealloc(str_new,sizeof(char)*mem_size);
 				*(str_new+i)=*str;
 				i++;
 				*(str_new+i)=' ';
@@ -256,7 +256,7 @@ char *rand_space(char *str)
 				*(str_new+i)=' ';
 			} else {	
 				mem_size+=10;
-				str_new=realloc(str_new,sizeof(char)*mem_size);
+				str_new=xrealloc(str_new,sizeof(char)*mem_size);
 				*(str_new+i)=*str;
 				i++;
 				*(str_new+i)=' ';     // Loop unrolling...
