@@ -55,7 +55,7 @@ inline char* encode64(char* str, unsigned long len)
 // random case return string, input= tomato output=ToMatO or tOmATo...
 char *rand_case(char *str)
 {
-	char *str_new=xmalloc(sizeof(char)*strlen(str));
+	char *str_new=xmalloc(sizeof(char)*strlen(str)+1);
 	int i=0;
 	
 	while(*str != '\0')
@@ -217,7 +217,6 @@ char *rand_comment(char *str)
 		str++;	
 	}
 
-	printf("%s \n",str_new);
 
 	if(str_new != NULL)
 	{
@@ -226,4 +225,75 @@ char *rand_comment(char *str)
 
 	return str_new;
 
+}
+
+
+
+char *rand_space(char *str)
+{
+	int i=0,mem_size=strlen(str)+1;
+	char *str_new=malloc(sizeof(char)*mem_size);
+		
+	while(*str != '\0')
+	{
+		
+		if(*str == ' ' )
+		{
+			entropy_clock();
+
+			if( (rand()%4) <= 2)
+			{
+				mem_size+=4;
+				str_new=realloc(str_new,sizeof(char)*mem_size);
+				*(str_new+i)=*str;
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+			} else {	
+				mem_size+=10;
+				str_new=realloc(str_new,sizeof(char)*mem_size);
+				*(str_new+i)=*str;
+				i++;
+				*(str_new+i)=' ';     // Loop unrolling...
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+				i++;
+				*(str_new+i)=' ';
+			}
+			i++;
+		} else {
+			*(str_new+i)=*str;
+			i++;
+		}
+
+	
+		str++;	
+	}
+
+
+	if(str_new != NULL)
+	{
+		free(str_new);
+	}
+
+	return str_new;
 }

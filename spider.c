@@ -13,7 +13,7 @@ void spider(void *pack,char *line,char * pathtable)
 	bool match_string=false,save_response=false,test_tamper=false;
 	long status=0,length=0;
 	int old=0,counter=0,counter_cookie=0,counter_agent=0,POST=0,timeout=0,debug_host=3; 
-	char *make=NULL,*make_cookie=NULL,*make_agent=NULL,*responsetemplate=NULL,*tmp_response=NULL,*tmp_make=NULL,*tmp_make_cookie=NULL,*tmp_make_agent=NULL,*tmp_line=NULL,*tmp_line2=NULL;
+	char *make=NULL,*make_cookie=NULL,*make_agent=NULL,*tamper=NULL,*responsetemplate=NULL,*tmp_response=NULL,*tmp_make=NULL,*tmp_make_cookie=NULL,*tmp_make_agent=NULL,*tmp_line=NULL,*tmp_line2=NULL;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
 	char randname[16],line2[1024],log[2048],tabledata[4086],pathsource[1024];
 
@@ -23,58 +23,67 @@ void spider(void *pack,char *line,char * pathtable)
 	if(arg[8]!=NULL)
 		timeout=atoi(arg[8]);
 
+
 // payload tamper 
 	if(arg[20]!=NULL)
 	{
-		
-		if(strstr(arg[20],"encode64"))
+		tamper=arg[20];
+			
+		if(strstr(tamper,"encode64"))
 		{
 			line=encode64(line,strlen(line)-1);
 			test_tamper=true;
 		}
 
-		if(strstr(arg[20],"randcase"))
+		if(strstr(tamper,"randcase"))
 		{
 			line=rand_case(line);
 			test_tamper=true;
 		}
 
 
-		if(strstr(arg[20],"urlencode"))
+		if(strstr(tamper,"urlencode"))
 		{
 			line=urlencode(line);
 			test_tamper=true;
 		}
 
-		if(strstr(arg[20],"double_urlencode"))
+		if(strstr(tamper,"double_urlencode"))
 		{
 			line=double_urlencode(line);
 			test_tamper=true;
 		}
 
-		if(strstr(arg[20],"spaces2comment"))
+		if(strstr(tamper,"spaces2comment"))
 		{
 			line=spaces2comment(line);
 			test_tamper=true;
 		}
 
-		if(strstr(arg[20],"unmagicquote"))
+		if(strstr(tamper,"unmagicquote"))
 		{
 			line=unmagicquote(line);
 			test_tamper=true;
 		}
 
 
-		if(strstr(arg[20],"apostrophe2nullencode"))
+		if(strstr(tamper,"apostrophe2nullencode"))
 		{
 			line=apostrophe2nullencode(line);
 			test_tamper=true;
 		}
 
-
-		if(strstr(arg[20],"rand_comment"))
+		if(strstr(tamper,"rand_comment"))
 		{
 			line=rand_comment(line);
+			test_tamper=true;
+		}
+
+
+
+		if(strstr(tamper,"rand_space"))
+		{
+			line=rand_space(line);
 			test_tamper=true;
 		}
 
@@ -84,9 +93,12 @@ void spider(void *pack,char *line,char * pathtable)
 			DEBUG("error at tamper argument\n");
 			exit(0);
 		}
+
 		
 	}
 
+
+		
 
 	memset(pathsource,0,sizeof(char)*1023);
 

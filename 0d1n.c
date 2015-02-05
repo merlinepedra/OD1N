@@ -85,6 +85,7 @@ void init_banner_odin()
  "    urlencode :  converts characters into a format that can be transmitted over the Internet, percent encoding\n    double_urlencode : converts payload two times with urlencode\n"
 "    spaces2comment:  change spaces ' ' to comment '/**/'\n    unmagicquote: change apostrophe to a multi-byte \%bf\%27 \n"
 "    apostrophe2nullencode: change apostrophe to illegal double unicode counterpart\n    rand_comment: to use random comment '/**/' position in payload string\n"
+"    rand_space: write random ' ' blank spaces\n"
 YELLOW
 YELLOW
  "\nEnable-options-args:\n"
@@ -131,7 +132,7 @@ static struct option long_options[] =
  	{"timeout", required_argument, NULL, 'T'}, 
  	{"proxy", required_argument, NULL, '1'}, 
  	{"proxy-rand", required_argument, NULL, '2'},
- 	{"tamper", required_argument, NULL, 'w'},
+ 	{"tamper", required_argument, NULL, 'w'}, 
 	{"save_response", no_argument, 0, 'k'},	
 	{"json_headers", no_argument, 0, 'j'},
 	{NULL, 0, NULL, 0}
@@ -358,7 +359,7 @@ main(int argc, char ** argv)
 
 // tamper
    			case 'w':
-				if ( strnlen(optarg,10)<= 9 )
+				if ( strnlen(optarg,18)<= 17 )
 				{	
     					pack[20] = optarg;
 				} else {	
@@ -366,6 +367,7 @@ main(int argc, char ** argv)
 					exit(1);
 				}
 				break;
+
 
  // save response
    			case 'k':
