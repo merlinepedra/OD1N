@@ -104,9 +104,11 @@ strstr_regex(char *string, char *expression)
 // Compile regular expression
 	reti = regcomp(&regex, expression, REG_EXTENDED);
 
-	if(reti) 
+	if(reti)
+	{ 
 		DEBUG("Could not compile regex ! \n");
-
+		DEBUG("%s ",expression);
+	}
 	reti = regexec(&regex, string, 0, NULL, 0);
 
 	regfree(&regex);
@@ -173,3 +175,21 @@ char *replace(char *instring,char *old,char *new)
 }
 
 
+
+
+long parse_http_status(char * str)
+{
+	char part_str[32];
+	strncpy(part_str,str,31);
+	char *status=strtok(part_str," ");
+	status=strtok(NULL," ");
+ 
+	if(strlen(status)<= 3)
+	{
+
+		long code_num=(long)atoi(status);
+		return code_num;
+	} else {
+		return 0;
+	}
+}

@@ -65,7 +65,8 @@ void init_banner_odin()
  LAST
  "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^\n"
  "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
- "--cookie :    COOKIE  fuzz params  ex: 'var=^&var2=^...'\n" 
+ "--cookie :    COOKIE  fuzz params  ex: 'var=^&var2=^...'\n"  
+ "--custom :    Load external HTTP Request file to fuzzing points with lexical char '^' '\n" 
  "--agent :    UserAgent fuzz  params  ex: 'firefox version ^...'\n"
  "--method :    Change method to Custom http method like DELETE, PUT, TRACE, CONNECT... \n"
  "--header :    Add line on http header \n"
@@ -115,7 +116,8 @@ CYAN
 static struct option long_options[] =
 {
 	{"host", required_argument, NULL, 'h'},
-	{"payloads", required_argument, NULL, 'p'},
+	{"payloads", required_argument, NULL, 'p'},	
+	{"custom", required_argument, NULL, 'e'},
 	{"find_string_list", required_argument, NULL, 'f'},
 	{"find_regex_list", required_argument, NULL, 'z'},
 	{"cookie_jar", required_argument, NULL, 'c'},
@@ -143,8 +145,8 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[21]; 
- short y=20;
+ char *pack[22]; 
+ short y=21;
 
  	no_write_coredump ();
  	load_signal_alarm ();
@@ -166,7 +168,7 @@ main(int argc, char ** argv)
 
  	opterr = 0;
 
- 	while((c = getopt_long(argc, argv, "h:p:f:z:c:i:a:P:b:d:o:u:s:t:T:1:2:w:k:j:V",long_options,NULL)) != -1)
+ 	while((c = getopt_long(argc, argv, "h:p:f:z:e:c:i:a:P:b:d:o:u:s:t:T:1:2:w:k:j:V",long_options,NULL)) != -1)
   		switch(c) 
   		{
 // Host
@@ -179,7 +181,7 @@ main(int argc, char ** argv)
     					printf("Host: %s \n",pack[0]);
     					
 				} else {
-					DEBUG("Error \nArgument Host very large \n");
+					DEBUG("Error \nArgument Host is very large \n");
 					exit(1);
 				}
 				break;
@@ -191,7 +193,20 @@ main(int argc, char ** argv)
     					printf("Payloads: %s \n",optarg);
     					
 				} else {
-					DEBUG("Error \nArgument Payloads very large  \n");
+					DEBUG("Error \nArgument Payloads is very large  \n");
+					exit(1);
+				}
+				break;
+
+// custom http request file
+			case 'e':
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[21] = optarg;
+    					printf("Custom HTTP Request: %s \n",optarg);
+    					
+				} else {
+					DEBUG("Error \nArgument custom is very large  \n");
 					exit(1);
 				}
 				break;
@@ -259,7 +274,7 @@ main(int argc, char ** argv)
 				{
     					pack[4] = optarg;
 				} else {
-					DEBUG("Error \nArgument POST very large  \n");
+					DEBUG("Error \nArgument POST is very large  \n");
 					exit(1);
 				}
     				break;
@@ -290,7 +305,7 @@ main(int argc, char ** argv)
     					pack[5] = optarg;
     					printf("Log file: %s \n",optarg);
     				} else {
-					DEBUG("Error \nArgument Log file very large \n");
+					DEBUG("Error \nArgument Log file is very large \n");
 					exit(1);
 				}
 				break;

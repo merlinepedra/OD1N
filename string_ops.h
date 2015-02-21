@@ -16,3 +16,4 @@ void chomp(char * str);
 char *payload_injector(char * ptr,char * payload,int counter);
 int strstr_regex(char *string, char *expression);
 char *replace(char *instring,char *old,char *new);
+long parse_http_status(char * str);

@@ -3,6 +3,7 @@
 #include <string.h>		
 #include <stdlib.h>
 #include <time.h>
+#include <curl/curl.h>
 
 // set DEBUG ON
 #define BUGVIEW 1
@@ -29,4 +30,5 @@ void *xcalloc (size_t mem, size_t size);
 void *xrealloc (void *ptr, size_t size);
 void xfree(void **ptr);
 size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data);
+int wait_on_socket(curl_socket_t sockfd, int for_recv, long timeout_ms);
 

@@ -12,7 +12,7 @@ void spider(void *pack,char *line,char * pathtable)
 	FILE *fp=NULL;
 	bool match_string=false,save_response=false,test_tamper=false;
 	long status=0,length=0;
-	int old=0,counter=0,counter_cookie=0,counter_agent=0,POST=0,timeout=0,debug_host=3; 
+	int old=0,res=0,counter=0,counter_cookie=0,counter_agent=0,POST=0,timeout=0,debug_host=3; 
 	char *make=NULL,*make_cookie=NULL,*make_agent=NULL,*tamper=NULL,*responsetemplate=NULL,*tmp_response=NULL,*tmp_make=NULL,*tmp_make_cookie=NULL,*tmp_make_agent=NULL,*tmp_line=NULL,*tmp_line2=NULL;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
 	char randname[16],line2[1024],log[2048],tabledata[4086],pathsource[1024];
@@ -108,11 +108,20 @@ void spider(void *pack,char *line,char * pathtable)
 	}
 
 // brute POST/GET/COOKIES/UserAgent
-	POST=(arg[4]==NULL)?0:1;
-	counter=char_type_counter(POST?arg[4]:arg[0],'^');
-	counter_cookie=char_type_counter(arg[13]!=NULL?arg[13]:"",'^');
-	counter_agent=char_type_counter(arg[19]!=NULL?arg[19]:"",'^');
-	old=counter;  
+	if(arg[21]==NULL)
+	{
+		POST=(arg[4]==NULL)?0:1;
+		counter=char_type_counter(POST?arg[4]:arg[0],'^');
+		counter_cookie=char_type_counter(arg[13]!=NULL?arg[13]:"",'^');
+		counter_agent=char_type_counter(arg[19]!=NULL?arg[19]:"",'^');
+		old=counter;  
+	} else {
+		char *file_request=readLine(arg[21]);
+		counter=char_type_counter(file_request,'^');
+		old=counter;
+		xfree((void**)&file_request);
+
+	}
 	chomp(line);
 
 // goto to fix signal stop if user do ctrl+c
@@ -127,17 +136,32 @@ void spider(void *pack,char *line,char * pathtable)
 		chunk.memory=NULL; 
 		chunk.size = 0;  
 
-// DEBUG("counts ^ : %d \n",old);	
-		make=payload_injector( (POST?arg[4]:arg[0]),line,old);
-		 		
-		if(arg[13]!=NULL)
-			make_cookie=payload_injector( arg[13],line,counter_cookie);	
-	
-		if(arg[19]!=NULL)
-			make_agent=payload_injector( arg[19],line,counter_agent);	
-//DEBUG("%s\n",make_agent);	
+		curl_socket_t sockfd; /* socket */
+		long sockextr;
+		size_t iolen;
+
+
 		curl = curl_easy_init();
-		curl_easy_setopt(curl,  CURLOPT_URL, POST?arg[0]:make);
+// DEBUG("counts ^ : %d \n",old);	
+
+		if(arg[21]==NULL)
+		{
+			make=payload_injector( (POST?arg[4]:arg[0]),line,old);
+		 		
+			if(arg[13]!=NULL)
+				make_cookie=payload_injector( arg[13],line,counter_cookie);	
+	
+			if(arg[19]!=NULL)
+				make_agent=payload_injector( arg[19],line,counter_agent);
+
+			curl_easy_setopt(curl,  CURLOPT_URL, POST?arg[0]:make);
+		} else {
+// if is custom request
+			char *request_file=readLine(arg[21]);
+			make=payload_injector( request_file,line,old);	
+			curl_easy_setopt(curl,  CURLOPT_URL, arg[0]);
+			xfree((void**)&request_file);
+		}	
  
 		if ( POST )
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, make);
@@ -230,7 +254,7 @@ void spider(void *pack,char *line,char * pathtable)
 	//		curl_easy_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 1);
 		}
 
-// load proxy list 
+// load random proxy in list 
 		if(arg[18] != NULL)
 		{
 			char *randproxy=Random_linefile(arg[18]);
@@ -245,9 +269,47 @@ void spider(void *pack,char *line,char * pathtable)
 
                 curl_easy_setopt(curl,CURLOPT_VERBOSE,0); 
 		curl_easy_setopt(curl,CURLOPT_HEADER,1);  
-		curl_easy_perform(curl);
+		
+		if(arg[21]!=NULL)
+		{
+			curl_easy_setopt(curl, CURLOPT_CONNECT_ONLY, 1L);
+		}
+		res=curl_easy_perform(curl);
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
 
+// custom http request
+		if(arg[21]!=NULL)
+		{
+			curl_easy_getinfo(curl, CURLINFO_LASTSOCKET, &sockextr); 
+			sockfd = sockextr;
+
+			if(!wait_on_socket(sockfd, 0, 60000L))
+			{
+				DEBUG("error in socket at custom http request");
+			}
+			res=curl_easy_send(curl, make, strlen(make), &iolen);
+// recv data
+			while(1)
+			{
+				wait_on_socket(sockfd, 1, 60000L);
+				chunk.memory=xmalloc(sizeof(char)*3024); 
+				res = curl_easy_recv(curl, chunk.memory, 3023, &iolen); 
+				chunk.size=strlen(chunk.memory);				
+
+				if(strlen(chunk.memory) > 8)
+					break;
+
+			        if(CURLE_OK != res)
+        				break;
+
+			}
+
+			
+			status=(long)parse_http_status(chunk.memory);
+//status=404;
+		}
+
+			
 
 // length of response
 		if(chunk.size<=0)
@@ -255,16 +317,16 @@ void spider(void *pack,char *line,char * pathtable)
 		else
 			length=chunk.size;
 
-//		curl_easy_cleanup(curl);
-
+		
 		if(status==0)
-		{	debug_host--;
+		{	
+			debug_host--;
 			DEBUG("Problem in Host");
 			if(debug_host<0)
 				exit(0);
-			
+		
 			goto try_again;
-			
+		
 		}
 
 
@@ -280,7 +342,7 @@ void spider(void *pack,char *line,char * pathtable)
 
 			if ( !fp )
 			{ 
-				puts("error to open response list"); 
+				DEBUG("error to open response list"); 
 				exit(1);
 			}
 
@@ -328,7 +390,7 @@ void spider(void *pack,char *line,char * pathtable)
 					snprintf(log,2047,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s  UserAgent: %s \n Path Response Source: %s\n",status,line,line2,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
 					WriteFile(arg[5],log);
 					memset(log,0,2047);		
-			
+
 					if(save_response==true)
 					{
 // write highlights response
@@ -419,7 +481,6 @@ void spider(void *pack,char *line,char * pathtable)
               	 		responsetemplate=readLine(TEMPLATE);
 				WriteFile(pathsource,responsetemplate);
 				//memset(responsetemplate,0,strlen(responsetemplate)-1);
-	
 				tmp_response=html_entities(chunk.memory);
 				WriteFile(pathsource,tmp_response);
 				//memset(tmp_response,0,strlen(tmp_response)-1);
