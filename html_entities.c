@@ -19,6 +19,8 @@ char *html_entities(const char *str)
       change = "&lt;";
     else if (*p == '>')
       change = "&gt;";
+    else if (*p == '\\')
+      change = "\\\\";
     else if (*p == '&')
       change = "&amp;";
     else if (*p == '"')
@@ -26,7 +28,6 @@ char *html_entities(const char *str)
     else if (*p == '\'')
       change = "&apos;";
     else if (*p == '-' && p > str && *(p - 1) == '-') {
-
       change = "&#45;";
     } else if (*p < 0x20 || (unsigned char) *p > 0x7F) {
       snprintf(buf, sizeof(buf), "&#x%x;", (unsigned char) *p);
