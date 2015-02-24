@@ -1,7 +1,7 @@
 ##0d1n
 =====
-![Alt text](https://coolerlab.files.wordpress.com/2014/07/odin_tool1.png)
-
+![Alt text](https://github.com/CoolerVoid/0d1n/blob/master/doc/images/overview1.png)
+![Alt text](https://github.com/CoolerVoid/0d1n/blob/master/doc/images/tables.png)
 0d1n is a tool for automating customized attacks against web applications.
 
 
@@ -40,6 +40,6 @@ $./0d1n
 
 
 
-
+Read the docs
 
 
