@@ -131,7 +131,7 @@ void spider(void *pack,char *line,char * pathtable)
 	{
 
 		CURL *curl;  
-		curl_global_init(CURL_GLOBAL_ALL); 
+//		curl_global_init(CURL_GLOBAL_ALL); 
 
 		chunk.memory=NULL; 
 		chunk.size = 0;  
@@ -242,8 +242,9 @@ void spider(void *pack,char *line,char * pathtable)
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2);
 			curl_easy_setopt(curl, CURLOPT_CAINFO, arg[7]);
 		} else {
-			curl_easy_setopt(curl,CURLOPT_SSL_VERIFYHOST,0); 
-			curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0); 
+
+			curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0L); 
+			curl_easy_setopt(curl,CURLOPT_SSL_VERIFYHOST,0L); 
 		}
 
 		if(timeout) 
@@ -323,7 +324,7 @@ void spider(void *pack,char *line,char * pathtable)
 		if(status==0)
 		{	
 			debug_host--;
-			DEBUG("Problem in Host");
+			DEBUG("Problem in Host: \n %s",chunk.memory);
 			if(debug_host<0)
 				exit(0);
 		
@@ -527,8 +528,8 @@ void spider(void *pack,char *line,char * pathtable)
 //		memset(pathsource,0,strlen(pathsource)-1);
 		xfree((void **)&chunk.memory);
 	
-		curl_easy_cleanup(curl);
-        	curl_global_cleanup();
+	//	curl_easy_cleanup(curl);
+       // 	curl_global_cleanup();
 
 		if(old>0)
 			old--;
@@ -629,8 +630,10 @@ void scan(void *arguments)
 // TODO add my thread pool library
 	while ( fgets(line,2047,fp) != NULL ) 
 	{
-
+		curl_global_cleanup();
 		pid=fork();
+		curl_global_init(CURL_GLOBAL_ALL);
+
  
 		if(pid==-1)
 		{
@@ -640,8 +643,11 @@ void scan(void *arguments)
 
 		if(!pid)
 		{
+
+//			curl_global_init(CURL_GLOBAL_ALL);
 			threadss--;
 			spider(arguments,line,pathtable);
+//			curl_global_cleanup();
 			exit(0);
 		}
 		
