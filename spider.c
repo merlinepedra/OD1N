@@ -143,6 +143,7 @@ void spider(void *pack,char *line,char * pathtable)
 
 		curl = curl_easy_init();
 // DEBUG("counts ^ : %d \n",old);	
+		
 
 		if(arg[21]==NULL)
 		{
@@ -241,6 +242,7 @@ void spider(void *pack,char *line,char * pathtable)
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2);
 			curl_easy_setopt(curl, CURLOPT_CAINFO, arg[7]);
 		} else {
+			curl_easy_setopt(curl,CURLOPT_SSL_VERIFYHOST,0); 
 			curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0); 
 		}
 

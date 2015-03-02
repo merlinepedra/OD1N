@@ -417,7 +417,12 @@ main(int argc, char ** argv)
 				break;
   		}
 
- 
+	if(pack[5]==NULL)
+	{
+		DEBUG("need use argument log");
+		exit(1);
+ 	}
+
 	if(pack[0]!=NULL)
 		if(strlen(pack[0]))
 			scan((void *)pack);
