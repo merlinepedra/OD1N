@@ -100,6 +100,10 @@ void validate_hostname(const char *hostname)
 		curl_easy_setopt(curl, CURLOPT_HEADER, 1 );
                 curl_easy_setopt(curl, CURLOPT_NOBODY, 1 );
                 curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1 );
+		curl_easy_setopt(curl,CURLOPT_SSL_VERIFYHOST,0); 
+		curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,0); 
+		
+
 		res = curl_easy_perform(curl);
  
 		if(CURLE_OK != res) 
