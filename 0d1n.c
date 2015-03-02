@@ -423,6 +423,16 @@ main(int argc, char ** argv)
 		exit(1);
  	}
 
+
+	if(pack[1]==NULL)
+	{
+		DEBUG("need use argument payload");
+		exit(1);
+ 	}
+
+
+
+
 	if(pack[0]!=NULL)
 		if(strlen(pack[0]))
 			scan((void *)pack);
