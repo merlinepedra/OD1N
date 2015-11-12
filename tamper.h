@@ -16,3 +16,4 @@ char *unmagicquote(char *str);
 char *apostrophe2nullencode(char *str);
 char *rand_comment(char *str);
 char *rand_space(char *str);
+char *replace_keywords(char *str);

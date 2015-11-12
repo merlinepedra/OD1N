@@ -66,7 +66,7 @@ void init_banner_odin()
  "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^\n"
  "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
  "--cookie :    COOKIE  fuzz params  ex: 'var=^&var2=^...'\n"  
- "--custom :    Load external HTTP Request file to fuzzing points with lexical char '^' '\n" 
+ "--custom :    Load external HTTP Request template file to change points with lexical char '^' to fuzzing \n(note: if you use this argv the payload list need be urlencoded) '\n" 
  "--agent :    UserAgent fuzz  params  ex: 'firefox version ^...'\n"
  "--method :    Change method to Custom http method like DELETE, PUT, TRACE, CONNECT... \n"
  "--header :    Add line on http header \n"
@@ -86,7 +86,7 @@ void init_banner_odin()
  "    urlencode :  converts characters into a format that can be transmitted over the Internet, percent encoding\n    double_urlencode : converts payload two times with urlencode\n"
 "    spaces2comment:  change spaces ' ' to comment '/**/'\n    unmagicquote: change apostrophe to a multi-byte \%bf\%27 \n"
 "    apostrophe2nullencode: change apostrophe to illegal double unicode counterpart\n    rand_comment: to use random comment '/**/' position in payload string\n"
-"    rand_space: write random ' ' blank spaces\n"
+"    rand_space: write random ' ' blank spaces\n    replace_keywords: replace especial words, SELECT to SELselectECT etc...\n"
 YELLOW
 YELLOW
  "\nEnable-options-args:\n"
@@ -440,5 +440,3 @@ main(int argc, char ** argv)
  	exit(0);
 }
 
-},
-	{

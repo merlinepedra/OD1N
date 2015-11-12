@@ -88,6 +88,15 @@ void spider(void *pack,char *line,char * pathtable)
 		}
 
 
+
+		if(strstr(tamper,"replace_keywords"))
+		{
+			line=replace_keywords(line);
+			test_tamper=true;
+		}
+
+
+
 		if(test_tamper==false)
 		{
 			DEBUG("error at tamper argument\n");
@@ -115,12 +124,13 @@ void spider(void *pack,char *line,char * pathtable)
 		counter_cookie=char_type_counter(arg[13]!=NULL?arg[13]:"",'^');
 		counter_agent=char_type_counter(arg[19]!=NULL?arg[19]:"",'^');
 		old=counter;  
+
 	} else {
+
 		char *file_request=readLine(arg[21]);
 		counter=char_type_counter(file_request,'^');
 		old=counter;
 		xfree((void**)&file_request);
-
 	}
 	chomp(line);
 
@@ -291,7 +301,7 @@ void spider(void *pack,char *line,char * pathtable)
 				DEBUG("error in socket at custom http request");
 			}
 			res=curl_easy_send(curl, make, strlen(make), &iolen);
-// recv data
+// recv data of custom request
 			while(1)
 			{
 				wait_on_socket(sockfd, 1, 60000L);
@@ -320,7 +330,7 @@ void spider(void *pack,char *line,char * pathtable)
 		else
 			length=chunk.size;
 
-		
+// if have error at status		
 		if(status==0)
 		{	
 			debug_host--;
@@ -546,6 +556,7 @@ void spider(void *pack,char *line,char * pathtable)
 	
 	}
 
+// clear all
 	xfree((void **)&make_agent);
 	xfree((void **)&make_cookie);
 	xfree((void **)&make);
@@ -585,7 +596,8 @@ void scan(void *arguments)
 
 	if(arg[8]!=NULL)
 		timeout=atoi(arg[8]);
- 
+
+ // write tables rows at datatables file to load
 	pathtable=xmalloc(sizeof(char)*64);
 	memset(pathtable,0, sizeof(char)*63);
 	strncat(pathtable,"tables/",8);
@@ -684,12 +696,14 @@ void scan(void *arguments)
 
 	sleep(timeout);
 
+// end of json file
 	WriteFile(pathtable," [\"\",\"\",\"\",\"\",\"\"] \n ] }");
 
 	puts(RED);
 	fprintf(stdout,"end scan \n look the file %s\n \n",pathhammer);
 	puts(LAST);
 
+// clear all
 	memset(pathtable,0,sizeof(char)*strlen(pathtable)-1);
 	xfree((void **)&pathtable);
 	memset(pathhammer,0,sizeof(char)*strlen(pathhammer)-1);

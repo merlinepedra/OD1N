@@ -297,3 +297,30 @@ char *rand_space(char *str)
 
 	return str_new;
 }
+
+
+char *replace_keywords(char *str)
+{
+ int mem_size=strlen(str)+1;
+ char *out=malloc(sizeof(char)*mem_size);
+ char *strs[] = {"select", "union", "delete", "script","where","from","and","eval","exec","or","update"};
+ char *strs2[] = {"selselectect", "uniunionon", "deldeleteete", "scrscriptipt","whewherere","frfromom","anandd","evevalal","exexecec","oorr","updupdateate"};
+ short num=10;
+
+	 strcpy(out,str);
+
+	do {
+		char *tmp=replace(out,strs[num],strs2[num]);
+		mem_size=strlen(tmp)+1;
+		out=xrealloc(out,sizeof(char)*mem_size);
+		strncpy(out,tmp,mem_size-1);
+		if(tmp != NULL)
+		{
+			free(tmp);
+			tmp=NULL;
+		}
+		num--;
+	} while(num!=-1);
+
+ return out;
+}
