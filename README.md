@@ -8,7 +8,7 @@
 
 > *brute force passwords in auth forms
 
-> *diretory disclosure ( use PATH list to brute, and find HTTP status code )
+> *directory disclosure ( use PATH list to brute, and find HTTP status code )
 
 > *test list on input to find SQL Injection and XSS vulnerabilities 
 
@@ -40,5 +40,3 @@ $./0d1n
 
 
 Read the docs
-
-
