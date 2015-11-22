@@ -51,6 +51,3 @@ $ ./0d1n --host 'http://coolerlab.wordpress.com/^' --payloads test_list1 --find_
 
 Lists of proxy: payloads/proxy_list.txt
 http://www.freeproxylists.net/
-
-
-
