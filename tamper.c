@@ -2,55 +2,64 @@
 #include "mem_ops.h"
 #include "string_ops.h"
 
-inline char* encode64(char* str, unsigned long len) 
+
+char *encode64(char* input, int len) 
 {
-  const char b64[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                     "abcdefghijklmnopqrstuvwxyz"
-                     "0123456789+/";
-  char *ret, *chunk;
+    int leftposition = len % 3,n = 0,outlen = 0;
+    char *ret = xmalloc(((len/3) * 4) + ((leftposition)?4:0) + 1);
+    uint8_t i = 0;
+    uint8_t *ptr = (uint8_t *) input;
+    const char *list = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                        "abcdefghijklmnopqrstuvwxyz"
+                        "0123456789+/";
 
-  chunk = xmalloc(((len + 3) << 2) / 4);
-  ret=chunk;
+    if (ret == NULL)
+        return NULL;
 
-  do {
-    if (len >= 3) {
-      unsigned long bitwise = (str[0] << 16) | (str[1] << 8) | str[2];
+    // Convert each 3 bytes of input to 4 bytes of output.
+    len -= leftposition;
+    for (n = 0; n < len; n+=3) 
+    {
+        i = ptr[n] >> 2;
+        ret[outlen++] = list[i];
 
-      *(chunk++) = b64[bitwise >> 18];
-      *(chunk++) = b64[(bitwise >> 12) & 0x3F];
-      *(chunk++) = b64[(bitwise >> 6) & 0x3F];
-      *(chunk++) = b64[bitwise & 0x3F];
-      len -= 3;
-      str += 3;
-    } else if (len == 2) {
-      unsigned long bitwise = (str[0] << 16) | (str[1] << 8);
-      *(chunk++) = b64[bitwise >> 18];
-      *(chunk++) = b64[(bitwise >> 12) & 0x3F];
-      *(chunk++) = b64[(bitwise >> 6) & 0x3D];
-      *(chunk++) = '=';
-      len -= 2;
-      str += 2;
-    } else {
-      unsigned long bitwise = (str[0] << 16);;
-      *(chunk++) = b64[bitwise >> 18];
-      *(chunk++) = b64[(bitwise >> 12) & 0x3F];
-      *(chunk++) = '=';
-      *(chunk++) = '=';
-      len--;
-      str++;
+        i  = (ptr[n]   & 0x03) << 4;
+        i |= (ptr[n+1] & 0xf0) >> 4;
+        ret[outlen++] = list[i];
+
+        i  = ((ptr[n+1] & 0x0f) << 2);
+        i |= ((ptr[n+2] & 0xc0) >> 6);
+        ret[outlen++] = list[i];
+
+        i  = (ptr[n+2] & 0x3f);
+        ret[outlen++] = list[i];
     }
-  } while(len); 
-  
-  *chunk=0;
-/*
-  if(chunk!=NULL)
-  {
-	free(chunk);
-	chunk=NULL;
-  }
-*/
-  return ret;
+
+    // Handle leftposition 1 or 2 bytes.
+    if (leftposition) 
+    {
+        i = (ptr[n] >> 2);
+        ret[outlen++] = list[i];
+
+        i = (ptr[n]   & 0x03) << 4;
+
+        if (leftposition == 2) 
+	{
+            i |= (ptr[n+1] & 0xf0) >> 4;
+            ret[outlen++] = list[i];
+
+            i  = ((ptr[n+1] & 0x0f) << 2);
+        }
+
+        ret[outlen++] = list[i];
+        ret[outlen++] = '=';
+        if (leftposition == 1)
+            ret[outlen++] = '=';
+    }
+    ret[outlen] = '\0';
+    return ret;
 }
+
 
 // random case return string, input= tomato output=ToMatO or tOmATo...
 char *rand_case(char *str)
