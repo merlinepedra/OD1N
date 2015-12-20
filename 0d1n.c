@@ -415,6 +415,11 @@ main(int argc, char ** argv)
      					exit(1);
     				}
 				break;
+
+			default:
+				init_banner_odin();
+				DEBUG("error argv, need more arguments.\n");
+				exit(1);
   		}
 
 	if(pack[5]==NULL)
