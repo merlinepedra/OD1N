@@ -591,8 +591,8 @@ void scan(void *arguments)
 
 	int old_thread=threadss;
 	int status=-1;
-
  	int timeout=3;
+	long int total_requests=0;
 
 	if(arg[8]!=NULL)
 		timeout=atoi(arg[8]);
@@ -646,6 +646,10 @@ void scan(void *arguments)
 		pid=fork();
 		curl_global_init(CURL_GLOBAL_ALL);
 
+
+		if(total_requests<LONG_MAX)
+			total_requests++;
+
  
 		if(pid==-1)
 		{
@@ -659,6 +663,8 @@ void scan(void *arguments)
 //			curl_global_init(CURL_GLOBAL_ALL);
 			threadss--;
 			spider(arguments,line,pathtable);
+
+
 //			curl_global_cleanup();
 			exit(0);
 		}
@@ -700,7 +706,7 @@ void scan(void *arguments)
 	WriteFile(pathtable," [\"\",\"\",\"\",\"\",\"\"] \n ] }");
 
 	puts(RED);
-	fprintf(stdout,"end scan \n look the file %s\n \n",pathhammer);
+	fprintf(stdout,"End scan \n look the file %s\n Total Requests %ld\n",pathhammer, total_requests);
 	puts(LAST);
 
 // clear all
