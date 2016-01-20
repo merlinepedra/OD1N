@@ -6,13 +6,17 @@
 
 #You can do: 
 
-> *brute force passwords in auth forms
+> *brute force login and passwords in auth forms
 
 > *directory disclosure ( use PATH list to brute, and find HTTP status code )
 
-> *test list on input to find SQL Injection and XSS vulnerabilities 
+> *test to find SQL Injection and XSS vulnerabilities 
 
-> other things...
+> *Options to load ANTI-CSRF token
+
+> *Options to use random proxy per request
+
+> *other functions...
 
                              
 ![Alt text](https://github.com/CoolerVoid/0d1n/blob/master/doc/images/tables.png)
