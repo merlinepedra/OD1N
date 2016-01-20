@@ -108,6 +108,10 @@ LAST
 "./0d1n --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads payloads/wordlist.txt --log log007 --threads 10 --timeout 3\n"
 "\n"
 YELLOW
+"example 3 to search XSS and pass anti-csrf token:\n"
+LAST
+"./0d1n --host https://page/test.php --post 'csrf={token}&pass=^' --payloads payloads/xss.txt --find_string_list payloads/xss.txt --token_url https://page/test.php --token_name name_token_field --log 1337 --save_response\n"
+YELLOW
 "Notes:\n"
 LAST
 "Look the character '^', is lexical char to change to payload list lines...\n"
