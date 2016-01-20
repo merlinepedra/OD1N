@@ -1,6 +1,23 @@
 #include "string_ops.h"
 #include "mem_ops.h"
 
+
+char *deadspace(char *str)
+{
+        char *out = str, *put = str;
+
+        for(; *str != '\0'; ++str)
+        {
+                if(*str != ' ')
+                        *put++ = *str;
+        }
+
+        *put = '\0';
+
+        return out;
+}
+
+
 void *entropy_clock(void)
 {
 	double cpu_time;

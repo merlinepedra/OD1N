@@ -63,7 +63,7 @@ void init_banner_odin()
  YELLOW
  "0d1n Web Hacking Tool 2.0 BeTa\n"
  LAST
- "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^\n"
+ "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^ \n"
  "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
  "--cookie :    COOKIE  fuzz params  ex: 'var=^&var2=^...'\n"  
  "--custom :    Load external HTTP Request template file to change points with lexical char '^' to fuzzing \n(note: if you use this argv the payload list need be urlencoded) '\n" 
@@ -87,6 +87,10 @@ void init_banner_odin()
 "    spaces2comment:  change spaces ' ' to comment '/**/'\n    unmagicquote: change apostrophe to a multi-byte \%bf\%27 \n"
 "    apostrophe2nullencode: change apostrophe to illegal double unicode counterpart\n    rand_comment: to use random comment '/**/' position in payload string\n"
 "    rand_space: write random ' ' blank spaces\n    replace_keywords: replace especial words, SELECT to SELselectECT etc...\n"
+"--token_url : Url of form that you need get anti-csrf token\n"
+"--token_name : Name of anti-csrf token to get and use at your request\n"
+"NOTE: if you using any token to bypass anti-csrf protection, you use {token} var at your POST or GET or custom request\n" 
+"if you make this 0d1n change {token} to token of form... example --post 'var=^&token={token}&var2=test'\n"
 YELLOW
 YELLOW
  "\nEnable-options-args:\n"
@@ -137,6 +141,8 @@ static struct option long_options[] =
  	{"tamper", required_argument, NULL, 'w'}, 
 	{"save_response", no_argument, 0, 'k'},	
 	{"json_headers", no_argument, 0, 'j'},
+ 	{"token_url", required_argument, NULL, '3'}, 
+ 	{"token_name", required_argument, NULL, '4'}, 
 	{NULL, 0, NULL, 0}
 };
 
@@ -145,8 +151,8 @@ int
 main(int argc, char ** argv)
 {
  char c;
- char *pack[22]; 
- short y=21;
+ char *pack[24]; 
+ short y=23;
 
  	no_write_coredump ();
  	load_signal_alarm ();
@@ -168,7 +174,7 @@ main(int argc, char ** argv)
 
  	opterr = 0;
 
- 	while((c = getopt_long(argc, argv, "h:p:f:z:e:c:i:a:P:b:d:o:u:s:t:T:1:2:w:k:j:V",long_options,NULL)) != -1)
+ 	while((c = getopt_long(argc, argv, "h:p:f:z:e:c:i:a:P:b:d:o:u:s:t:T:1:2:w:k:j:V:3:4",long_options,NULL)) != -1)
   		switch(c) 
   		{
 // Host
@@ -404,6 +410,32 @@ main(int argc, char ** argv)
 					exit(1);
 				}
 				break;
+
+			case '3':
+				if ( strnlen(optarg,256)<= 255 )
+				{
+    					pack[22] = optarg;
+    					printf("token url: %s \n",optarg);
+    					
+				} else {
+					DEBUG("Error \nArgument token Url is very large  \n");
+					exit(1);
+				}
+				break;
+
+
+			case '4':
+				if ( strnlen(optarg,256)<= 128 )
+				{
+    					pack[23] = optarg;
+    					printf("Token name to get : %s \n",optarg);
+    					
+				} else {
+					DEBUG("Error \nArgument token name is large  \n");
+					exit(1);
+				}
+				break;
+
 
    			case '?':
     				if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s') 

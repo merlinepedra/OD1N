@@ -19,6 +19,7 @@
 #include "string_ops.h"
 #include "file_ops.h"
 #include "tamper.h"
+#include "get_csrf_token.h"
 
 // colors macro
 #define RED "\033[22;31m"
