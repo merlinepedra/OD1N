@@ -108,9 +108,15 @@ LAST
 "./0d1n --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads payloads/wordlist.txt --log log007 --threads 10 --timeout 3\n"
 "\n"
 YELLOW
+<<<<<<< HEAD
 "example 3 to search XSS and pass anti-csrf token:\n"
 LAST
 "./0d1n --host https://page/test.php --post 'csrf={token}&pass=^' --payloads payloads/xss.txt --find_string_list payloads/xss.txt --token_url https://page/test.php --token_name name_token_field --log logtest --save_response\n"
+=======
+"example 3 to search XSS and get anti-csrf token to use at request:\n"
+LAST
+"./0d1n --host https://page/test.php --post 'csrf={token}&pass=^' --payloads payloads/xss.txt --find_string_list payloads/xss.txt --token_url https://page/test.php --token_name name_token_field --log 1337 --save_response\n"
+>>>>>>> 096abab98779a7c915a627cd23663d4f93ad88d0
 YELLOW
 "Notes:\n"
 LAST
