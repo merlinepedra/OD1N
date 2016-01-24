@@ -46,22 +46,23 @@ char *get_anti_csrf_token(char *url,char *param, char *agent)
 			char *ptr=deadspace(line);	
 			int x=0;
 
-			while(*ptr!='\0' && x != 255)
-			{
-				if(ptr[0]=='v' && ptr[1]=='a' && ptr[2]=='l' && ptr[3]=='u' && ptr[4]=='e')
+			if(!strlen(parse))
+				while(*ptr!='\0' && x != 255)
 				{
-					ptr+=7;
-
-					while(*ptr!='"')
+					if(ptr[0]=='v' && ptr[1]=='a' && ptr[2]=='l' && ptr[3]=='u' && ptr[4]=='e')
 					{
-						parse[x]=*ptr;
-						ptr++;
-						x++;
+						ptr+=7;
+	
+						while(*ptr!='"')
+						{
+							parse[x]=*ptr;
+							ptr++;
+							x++;
+						}
 					}
-				}
-				ptr++;
+					ptr++;
 				
-			}	
+				}	
 		}
 		line=strtok(NULL, "\n");
 	}	

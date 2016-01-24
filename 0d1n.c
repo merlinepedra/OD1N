@@ -110,7 +110,7 @@ LAST
 YELLOW
 "example 3 to search XSS and pass anti-csrf token:\n"
 LAST
-"./0d1n --host https://page/test.php --post 'csrf={token}&pass=^' --payloads payloads/xss.txt --find_string_list payloads/xss.txt --token_url https://page/test.php --token_name name_token_field --log 1337 --save_response\n"
+"./0d1n --host https://page/test.php --post 'csrf={token}&pass=^' --payloads payloads/xss.txt --find_string_list payloads/xss.txt --token_url https://page/test.php --token_name name_token_field --log logtest --save_response\n"
 YELLOW
 "Notes:\n"
 LAST
