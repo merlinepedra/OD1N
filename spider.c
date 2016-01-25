@@ -164,8 +164,11 @@ void spider(void *pack,char *line,char * pathtable)
 		if(arg[21]==NULL)
 		{
 			make2=payload_injector( (POST?arg[4]:arg[0]),line,old);
-		 	make=replace(make2,"{token}",token); // if user pass token to bypass anti-csrf
-	
+			if(token!=NULL)
+		 		make=replace(make2,"{token}",token); // if user pass token to bypass anti-csrf
+			else
+				make=strdup(make2);	
+
 			if(arg[13]!=NULL)	
 				make_cookie=payload_injector( arg[13],line,counter_cookie);	
 	
@@ -178,7 +181,11 @@ void spider(void *pack,char *line,char * pathtable)
 			char *request_file=readLine(arg[21]);
 			make2=payload_injector( request_file,line,old);	
 			curl_easy_setopt(curl,  CURLOPT_URL, arg[0]);
-			make=replace(make2,"{token}",token); // if user pass token to bypass anti-csrf
+			if(token!=NULL)
+				make=replace(make2,"{token}",token); // if user pass token to bypass anti-csrf
+			else
+				make=strdup(make2);
+
 			xfree((void**)&request_file);
 		}	
  
