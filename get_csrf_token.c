@@ -53,7 +53,7 @@ char *get_anti_csrf_token(char *url,char *param, char *agent)
 					{
 						ptr+=7;
 	
-						while(*ptr!='"')
+						while(*ptr!='"' || *ptr!='\'')
 						{
 							parse[x]=*ptr;
 							ptr++;
