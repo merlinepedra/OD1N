@@ -12,7 +12,7 @@
 
 > *test to find SQL Injection and XSS vulnerabilities 
 
-> *Options to load ANTI-CSRF token
+> *Options to load ANTI-CSRF token each request
 
 > *Options to use random proxy per request
 
