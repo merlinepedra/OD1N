@@ -311,7 +311,7 @@ char *rand_space(char *str)
 char *replace_keywords(char *str)
 {
  int mem_size=strlen(str)+1;
- char *out=malloc(sizeof(char)*mem_size);
+ char *out=xmalloc(sizeof(char)*mem_size);
  char *strs[] = {"select", "union", "delete", "script","where","from","and","eval","exec","or","update"};
  char *strs2[] = {"selselectect", "uniunionon", "deldeleteete", "scrscriptipt","whewherere","frfromom","anandd","evevalal","exexecec","oorr","updupdateate"};
  short num=10;

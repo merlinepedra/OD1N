@@ -152,7 +152,7 @@ char *replace(char *instring,char *old,char *new)
     
  	if(instring_size<old_size || !old_size)
 	{       
-		strcpy(out, instring);
+		strncpy(out, instring,out_size);
  		free(tmp);
 		return out;
 	}   
@@ -176,11 +176,11 @@ char *replace(char *instring,char *old,char *new)
 					return NULL;
 				}
 			}
-			strcat(out,new);
+			strncat(out,new,out_size-1);
 			count=count+old_size-1;
 		}else{
 			tmp[1]='\0';
-			strcat(out,tmp);
+			strncat(out,tmp,out_size);
 		}
 
 		count++;

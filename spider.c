@@ -137,7 +137,7 @@ void spider(void *pack,char *line,char * pathtable)
 		char *file_request=readLine(arg[21]);
 		counter=char_type_counter(file_request,'^');
 		old=counter;
-		xfree((void**)&file_request);
+		XFREE(file_request);
 	}
 	chomp(line);
 
@@ -186,7 +186,7 @@ void spider(void *pack,char *line,char * pathtable)
 			else
 				make=strdup(make2);
 
-			xfree((void**)&request_file);
+			XFREE(request_file);
 		}	
  
 		if ( POST )
@@ -547,7 +547,7 @@ void spider(void *pack,char *line,char * pathtable)
 		}
 
 
-		xfree((void **)&chunk.memory);
+		XFREE(chunk.memory);
 	
 	//	curl_easy_cleanup(curl);
        // 	curl_global_cleanup();
@@ -568,23 +568,23 @@ void spider(void *pack,char *line,char * pathtable)
 	}
 
 // clear all
-	xfree((void **)&make_agent);
-	xfree((void **)&make_cookie);
-	xfree((void **)&make);
-	xfree((void **)&make2);
-	xfree((void **)&tmp_make);
-	xfree((void **)&tmp_make_cookie);
-	xfree((void **)&tmp_make_agent); 
-	xfree((void **)&tmp_line);
-	xfree((void **)&tmp_line2);
-	xfree((void **)&responsetemplate);
-	xfree((void **)&tmp_response);
+	XFREE(make_agent);
+	XFREE(make_cookie);
+	XFREE(make);
+	XFREE(make2);
+	XFREE(tmp_make);
+	XFREE(tmp_make_cookie);
+	XFREE(tmp_make_agent); 
+	XFREE(tmp_line);
+	XFREE(tmp_line2);
+	XFREE(responsetemplate);
+	XFREE(tmp_response);
 
 	if(arg[20] != NULL)
-		xfree((void **)&line);
+		XFREE(line);
 
 	if(arg[22] != NULL)
-		xfree((void **)&token);
+		XFREE(token);
  
 }
 
@@ -725,15 +725,14 @@ void scan(void *arguments)
 
 // clear all
 	memset(pathtable,0,sizeof(char)*strlen(pathtable)-1);
-	xfree((void **)&pathtable);
+	XFREE(pathtable);
 	memset(pathhammer,0,sizeof(char)*strlen(pathhammer)-1);
-	xfree((void **)&pathhammer);
+	XFREE(pathhammer);
 	memset(view,0,sizeof(char)*strlen(view)-1);
-	xfree((void **)&view);
+	XFREE(view);
 
-
-	xfree((void **)&template2);
-	xfree((void **)&template3);
+	XFREE(template2);
+	XFREE(template3);
 
 
 

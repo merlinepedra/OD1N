@@ -14,7 +14,7 @@ char *get_anti_csrf_token(char *url,char *param, char *agent)
   struct MemoryStruct chunk;
   char *parse=xmalloc(sizeof(char)*256);
 
-  chunk.memory = malloc(1);  
+  chunk.memory = xmalloc(1);  
   chunk.size = 0;    
 
   curl_global_init(CURL_GLOBAL_ALL);
@@ -55,6 +55,7 @@ char *get_anti_csrf_token(char *url,char *param, char *agent)
 	
 						while(*ptr!='"' || *ptr!='\'')
 						{
+							
 							parse[x]=*ptr;
 							ptr++;
 							x++;

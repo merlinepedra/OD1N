@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <curl/curl.h>
-
+#define XFREE(x) xfree((void **)&x); 
 // set DEBUG ON
 #define BUGVIEW 1
 #define DEBUG(x, s...) do { \

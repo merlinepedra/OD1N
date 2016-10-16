@@ -77,7 +77,7 @@ void init_banner_odin()
  "--log :	Create text output of result\n"
  "--UserAgent :	Custom UserAgent\n"
  "--CA_certificate :	Load CA certificate to work with SSL\n"
- "--SSL_version :	Choice SSL version  \n	1 = TLSv1\n	2 = SSLv2\n	3 = SSLv3\n"
+ "--SSL_version :	Choice SSL version by number: \n	1 = SSLv1\n	2 = SSLv2\n	3 = SSLv3\n	4 = TLSv1.0\n	5 = TLSv1.1\n	6 = TLSv1.2\n" // https://curl.haxx.se/libcurl/c/CURLOPT_SSLVERSION.html
  "--threads : Number of threads to use, default is 4\n"
  "--timeout :	Timeout to wait Response\n"
  "--proxy :   Proxy_address:port to use single proxy tunnel\n	example: format [protocol://][user:password@]machine[:port]\n"
@@ -160,7 +160,6 @@ main(int argc, char ** argv)
 
  	no_write_coredump ();
  	load_signal_alarm ();
-
 
 	if(argc < 7) 
 	{
