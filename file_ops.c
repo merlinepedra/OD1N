@@ -1,6 +1,7 @@
 #include "file_ops.h"
 #include "mem_ops.h"
 #include "string_ops.h"
+#include "strsec.h"
 
 //read lines of file
 char *readLine(char * NameFile)
@@ -17,11 +18,14 @@ char *readLine(char * NameFile)
 	}
 
 	char *lineBuffer=xcalloc(1,1), line[4096];
+	size_t len_line=0,len=0;
 
 	while( fgets(line,sizeof line,arq) )  
 	{
-		lineBuffer=xrealloc(lineBuffer,strlen(lineBuffer)+strlen(line)+1);
-		strncat(lineBuffer,line,strlen(line));
+		len=strnlen(line,4095);
+		len_line+=len;	
+		lineBuffer=xreallocarray(lineBuffer,len_line,sizeof(char));
+		strlcat(lineBuffer,line,len_line);
 	}
 
  
@@ -32,11 +36,6 @@ char *readLine(char * NameFile)
 	}
 	arq=NULL;
 
-/*	if(lineBuffer != NULL)
-	{
-		free(lineBuffer);
-	}
-*/
 
 	return lineBuffer;
 }

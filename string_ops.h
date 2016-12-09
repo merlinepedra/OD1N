@@ -6,6 +6,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <limits.h>
+
 //#include "mem_ops.h"
 #define XorSwap(a, b) (((*a) ^= (*b)), ((*b) ^= (*a)), ((*a) ^= (*b)))
 char *deadspace(char *str);

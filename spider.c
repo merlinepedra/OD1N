@@ -119,9 +119,7 @@ void spider(void *pack,char *line,char * pathtable)
 	memset(pathsource,0,sizeof(char)*1023);
 
 	if(save_response==false)
-	{
-		strcat(pathsource,"0");
-	}
+		strlcat(pathsource,"0",1024);
 
 // brute POST/GET/COOKIES/UserAgent
 	if(arg[21]==NULL)
@@ -322,11 +320,11 @@ void spider(void *pack,char *line,char * pathtable)
 			while(1)
 			{
 				wait_on_socket(sockfd, 1, 60000L);
-				chunk.memory=xmalloc(sizeof(char)*3024); 
+				chunk.memory=xmallocarray(3024,sizeof(char)); 
 				res = curl_easy_recv(curl, chunk.memory, 3023, &iolen); 
-				chunk.size=strlen(chunk.memory);				
+				chunk.size=strnlen(chunk.memory,3023);				
 
-				if(strlen(chunk.memory) > 8)
+				if(strnlen(chunk.memory,3023) > 8)
 					break;
 
 			        if(CURLE_OK != res)
@@ -351,11 +349,15 @@ void spider(void *pack,char *line,char * pathtable)
 		if(status==0)
 		{	
 			debug_host--;
-			DEBUG("Problem in Host: \n %s",chunk.memory);
+			DEBUG("Problem in Host: \n %s\n Host is down ?\n",chunk.memory);
+
 			if(debug_host<0)
 				exit(0);
-		
+
+			sleep(10);
+
 			goto try_again;
+			
 		
 		}
 
@@ -411,8 +413,8 @@ void spider(void *pack,char *line,char * pathtable)
 					{
 // create responses path
 						memset(pathsource,0,sizeof(char)*1023);
-						strncat(pathsource,"response_sources/",18);
-						strncat(pathsource,arg[5], 15);
+						strlcat(pathsource,"response_sources/",18);
+						strlcat(pathsource,arg[5], 33);
 						mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
 						snprintf(pathsource,986,"response_sources/%s/%s.html",arg[5],rand_str(randname, sizeof randname));
 					}
@@ -464,8 +466,6 @@ void spider(void *pack,char *line,char * pathtable)
 					memset(tmp_line2,0,strlen(tmp_line2)-1);
 					memset(tabledata,0,4085);
 					memset(pathsource,0,strlen(pathsource)-1);
-
-
 				}
 			}
  
@@ -495,8 +495,8 @@ void spider(void *pack,char *line,char * pathtable)
 			if(save_response==true)
 			{		
 			//	memset(pathsource,0,sizeof(char)*1023);
-				strncat(pathsource,"response_sources/",18);
-				strncat(pathsource,arg[5], 15);
+				strlcat(pathsource,"response_sources/",18);
+				strlcat(pathsource,arg[5], 33);
 				mkdir(pathsource,S_IRWXU|S_IRWXG|S_IRWXO);
 				snprintf(pathsource,986,"response_sources/%s/%s.html",arg[5],rand_str(randname, sizeof randname));
 			}
@@ -592,7 +592,6 @@ void spider(void *pack,char *line,char * pathtable)
 void scan(void *arguments)
 {
 	FILE *fp=NULL;
-        int num1=0,num2=0;
 
 	char **arg = (char **)arguments;
 	char *pathtable=NULL,*pathhammer=NULL,*view=NULL,*template2=NULL,*template3=NULL;
@@ -603,20 +602,18 @@ void scan(void *arguments)
 	if(arg[11]!=NULL)
 		threadss=atoi(arg[11]);
 
-	int old_thread=threadss;
-	int status=-1;
- 	int timeout=3;
+	int old_thread=threadss,status=-1,timeout=3,num1=0,num2=0;
 	long int total_requests=0;
 
 	if(arg[8]!=NULL)
 		timeout=atoi(arg[8]);
 
  // write tables rows at datatables file to load
-	pathtable=xmalloc(sizeof(char)*64);
-	memset(pathtable,0, sizeof(char)*63);
-	strncat(pathtable,"tables/",8);
-	strncat(pathtable,arg[5],16);
-	strncat(pathtable,".txt",5);
+	pathtable=xmalloc(64*sizeof(char));
+	memset(pathtable,0, 63*sizeof(char));
+	strlcat(pathtable,"tables/",8);
+	strlcat(pathtable,arg[5],28);
+	strlcat(pathtable,".txt",33);
 	fp = fopen(arg[1], "r");
 
  	if ( !fp )
@@ -628,26 +625,31 @@ void scan(void *arguments)
         num1=FileSize(TEMPLATE2);
         num2=FileSize(TEMPLATE3); 
 
-	view=xmalloc(sizeof(char)*(num1+num2+42));
-	memset(view,0,sizeof(char)*(num1+num2+1));
+	size_t total=num1+num2+512;
+
+	view=xmallocarray(total,sizeof(char));
+	memset(view,0,(total-1)*sizeof(char));
 
       //  template2=xmalloc(sizeof(char)*num1+1);
         template2=readLine(TEMPLATE2);
-	strncat(view,template2,num1+1);
-	strncat(view,"\"sAjaxSource\": \"",23);
-	strncat(view,arg[5],16);
-	strncat(view,".txt\" \n",9);
+
+	strlcat(view,template2,num1+1);
+	strlcat(view,"\"sAjaxSource\": \"",num1+24);
+	strlcat(view,arg[5],num1+64);
+	strlcat(view,".txt\" \n",num1+112);
 
       //  template3=xmalloc(sizeof(char)*num2+1);
         template3=readLine(TEMPLATE3);
 
-	strncat(view,template3,num2);
+	strlcat(view,template3,num2+num1+112);
 
-	pathhammer=xmalloc(sizeof(char)*64);
-	memset(pathhammer,0,sizeof(char)*63);
-	strncat(pathhammer,"tables/hammer_",15);
-	strncat(pathhammer,arg[5],16);
-	strncat(pathhammer,".html",6);
+	pathhammer=xmalloc(64*sizeof(char));
+	memset(pathhammer,0,63*sizeof(char));
+
+	strlcat(pathhammer,"tables/hammer_",15);
+	strlcat(pathhammer,arg[5],32);
+	strlcat(pathhammer,".html",38);
+
 	WriteFile(pathhammer,view);
 	WriteFile(pathtable,"{ \"aaData\": [ \n");
 
@@ -720,21 +722,19 @@ void scan(void *arguments)
 	WriteFile(pathtable," [\"\",\"\",\"\",\"\",\"\"] \n ] }");
 
 	puts(RED);
-	fprintf(stdout,"End scan \n look the file %s\n Total Requests %ld\n",pathhammer, total_requests);
+	fprintf(stdout,"End scan \n look the file %s\n Total Requests %ld\n Path table: %s\n",pathhammer, total_requests,pathtable);
 	puts(LAST);
 
 // clear all
-	memset(pathtable,0,sizeof(char)*strlen(pathtable)-1);
-	XFREE(pathtable);
-	memset(pathhammer,0,sizeof(char)*strlen(pathhammer)-1);
-	XFREE(pathhammer);
-	memset(view,0,sizeof(char)*strlen(view)-1);
-	XFREE(view);
+	memset(pathtable,0,(strnlen(pathtable,64)-1)*sizeof(char));
+	memset(pathhammer,0,(strnlen(pathhammer,64)-1)*sizeof(char));
+	memset(view,0,(strnlen(view,total-1)-1)*sizeof(char));
 
+	XFREE(pathtable);
+	XFREE(pathhammer);
+	XFREE(view);
 	XFREE(template2);
 	XFREE(template3);
-
-
 
 	if( fclose(fp) == EOF )
 	{

@@ -6,7 +6,7 @@
 char *encode64(char* input, int len) 
 {
     int leftposition = len % 3,n = 0,outlen = 0;
-    char *ret = xmalloc(((len/3) * 4) + ((leftposition)?4:0) + 1);
+    char *ret = xmallocarray(((len/3) * 4) + ((leftposition)?4:0) + 1,sizeof(char));
     uint8_t i = 0;
     uint8_t *ptr = (uint8_t *) input;
     const char *list = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -64,7 +64,7 @@ char *encode64(char* input, int len)
 // random case return string, input= tomato output=ToMatO or tOmATo...
 char *rand_case(char *str)
 {
-	char *str_new=xmalloc(sizeof(char)*strlen(str)+1);
+	char *str_new=xmallocarray(strlen(str)+1,sizeof(char));
 	int i=0;
 	
 	while(*str != '\0')
@@ -104,7 +104,7 @@ char *urlencode( char *str )
 	char *buf=NULL,*ptr=NULL;
 	char hex[] = "0123456789ABCDEF";
   
-	buf = xmalloc( strlen(str) << 2 );
+	buf = xmallocarray( strlen(str) << 2,sizeof(char) );
 	ptr = buf;
   
 	while(*str)
@@ -132,7 +132,7 @@ char *double_urlencode( char *str )
 
 	char hex[] = "0123456789ABCDEF";
   
-	buf = xmalloc( strlen(str) << 2 );
+	buf = xmallocarray( strlen(str) << 2,sizeof(char) );
 	ptr = buf;
   
 	while(*str)
@@ -150,7 +150,7 @@ char *double_urlencode( char *str )
 	}
 
 	*ptr = '\0';
-	buf2 = xmalloc( strlen(buf) << 2 );
+	buf2 = xmallocarray( strlen(buf) << 2,sizeof(char) );
 	buf2 = urlencode(buf);
 
 	if(buf!=NULL)
@@ -191,7 +191,7 @@ char *apostrophe2nullencode(char *str)
 char *rand_comment(char *str)
 {
 	int i=0,mem_size=strlen(str)+1;
-	char *str_new=xmalloc(sizeof(char)*mem_size);
+	char *str_new=xmallocarray(mem_size,sizeof(char));
 		
 	while(*str != '\0')
 	{
@@ -203,7 +203,7 @@ char *rand_comment(char *str)
 			if( (rand()%16) < 4)
 			{
 				mem_size+=4;
-				str_new=xrealloc(str_new,sizeof(char)*mem_size);
+				str_new=xreallocarray(str_new,sizeof(char),mem_size);
 				*(str_new+i)=*str;
 				i++;
 				*(str_new+i)='/';
@@ -241,7 +241,7 @@ char *rand_comment(char *str)
 char *rand_space(char *str)
 {
 	int i=0,mem_size=strlen(str)+1;
-	char *str_new=xmalloc(sizeof(char)*mem_size);
+	char *str_new=xmallocarray(mem_size,sizeof(char));
 		
 	while(*str != '\0')
 	{
@@ -253,7 +253,7 @@ char *rand_space(char *str)
 			if( (rand()%4) <= 2)
 			{
 				mem_size+=4;
-				str_new=xrealloc(str_new,sizeof(char)*mem_size);
+				str_new=xreallocarray(str_new,mem_size,sizeof(char));
 				*(str_new+i)=*str;
 				i++;
 				*(str_new+i)=' ';
@@ -265,7 +265,7 @@ char *rand_space(char *str)
 				*(str_new+i)=' ';
 			} else {	
 				mem_size+=10;
-				str_new=xrealloc(str_new,sizeof(char)*mem_size);
+				str_new=xreallocarray(str_new,mem_size,sizeof(char));
 				*(str_new+i)=*str;
 				i++;
 				*(str_new+i)=' ';     // Loop unrolling...
@@ -311,18 +311,18 @@ char *rand_space(char *str)
 char *replace_keywords(char *str)
 {
  int mem_size=strlen(str)+1;
- char *out=xmalloc(sizeof(char)*mem_size);
+ char *out=xmallocarray(mem_size,sizeof(char));
  char *strs[] = {"select", "union", "delete", "script","where","from","and","eval","exec","or","update"};
  char *strs2[] = {"selselectect", "uniunionon", "deldeleteete", "scrscriptipt","whewherere","frfromom","anandd","evevalal","exexecec","oorr","updupdateate"};
  short num=10;
 
-	 strcpy(out,str);
+	 strlcpy(out,str,mem_size);
 
 	do {
 		char *tmp=replace(out,strs[num],strs2[num]);
 		mem_size=strlen(tmp)+1;
-		out=xrealloc(out,sizeof(char)*mem_size);
-		strncpy(out,tmp,mem_size-1);
+		out=xreallocarray(out,mem_size,sizeof(char));
+		strlcpy(out,tmp,mem_size);
 		if(tmp != NULL)
 		{
 			free(tmp);

@@ -44,7 +44,7 @@ char *html_entities(const char *str)
     if ( !i || i + len > n) 
     {
       n = (i + len) << 1;
-      result = xrealloc(result, n + 1);
+      result = xreallocarray(result, n + 1,sizeof(char));
     }
 
     memcpy(result + i, change, len);
@@ -52,7 +52,7 @@ char *html_entities(const char *str)
     p++;
   }
 
-  result = xrealloc(result, i + 1);
+  result = xreallocarray(result, i + 1,sizeof(char));
   result[i] = '\0';
 
 //  if(result != NULL)

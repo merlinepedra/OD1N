@@ -7,6 +7,7 @@
 //#include "mem_ops.h"
 #include "string_ops.h"
 #include "validate.h"
+#include "strsec.h"
 
 char* encode64(char* input, int len);
 char *rand_case(char *str); 

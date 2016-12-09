@@ -1,5 +1,6 @@
 #include "string_ops.h"
 #include "mem_ops.h"
+#include "strsec.h"
 
 
 char *deadspace(char *str)
@@ -81,9 +82,10 @@ void chomp(char * str)
 
 char *payload_injector(char * ptr,char * payload,int counter)
 {
-	char *new=xmalloc((strlen(ptr)+strlen(payload)+2)*sizeof(char));
+	size_t len_ptr=strlen(ptr),len_payload=strlen(payload),total_len=len_ptr+len_payload;
+	char *new=xmallocarray((total_len+1),sizeof(char));
 	short i=0,x=1;
-	memset(new, 0,sizeof(char)*(strlen(ptr)+strlen(payload)+1));
+	memset(new, 0,(total_len)*sizeof(char));
 
 	while(*ptr != '\0')
 	{
@@ -91,8 +93,8 @@ char *payload_injector(char * ptr,char * payload,int counter)
 		{
 			if(counter==x)
 			{
-				strncat(new,payload,strlen(payload));
-				i+=strlen(payload);
+				strlcat(new,payload,total_len+1);
+				i+=len_payload;
 			}
 			x++;
 		} 
@@ -152,7 +154,7 @@ char *replace(char *instring,char *old,char *new)
     
  	if(instring_size<old_size || !old_size)
 	{       
-		strncpy(out, instring,out_size);
+		strlcpy(out, instring,out_size);
  		free(tmp);
 		return out;
 	}   
@@ -161,14 +163,14 @@ char *replace(char *instring,char *old,char *new)
     
  	while(count <= instring_size)
 	{       
-		strncpy(tmp,(instring+count),old_size);
+		strlcpy(tmp,(instring+count),old_size);
 		tmp[old_size]='\0';
 		if(!strcmp(tmp,old))
 		{
 			if(new_size!=old_size)
 			{
 				out_size=out_size+new_size-old_size;
-				out=xrealloc(out,out_size);
+				out=xreallocarray(out,out_size,sizeof(char));
 
 				if(!out)
 				{
@@ -176,11 +178,11 @@ char *replace(char *instring,char *old,char *new)
 					return NULL;
 				}
 			}
-			strncat(out,new,out_size-1);
+			strlcat(out,new,out_size);
 			count=count+old_size-1;
 		}else{
 			tmp[1]='\0';
-			strncat(out,tmp,out_size);
+			strlcat(out,tmp,out_size);
 		}
 
 		count++;
@@ -197,11 +199,11 @@ char *replace(char *instring,char *old,char *new)
 long parse_http_status(char * str)
 {
 	char part_str[32];
-	strncpy(part_str,str,31);
+	strlcpy(part_str,str,32);
 	char *status=strtok(part_str," ");
 	status=strtok(NULL," ");
  
-	if(strlen(status)<= 3)
+	if(strnlen(status,5)<= 3)
 	{
 
 		long code_num=(long)atoi(status);
