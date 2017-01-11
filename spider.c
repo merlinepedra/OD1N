@@ -21,7 +21,7 @@ void spider(void *pack,char *line,char * pathtable)
 		save_response=true;
 
 	if(arg[8]!=NULL)
-		timeout=atoi(arg[8]);
+		timeout=(int)strtol(arg[8],(char **)NULL,10);
 
 // if need get anti-csrf token
 	if(arg[22]!=NULL && arg[23]!=NULL)
@@ -290,7 +290,7 @@ void spider(void *pack,char *line,char * pathtable)
 
 // choice SSL version
 		if ( arg[9] != NULL ) 
-			curl_easy_setopt(curl,CURLOPT_SSLVERSION,(long)atoi(arg[9]));
+			curl_easy_setopt(curl,CURLOPT_SSLVERSION,(int)strtol(arg[9],(char **)NULL,10));
 
                 curl_easy_setopt(curl,CURLOPT_VERBOSE,0); 
 		curl_easy_setopt(curl,CURLOPT_HEADER,1);  
@@ -600,13 +600,13 @@ void scan(void *arguments)
 	pid_t pid;
 
 	if(arg[11]!=NULL)
-		threadss=atoi(arg[11]);
+		threadss=(int)strtol(arg[11],(char **)NULL,10);
 
 	int old_thread=threadss,status=-1,timeout=3,num1=0,num2=0;
 	long int total_requests=0;
 
 	if(arg[8]!=NULL)
-		timeout=atoi(arg[8]);
+		timeout=(int)strtol(arg[8],(char **)NULL,10);
 
  // write tables rows at datatables file to load
 	pathtable=xmalloc(64*sizeof(char));

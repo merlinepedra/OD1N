@@ -206,7 +206,7 @@ long parse_http_status(char * str)
 	if(strnlen(status,5)<= 3)
 	{
 
-		long code_num=(long)atoi(status);
+		long code_num=strtol(status,(char **)NULL,10);
 		return code_num;
 	} else {
 		return 0;
