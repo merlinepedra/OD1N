@@ -20,8 +20,8 @@ clean:
 
 PREFIX=/usr/local
 install:
-	mkdir -p \$(DESTDIR)\$(PREFIX)/bin
-	install -m 0755 0d1n \$(DESTDIR)\$(PREFIX)/bin
+	mkdir -p $(DESTDIR)$(PREFIX)/bin
+	install -m 0755 0d1n $(DESTDIR)$(PREFIX)/bin
 
 uninstall:
-	rm \$(TARGET_DIR))/bin/0d1n
+	rm $(DESTDIR)$(PREFIX)/bin/0d1n
