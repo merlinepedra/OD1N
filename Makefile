@@ -17,3 +17,11 @@ endif
 
 clean:
 	rm -f *.o 0d1n
+
+PREFIX=/usr/local
+install:
+	mkdir -p $(DESTDIR)$(PREFIX)/bin
+	install -m 0755 0d1n $(DESTDIR)$(PREFIX)/bin
+
+uninstall:
+	rm $(DESTDIR)$(PREFIX)/bin/0d1n
