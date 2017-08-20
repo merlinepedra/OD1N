@@ -112,8 +112,8 @@ void *xmallocarray (size_t nmemb, size_t size)
 
 	void *ptr = malloc (nmemb*size);
 
-	if (ptr == NULL) 
-		return NULL;
+	if (ptr == NULL) 	
+		return xmalloc_fatal(size);
 
 	return ptr;
 }
@@ -131,8 +131,8 @@ void *xreallocarray (void *ptr, size_t nmemb, size_t size)
 
 	void *p = realloc (ptr, nmemb*size);
 
-	if (p == NULL) 
-		return NULL;
+	if (p == NULL) 	
+		return xmalloc_fatal(size);
 
 	return p;
 }
