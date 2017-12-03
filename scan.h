@@ -12,19 +12,11 @@
 #include <curl/curl.h>
 //#include <curl/types.h>
 #include <curl/easy.h>
-#include "mem_ops.h"
-#include "html_entities.h" 
+
+//#include "mem_ops.h"
 #include "string_ops.h"
 #include "file_ops.h"
-#include "tamper.h"
-#include "get_csrf_token.h"
-
-// colors macro
-#define RED "\033[22;31m"
-#define YELLOW "\033[01;33m"
-#define CYAN "\033[22;36m"
-#define GREEN "\033[22;32m"
-#define LAST "\033[0m"
+#include "spider.h"
  
-void spider(void *arg,char *line,char * pathtable);
+int threadss=4;
 void scan(void *arg);

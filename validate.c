@@ -38,7 +38,7 @@ contact: c00f3r[at]gmail[dot]com
 // block ctrl+c 
 void No_Pause_Scan ()
 {
-	DEBUG("\n When start Scan\n You Cannot be terminated using Ctrl+C or Ctrl+Z...\n Wait task ends... press <enter> to continue... \n");
+	DEBUG("\n When start Scan\n You Cannot be terminated using Ctrl+C or Ctrl+Z...\n Wait task ends... press <enter> to continue... \nif you close it this can crash report in html\n");
 	getchar();
 	fflush(stdout);
 }

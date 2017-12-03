@@ -61,7 +61,7 @@ void init_banner_odin()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "0d1n Web Hacking Tool 2.3 BeTa\n"
+ "0d1n Web Hacking Tool 2.5 BeTa\n"
  LAST
  "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^ \n"
  "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
@@ -186,6 +186,7 @@ main(int argc, char ** argv)
 				if ( strnlen(optarg,256)<= 128 )
 				{
     					pack[0] = optarg;
+// todo improve that function
 					validate_hostname(pack[0]);
     					printf("Host: %s \n",pack[0]);
     					
