@@ -1,3 +1,6 @@
+export MALLOC_MMAP_THRESHOLD_=1
+export MALLOC_CHECK_=1
+export MALLOC_PERTURB_=1
 CC=gcc
 CFLAGS=-W -Wall -Wextra -O2 -fstack-protector-all
 DFLAGS=-D_FORTIFY_SOURCE=2

@@ -187,7 +187,7 @@ main(int argc, char ** argv)
 				{
     					pack[0] = optarg;
 // todo improve that function
-					validate_hostname(pack[0]);
+//					validate_hostname(pack[0]);
     					printf("Host: %s \n",pack[0]);
     					
 				} else {
