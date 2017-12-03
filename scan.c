@@ -137,8 +137,8 @@ void scan(void *arguments)
 		}
 	}				
 
-	sleep(timeout);
-
+	sleep(timeout+5);
+	
 // end of json file
 	WriteFile(pathtable," [\"\",\"\",\"\",\"\",\"\"] \n ] }");
 
