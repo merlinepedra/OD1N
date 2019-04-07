@@ -87,7 +87,6 @@ void init_banner_odin()
 "    spaces2comment:  change spaces ' ' to comment '/**/'\n    unmagicquote: change apostrophe to a multi-byte \%bf\%27 \n"
 "    apostrophe2nullencode: change apostrophe to illegal double unicode counterpart\n    rand_comment: to use random comment '/**/' position in payload string\n"
 "    rand_space: write random ' ' blank spaces\n    replace_keywords: replace especial words, SELECT to SELselectECT etc...\n"
-"--token_url : Url of form that you need get anti-csrf token\n"
 "--token_name : Name of anti-csrf token to get and use at your request\n"
 "NOTE: if you using any token to bypass anti-csrf protection, you use {token} var at your POST or GET or custom request\n" 
 "if you make this 0d1n change {token} to token of form... example --post 'var=^&token={token}&var2=test'\n"
@@ -110,7 +109,7 @@ LAST
 YELLOW
 "example 3 to search XSS and pass anti-csrf token:\n"
 LAST
-"./0d1n --host https://page/test.php --post 'csrf={token}&pass=^' --payloads payloads/xss.txt --find_string_list payloads/xss.txt --token_url https://page/test.php --token_name name_token_field --log logtest --save_response\n"
+"./0d1n --host https://page/test.php --post 'csrf={token}&pass=^' --payloads payloads/xss.txt --find_string_list payloads/xss.txt --token_name name_token_field --log logtest --save_response\n"
 YELLOW
 "Notes:\n"
 LAST
@@ -145,7 +144,6 @@ static struct option long_options[] =
  	{"tamper", required_argument, NULL, 'w'}, 
 	{"save_response", no_argument, 0, 'k'},	
 	{"json_headers", no_argument, 0, 'j'},
- 	{"token_url", required_argument, NULL, '3'}, 
  	{"token_name", required_argument, NULL, '4'}, 
 	{NULL, 0, NULL, 0}
 };
@@ -414,19 +412,6 @@ main(int argc, char ** argv)
 					exit(1);
 				}
 				break;
-
-			case '3':
-				if ( strnlen(optarg,256)<= 255 )
-				{
-    					pack[22] = optarg;
-    					printf("token url: %s \n",optarg);
-    					
-				} else {
-					DEBUG("Error \nArgument token Url is very large  \n");
-					exit(1);
-				}
-				break;
-
 
 			case '4':
 				if ( strnlen(optarg,256)<= 128 )

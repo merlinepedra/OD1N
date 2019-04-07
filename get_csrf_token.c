@@ -1,6 +1,28 @@
 #include "get_csrf_token.h"
 #include "mem_ops.h"
 
+
+char *parse_token(char *str)
+{
+	int x=0;
+	char *parse=xmalloc(sizeof(char)*1024);	
+    	memset(parse,0,1023); // i dont use last byte because crash my compiler, hardening use last byte to canary
+	
+		while((*str!='"') && (*str!='\'') && (*str!='\n')&&(*str!='\0'))
+		{
+			if(x<=1023)
+				parse[x]=*str;
+			str++;
+			x++;
+		}
+
+	if(parse)
+		return parse;
+	else
+		return " ";
+
+}
+
 /*
 
 THis function get token, to use custom request to bypass anti csrf 
@@ -12,7 +34,8 @@ char *get_anti_csrf_token(char *url,char *param, char *agent)
   CURLcode res;
 
   struct MemoryStruct chunk;
-  char *parse=xmalloc(sizeof(char)*256);
+  char *parse=xmalloc(sizeof(char)*1024);
+  bool ValidToken=false;
 
   chunk.memory = xmalloc(1);  
   chunk.size = 0;    
@@ -35,48 +58,43 @@ char *get_anti_csrf_token(char *url,char *param, char *agent)
             curl_easy_strerror(res));
   }
   else {
-    	char *line;
-    	memset(parse,0,255);
-    	line=strtok(chunk.memory, "\n");
-
+    	
+    	memset(parse,0,1023);
+	char *line=strtok(chunk.memory, "\n");
 	while(line!=NULL)
 	{
+// read line per line
 		if(strstr(line,param))
 		{
-			char *ptr=deadspace(line);	
-			int x=0;
-
-			if(!strlen(parse))
-				while(*ptr!='\0' && x != 255)
+			char *ptr=line;
+			deadspace(ptr);	
+				while(*ptr!='\n' && *ptr!='\0' && ValidToken==false)
 				{
 					if(ptr[0]=='v' && ptr[1]=='a' && ptr[2]=='l' && ptr[3]=='u' && ptr[4]=='e')
 					{
 						ptr+=7;
-	
-						while(*ptr!='"' || *ptr!='\'')
-						{
+						ValidToken=true;
+						parse=parse_token(ptr);
 							
-							parse[x]=*ptr;
-							ptr++;
-							x++;
-						}
 					}
 					ptr++;
 				
 				}	
 		}
+
 		line=strtok(NULL, "\n");
 	}	
 	
 
   }
 
-
-
   curl_easy_cleanup(curl_handle);
   free(chunk.memory);
   curl_global_cleanup();
-  
-  return parse;
+
+  if(parse)
+  	return parse;
+  else
+	return "error";
 }
 

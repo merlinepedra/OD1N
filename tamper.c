@@ -2,6 +2,87 @@
 #include "mem_ops.h"
 #include "string_ops.h"
 
+char * tamper_choice(char * tamper,char *line)
+{
+	bool test_tamper=false;
+			
+		if(strstr(tamper,"encode64"))
+		{
+			line=encode64(line,strlen(line)-1);
+			test_tamper=true;
+		}
+
+		if(strstr(tamper,"randcase"))
+		{
+			line=rand_case(line);
+			test_tamper=true;
+		}
+
+
+		if(strstr(tamper,"urlencode"))
+		{
+			line=urlencode(line);
+			test_tamper=true;
+		}
+
+		if(strstr(tamper,"double_urlencode"))
+		{
+			line=double_urlencode(line);
+			test_tamper=true;
+		}
+
+		if(strstr(tamper,"spaces2comment"))
+		{
+			line=spaces2comment(line);
+			test_tamper=true;
+		}
+
+		if(strstr(tamper,"unmagicquote"))
+		{
+			line=unmagicquote(line);
+			test_tamper=true;
+		}
+
+
+		if(strstr(tamper,"apostrophe2nullencode"))
+		{
+			line=apostrophe2nullencode(line);
+			test_tamper=true;
+		}
+
+		if(strstr(tamper,"rand_comment"))
+		{
+			line=rand_comment(line);
+			test_tamper=true;
+		}
+
+
+
+		if(strstr(tamper,"rand_space"))
+		{
+			line=rand_space(line);
+			test_tamper=true;
+		}
+
+
+
+		if(strstr(tamper,"replace_keywords"))
+		{
+			line=replace_keywords(line);
+			test_tamper=true;
+		}
+
+
+		if(test_tamper==false)
+		{
+			DEBUG("error at tamper argument\n");
+			exit(0);
+		}
+
+
+	return line;
+}
+
 
 char *encode64(char* input, int len) 
 {

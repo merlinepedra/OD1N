@@ -16,6 +16,8 @@
 THis function get anti csrf token of param var
 
 */
+
+char *parse_token(char *str);
 char *get_anti_csrf_token(char *url, char *param, char *agent);
  
 

@@ -5,10 +5,12 @@ void spider(void *pack,char *line,char * pathtable)
 {
 	struct MemoryStruct chunk;
 	FILE *fp=NULL;
-	bool match_string=false,save_response=false,test_tamper=false;
+	bool match_string=false,save_response=false;
 	long status=0,length=0;
 	int old=0,res=0,counter=0,counter_cookie=0,counter_agent=0,POST=0,timeout=0,debug_host=3; 
-	char *make=NULL,*make2=NULL,*make_cookie=NULL,*make_agent=NULL,*tamper=NULL,*responsetemplate=NULL,*tmp_response=NULL,*tmp_make=NULL,*tmp_make_cookie=NULL,*tmp_make_agent=NULL,*tmp_line=NULL,*tmp_line2=NULL,*token=NULL;
+	char *make=NULL,*make2=NULL,*make_cookie=NULL,*make_agent=NULL,*tamper=NULL,*responsetemplate=NULL;
+        char *tmp_response=NULL,*tmp_make=NULL,*tmp_make_cookie=NULL,*tmp_make_agent=NULL,*tmp_line=NULL;
+	char *tmp_line2=NULL,*token=NULL;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
 	char randname[16],line2[1024],log[2048],tabledata[4086],pathsource[1024];
 
@@ -19,12 +21,15 @@ void spider(void *pack,char *line,char * pathtable)
 		timeout=(int)strtol(arg[8],(char **)NULL,10);
 
 // if need get anti-csrf token
-	if(arg[22]!=NULL && arg[23]!=NULL)
+	if(arg[0]!=NULL && arg[23]!=NULL)
 	{
+		token=xmalloc(sizeof(char)*1024);
+		memset(token,0,1023);
+
 		if(arg[6]!=NULL)
-			token=get_anti_csrf_token(arg[22],arg[23],arg[6]);
+			token=get_anti_csrf_token(arg[0],arg[23],arg[6]);
 		else
-			token=get_anti_csrf_token(arg[22],arg[23],"Mozilla/5.0 (0d1n v0.1)");
+			token=get_anti_csrf_token(arg[0],arg[23],"Mozilla/5.0 (0d1n v0.1)");
 	}
 
 
@@ -33,82 +38,7 @@ void spider(void *pack,char *line,char * pathtable)
 	if(arg[20]!=NULL)
 	{
 		tamper=arg[20];
-			
-		if(strstr(tamper,"encode64"))
-		{
-			line=encode64(line,strlen(line)-1);
-			test_tamper=true;
-		}
-
-		if(strstr(tamper,"randcase"))
-		{
-			line=rand_case(line);
-			test_tamper=true;
-		}
-
-
-		if(strstr(tamper,"urlencode"))
-		{
-			line=urlencode(line);
-			test_tamper=true;
-		}
-
-		if(strstr(tamper,"double_urlencode"))
-		{
-			line=double_urlencode(line);
-			test_tamper=true;
-		}
-
-		if(strstr(tamper,"spaces2comment"))
-		{
-			line=spaces2comment(line);
-			test_tamper=true;
-		}
-
-		if(strstr(tamper,"unmagicquote"))
-		{
-			line=unmagicquote(line);
-			test_tamper=true;
-		}
-
-
-		if(strstr(tamper,"apostrophe2nullencode"))
-		{
-			line=apostrophe2nullencode(line);
-			test_tamper=true;
-		}
-
-		if(strstr(tamper,"rand_comment"))
-		{
-			line=rand_comment(line);
-			test_tamper=true;
-		}
-
-
-
-		if(strstr(tamper,"rand_space"))
-		{
-			line=rand_space(line);
-			test_tamper=true;
-		}
-
-
-
-		if(strstr(tamper,"replace_keywords"))
-		{
-			line=replace_keywords(line);
-			test_tamper=true;
-		}
-
-
-
-		if(test_tamper==false)
-		{
-			DEBUG("error at tamper argument\n");
-			exit(0);
-		}
-
-		
+		line=tamper_choice(tamper,line);
 	}
 
 	memset(pathsource,0,sizeof(char)*1023);
@@ -154,13 +84,16 @@ void spider(void *pack,char *line,char * pathtable)
 		curl = curl_easy_init();
 		
 // add payload at inputs
-		if(arg[21]==NULL)
+		if(arg[21]==NULL) //if custom request  argv mode null
 		{
 			make2=payload_injector( (POST?arg[4]:arg[0]),line,old);
-			if(token!=NULL)
+			if(token)
+			{
+printf("OK\n");
 		 		make=replace(make2,"{token}",token); // if user pass token to bypass anti-csrf
-			else
+			} else
 				make=strdup(make2);	
+printf("DEBUG PAYLOAD %s\n",make);
 
 			if(arg[13]!=NULL)	
 				make_cookie=payload_injector( arg[13],line,counter_cookie);	

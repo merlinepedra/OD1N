@@ -3,19 +3,11 @@
 #include "strsec.h"
 
 
-char *deadspace(char *str)
+void deadspace(char *str)
 {
-        char *out = str, *put = str;
-
-        for(; *str != '\0'; ++str)
-        {
-                if(*str != ' ')
-                        *put++ = *str;
-        }
-
-        *put = '\0';
-
-        return out;
+    char *p = str;
+    do *(*p == ' ' ? str : str++) = *p;
+    while (*p++);
 }
 
 
@@ -140,7 +132,6 @@ strstr_regex(char *string, char *expression)
 }
 
 
-
 char *replace(char *instring,char *old,char *new)
 { 
 	int instring_size=strlen(instring),new_size=strlen(new),old_size=strlen(old),out_size=instring_size+1,count=0;
@@ -154,8 +145,8 @@ char *replace(char *instring,char *old,char *new)
     
  	if(instring_size<old_size || !old_size)
 	{       
-		strlcpy(out, instring,out_size);
- 		free(tmp);
+		strcpy(out, instring);
+ 		XFREE(tmp);
 		return out;
 	}   
 
@@ -163,8 +154,9 @@ char *replace(char *instring,char *old,char *new)
     
  	while(count <= instring_size)
 	{       
-		strlcpy(tmp,(instring+count),old_size);
+		strncpy(tmp,(instring+count),old_size);
 		tmp[old_size]='\0';
+
 		if(!strcmp(tmp,old))
 		{
 			if(new_size!=old_size)
@@ -174,25 +166,25 @@ char *replace(char *instring,char *old,char *new)
 
 				if(!out)
 				{
-					free(tmp);
+					XFREE(tmp);
 					return NULL;
 				}
 			}
-			strlcat(out,new,out_size);
+
+			strcat(out,new);
 			count=count+old_size-1;
 		}else{
 			tmp[1]='\0';
-			strlcat(out,tmp,out_size);
+			strcat(out,tmp);
 		}
 
 		count++;
 	}
 
-	free(tmp);
+	XFREE(tmp);
 
 	return out;
 }
-
 
 
 

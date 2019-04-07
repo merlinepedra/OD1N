@@ -8,7 +8,9 @@
 #include "string_ops.h"
 #include "validate.h"
 #include "strsec.h"
+#include "stdbool.h"
 
+char * tamper_choice(char * tamper,char * line);
 char* encode64(char* input, int len);
 char *rand_case(char *str); 
 char *urlencode(char *str); 
