@@ -12,7 +12,7 @@ void spider(void *pack,char *line,char * pathtable)
         char *tmp_response=NULL,*tmp_make=NULL,*tmp_make_cookie=NULL,*tmp_make_agent=NULL,*tmp_line=NULL;
 	char *tmp_line2=NULL,*token=NULL;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
-	char randname[16],line2[1024],log[2048],tabledata[4086],pathsource[1024];
+	char randname[16],line2[1024],log[3048],tabledata[4086],pathsource[1024];
 
 	if(arg[12]!=NULL)
 		save_response=true;
@@ -348,9 +348,9 @@ printf("DEBUG PAYLOAD %s\n",make);
 						snprintf(pathsource,986,"response_sources/%s/%s.html",arg[5],rand_str(randname, sizeof randname));
 					}
 // write log file
-					snprintf(log,2047,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s  UserAgent: %s \n Path Response Source: %s\n",status,line,line2,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
+					snprintf(log,3047,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s  UserAgent: %s \n Path Response Source: %s\n",status,line,line2,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
 					WriteFile(arg[5],log);
-					memset(log,0,2047);		
+					memset(log,0,3047);		
 
 					if(save_response==true)
 					{
@@ -430,9 +430,9 @@ printf("DEBUG PAYLOAD %s\n",make);
 				snprintf(pathsource,986,"response_sources/%s/%s.html",arg[5],rand_str(randname, sizeof randname));
 			}
 //write logs
-			snprintf(log,2047,"[%ld Payload: %s Params: %s Cookie: %s UserAgent: %s \n Path Response Source: %s\n",status,line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
+			snprintf(log,3047,"[%ld Payload: %s Params: %s Cookie: %s UserAgent: %s \n Path Response Source: %s\n",status,line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
 			WriteFile(arg[5],log);
-			memset(log,0,2047);
+			memset(log,0,3047);
 
 			if(save_response==true)
 			{
