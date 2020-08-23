@@ -47,9 +47,9 @@ To install follow this cmd:
 ```
 $ cd 0d1n
 
-$ sudo make install; 
+$ make; sudo make install name_your_user; 
 
-$ cd 0d1n_view; sudo make install; 
+$ cd 0d1n_view; make; sudo make install name_your_user; 
 ```
 
 Up the view server to look the reports online:

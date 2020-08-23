@@ -28,6 +28,7 @@ install:
 	cp -rf cert /opt/0d1n/server/
 	cp config/allowlist.txt /opt/0d1n/server/
 	chmod 0755 -R /opt/0d1n/view/
+	chown ${USER} -R /opt/0d1n
 
 uninstall:
 	rm $(DESTDIR)$(PREFIX)/bin/0d1n_view
