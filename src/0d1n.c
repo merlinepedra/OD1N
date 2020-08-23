@@ -409,11 +409,11 @@ main(int argc, char ** argv)
  			
  				
    			case 'V':
-				if ( strnlen(optarg,3)<= 1 )
+				if ( strnlen(optarg,4)<= 1 )
 				{	
     					pack[9] = optarg;
 				} else {	
-					DEBUG("Error \nArgument SSL version one digit example 1,2 or 3 : \n1 is TLSv1\n2 is SSLv2\n3 is SSLv3\n 0 is default\n");
+					DEBUG("Error \nArgument SSL version one digit example 1,2,3,32,39 : \n1 is TLSv1\n2 is SSLv2\n3 is SSLv3\n5 is TLS 1.1\n6 is TLS 1.2\n7 is TLS 1.3\n 0 default if possible use last version\n");
 					exit(1);
 				}
 				break;

@@ -17,6 +17,7 @@ void scan(void *arguments)
 
 	if(arg[11]!=NULL)
 		threadss=(int)strtol(arg[11],(char **)NULL,10);
+
 	int old_thread=threadss,status=-1,timeout=0,num1=0,num2=0;
 	long int total_requests=0;
 
@@ -146,7 +147,7 @@ void scan(void *arguments)
 
 	puts(RED);
 	fprintf(stdout,"End scan \n look the file %s\n Total Requests %ld\n Path table: %s\n",pathhammer, total_requests,pathtable);
-	fprintf(stdout,"\nExecute 0d1n_view server \nFind the file html in https://127.0.0.1:40111/response_sources\n");
+	fprintf(stdout,"\nExecute 0d1n_view server \nFind the file html in https://127.0.0.1:40111/response_sources/hammmer_%s.html\n",arg[5]);
 	puts(LAST);
 
 // clear all

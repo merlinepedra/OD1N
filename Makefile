@@ -35,6 +35,7 @@ install:
 	cp -rf tables /opt/0d1n/view/
 	cp -rf payloads /opt/0d1n/
 	chmod 0755 -R /opt/0d1n
+	chown ${USER} -R /opt/0d1n
 
 uninstall:
 	rm $(DESTDIR)$(PREFIX)/bin/0d1n

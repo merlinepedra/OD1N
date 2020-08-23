@@ -2,8 +2,6 @@
 #define TEMPLATE "/opt/0d1n/templates/template.conf"
 #define RESPONSE_PATH "/opt/0d1n/view/response_sources"
 
-
-
 void spider(void *pack,char *line,char * pathtable)
 {
 	struct MemoryStruct chunk;
@@ -32,7 +30,7 @@ void spider(void *pack,char *line,char * pathtable)
 		if(arg[6]!=NULL)
 			token=get_anti_csrf_token(arg[0],arg[23],arg[6]);
 		else
-			token=get_anti_csrf_token(arg[0],arg[23],"Mozilla/5.0 (0d1n v0.1)");
+			token=get_anti_csrf_token(arg[0],arg[23],"Mozilla/5.0 (0d1n v2.7)");
 	}
 
 
@@ -111,6 +109,7 @@ void spider(void *pack,char *line,char * pathtable)
 			char *request_file=readLine(arg[21]);
 			make2=payload_injector( request_file,line,old);	
 			curl_easy_setopt(curl,  CURLOPT_URL, arg[0]);
+
 			if(token!=NULL)
 				make=replace(make2,"{token}",token); // if user pass token to bypass anti-csrf
 			else
@@ -224,7 +223,7 @@ void spider(void *pack,char *line,char * pathtable)
 		if ( arg[9] != NULL ) 
 			curl_easy_setopt(curl,CURLOPT_SSLVERSION,(int)strtol(arg[9],(char **)NULL,10));
 
-                curl_easy_setopt(curl,CURLOPT_VERBOSE,0); 
+		curl_easy_setopt(curl,CURLOPT_VERBOSE,0); 
 		curl_easy_setopt(curl,CURLOPT_HEADER,1);  
 		
 // if use custom request
