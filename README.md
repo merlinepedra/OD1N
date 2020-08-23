@@ -23,9 +23,6 @@
 
 > *other functions...
 
-                             
-![Alt text](https://github.com/CoolerVoid/0d1n/blob/master/doc/images/tables.png)
-
 ## to run and install follow this steps:
 
 require libcurl-dev or libcurl-devel(on rpm linux based)
