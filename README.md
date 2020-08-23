@@ -33,19 +33,37 @@ require libcurl-dev or libcurl-devel(on rpm linux based)
 $ git clone https://github.com/CoolerVoid/0d1n/
 
  
-need libcurl to run
+You need libcurl to run
 
-  
+```  
 $ sudo apt-get install libcurl-dev
 
 if rpm distro
 
 $ sudo yum install libcurl-devel
+```
 
-$ make
+To install follow this cmd:
+```
+$ cd 0d1n
 
-$./0d1n
+$ sudo make install; 
 
+$ cd 0d1n_view; sudo make install; sudo 
+```
+
+Up the view server to look the reports online:
+
+```
+$ sudo 0d1n_view &
+
+```
+
+Now you can run the tool:
+```
+
+$ 0d1n
+```
 
 
 Read the docs
