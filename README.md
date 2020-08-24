@@ -75,6 +75,33 @@ $ cd 0d1n_view; sudo make uninstall
 ```
 
 
+
+## Project Overview on cloc
+```
+cooler@gentoo:~/codes$ cloc 0d1n/
+     937 text files.
+     532 unique files.                                          
+     451 files ignored.
+
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+JavaScript                     361           9951          15621          52178
+C                               51           4986           4967          26642
+C/C++ Header                    30           1184           2858           4295
+CSS                             10            434            369           2142
+HTML                             7             59              0           1616
+TeX                              2             52              4            206
+Markdown                         3             81              0            137
+make                             4             36              9            130
+Bourne Shell                     2              0              0              4
+-------------------------------------------------------------------------------
+SUM:                           487          16835          23846          91213
+-------------------------------------------------------------------------------
+
+```
+
+
 Read the docs...
 
 Do you have any doubt about 0d1n? please create a issue in this repository, i can help you...
