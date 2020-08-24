@@ -26,7 +26,7 @@ PREFIX=/usr/local
 install:
 	make
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	install -m 0755 bin/0d1n $(DESTDIR)$(PREFIX)/bin
+	install -m 0766 bin/0d1n $(DESTDIR)$(PREFIX)/bin
 	mkdir /opt/0d1n
 	mkdir /opt/0d1n/view/
 	mkdir /opt/0d1n/view/response_sources
@@ -34,8 +34,9 @@ install:
 	cp -rf templates /opt/0d1n/
 	cp -rf tables /opt/0d1n/view/
 	cp -rf payloads /opt/0d1n/
-	chmod 0755 -R /opt/0d1n
+	chmod 0766 -R /opt/0d1n
 	chown ${USER} -R /opt/0d1n
+	chown ${USER} $(DESTDIR)$(PREFIX)/bin/0d1n
 
 uninstall:
 	rm $(DESTDIR)$(PREFIX)/bin/0d1n

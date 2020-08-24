@@ -19,5 +19,4 @@
 #include "file_ops.h"
 #include "spider.h"
  
-int threadss=4;
 void scan(void *arg);

@@ -19,12 +19,11 @@ ODBC
 quotation mark
 syntax
 ORA-
-<?php
+\<\?php
 bin/ruby
 bin/perl
 bin/python
-?>
-eval(
-system(
-execl(
-
+\?\>
+eval\(
+system\(
+execl\(

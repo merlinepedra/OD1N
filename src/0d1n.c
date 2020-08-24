@@ -42,7 +42,7 @@ $./0d1n
 #include <string.h>
 #include <signal.h>
 #include <sys/resource.h>
-#include "spider.h"
+#include "scan.h"
 #include "validate.h"
 
 void init_banner_odin()
