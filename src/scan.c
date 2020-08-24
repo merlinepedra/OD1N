@@ -148,7 +148,7 @@ void scan(void *arguments)
 
 	puts(RED);
 	fprintf(stdout,"End scan \n look the file %s\n Total Requests %ld\n Path table: %s\n",pathhammer, total_requests,pathtable);
-	fprintf(stdout,"\nExecute 0d1n_view server \nFind the file html in https://127.0.0.1:40111/tables/hammmer_%s.html\n",arg[5]);
+	fprintf(stdout,"\nExecute 0d1n_view server \nFind the file html in https://127.0.0.1:40111/tables/hammer_%s.html\n",arg[5]);
 	puts(LAST);
 
 // clear all

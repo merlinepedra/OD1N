@@ -20,8 +20,6 @@ void write_result(
 {
 	FILE *fp=NULL;
 	bool match_string=false; 
-	char *responsetemplate=NULL;
-        char *tmp_response=NULL,*tmp_make_cookie=NULL,*tmp_make_agent=NULL;
 	char **pack_ptr=(char **)pack,**arg = pack_ptr;
 	char randname[16],line2[1024],log[3048],tabledata[4086],pathsource[1024],pathurl[1024];
 // arg[10]  list to find with regex , arg[2] list without regex
@@ -39,7 +37,8 @@ void write_result(
 			while ( fgets(line2,1023,fp) != NULL) 
 			{
 				chomp(line2);
-				char *tmp_make=NULL,*tmp_line=NULL,*tmp_line2=NULL;
+				char *tmp_make_cookie=NULL,*tmp_make_agent=NULL;
+				char *tmp_make=NULL,*tmp_line=NULL,*tmp_line2=NULL,*tmp_response=NULL,*responsetemplate=NULL;
 // find a string in response
 				if(status != 0)
 				{
@@ -121,9 +120,10 @@ void write_result(
       					}
 
 					WriteFile(pathtable,tabledata);
-				//	memset(tmp_make,0,strlen(tmp_make)-1);
-				//	memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
-				//	memset(tmp_make_agent,0,strlen(tmp_make_agent)-1);
+			// for debug purpose
+			//		memset(tmp_make,0,strlen(tmp_make)-1);
+			//		memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
+			//		memset(tmp_make_agent,0,strlen(tmp_make_agent)-1);
 			//		memset(tmp_line,0,strlen(tmp_line)-1);
 			//		memset(tmp_line2,0,strlen(tmp_line2)-1);
 			//		memset(tabledata,0,4085);
@@ -131,7 +131,14 @@ void write_result(
 					XFREE(tmp_line);
 					XFREE(tmp_make);
 					XFREE(tmp_line2);
+					XFREE(responsetemplate);
+					XFREE(tmp_response);	
+					XFREE(tmp_make_cookie);
+					XFREE(tmp_make_agent);
+	
+	
 				}
+
 			}
  
 			
@@ -145,7 +152,8 @@ void write_result(
 			fp=NULL;
 
 		} else {
-			char *tmp_line=NULL,*tmp_make=NULL;
+			char *tmp_line=NULL,*tmp_make=NULL,*tmp_response=NULL,*responsetemplate=NULL;
+			char *tmp_make_cookie=NULL,*tmp_make_agent=NULL;
 
 			if(counter_cookie)
 			{
@@ -208,21 +216,19 @@ void write_result(
 				snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_line);
 			}
   			WriteFile(pathtable,tabledata);
+
 //			memset(tmp_make,0,strlen(tmp_make)-1);
 //			memset(tmp_line,0,strlen(tmp_line)-1);
 //			memset(tabledata,0,4085);
 //			memset(pathsource,0,strlen(pathsource)-1);
 			XFREE(tmp_line);
 			XFREE(tmp_make);
-
+			XFREE(tmp_response);
+			XFREE(responsetemplate);
+			XFREE(tmp_make_cookie);
+			XFREE(tmp_make_agent);
+	
 		}
-
-
-// clear all
-	XFREE(tmp_make_cookie);
-	XFREE(tmp_make_agent); 
-	XFREE(responsetemplate);
-	XFREE(tmp_response);
  
 }
 
