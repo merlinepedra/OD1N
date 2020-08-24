@@ -70,7 +70,7 @@ $ 0d1n
 ```
 $ cd 0d1n; sudo make uninstall
 
-$ cd 0d1n\_view; sudo uninstall
+$ cd 0d1n_view; sudo make uninstall
 
 ```
 
