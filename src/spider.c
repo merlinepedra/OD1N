@@ -318,7 +318,6 @@ void spider(void *pack,char *line,char * pathtable)
 			length
 	);	
 
-
 // clear all
 	XFREE(chunk.memory);
 	XFREE(make_agent);
@@ -326,15 +325,10 @@ void spider(void *pack,char *line,char * pathtable)
 	XFREE(make);
 	XFREE(make2);
 
-	XFREE(chunk.memory);
-	
-
-
 	if(arg[20] != NULL)
 		XFREE(line);
 
 	if(arg[22] != NULL)
 		XFREE(token);
- 
 }
 

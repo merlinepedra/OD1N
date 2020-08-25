@@ -14,7 +14,7 @@ void scan(void *arguments)
 	char line[2048]; 
 	int threadss=2;
 
-	pid_t pid;
+	pid_t pid=0;
 
 	if(arg[11]!=NULL)
 		threadss=(int)strtol(arg[11],(char **)NULL,10);
@@ -84,7 +84,7 @@ void scan(void *arguments)
 	{
 		threadss--;
 		curl_global_cleanup();
-		pid=vfork();
+		pid=fork();
 		curl_global_init(CURL_GLOBAL_ALL);
 
 
@@ -104,8 +104,6 @@ void scan(void *arguments)
 //			curl_global_init(CURL_GLOBAL_ALL);
 			threadss--;
 			spider(arguments,line,pathtable);
-
-
 //			curl_global_cleanup();
 			exit(0);
 		}
@@ -142,7 +140,6 @@ void scan(void *arguments)
 	}				
 
 	sleep(timeout+5);
-	
 // end of json file
 	WriteFile(pathtable," [\"\",\"\",\"\",\"\",\"\"] \n ] }");
 
@@ -152,9 +149,9 @@ void scan(void *arguments)
 	puts(LAST);
 
 // clear all
-	memset(pathtable,0,(strnlen(pathtable,64)-1)*sizeof(char));
-	memset(pathhammer,0,(strnlen(pathhammer,64)-1)*sizeof(char));
-	memset(view,0,(strnlen(view,total-1)-1)*sizeof(char));
+//	memset(pathtable,0,(strnlen(pathtable,64)-1)*sizeof(char));
+//	memset(pathhammer,0,(strnlen(pathhammer,64)-1)*sizeof(char));
+//	memset(view,0,(strnlen(view,total-1)-1)*sizeof(char));
 
 	XFREE(pathtable);
 	XFREE(pathhammer);
