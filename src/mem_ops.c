@@ -9,12 +9,10 @@
 
 static void *xmalloc_fatal(size_t size) 
 {
-	if ( size == 0 ) 
-		return NULL;
 
-	DEBUG("\n Memory FAILURE...\n");
+	DEBUG("\n Memory FAILURE...\n size dbg: %lu\n",size);
 
-	exit(1);
+	exit(0);
 }
 
 void *xmalloc (size_t size) 
@@ -107,7 +105,7 @@ void *xmallocarray (size_t nmemb, size_t size)
 	if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) && nmemb > 0 && SIZE_MAX / nmemb < size) 
 	{
 		DEBUG("integer overflow block");
-		return NULL;
+		exit(0);
 	}
 
 	void *ptr = malloc (nmemb*size);
@@ -126,7 +124,7 @@ void *xreallocarray (void *ptr, size_t nmemb, size_t size)
 	if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) && nmemb > 0 && SIZE_MAX / nmemb < size) 
 	{
 		DEBUG("integer overflow block");
-		return NULL;
+		exit(0);
 	}
 
 	void *p = realloc (ptr, nmemb*size);
