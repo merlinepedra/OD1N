@@ -2,7 +2,8 @@ export MALLOC_MMAP_THRESHOLD_=1
 export MALLOC_CHECK_=1
 export MALLOC_PERTURB_=1
 CC=gcc
-CFLAGS=-W -Wall -Wextra -fstack-protector-all
+CFLAGS=-W -Wall -Wextra -Wformat-security
+HARDENING= -mmitigate-rop -fstack-protector-all -pie -fPIE -ftrapv
 DIR=src/
 DIROUT=bin/
 UNAME_S := $(shell uname -s)
@@ -12,12 +13,11 @@ else
 	LDFLAGS=-Wl,-z,relro,-z,now -lcurl
 endif
 
-#LDFLAGS=-lcurl
 
 
 0d1n: $(DIR)0d1n.c 
-	$(CC) $(CFLAGS) -c $(DIR)*.c
-	$(CC) -o $(DIROUT)0d1n *.o  $(LDFLAGS)
+	$(CC) $(CFLAGS) $(HARDENING) -c $(DIR)*.c
+	$(CC) $(HARDENING)  -o $(DIROUT)0d1n *.o  $(LDFLAGS)
 
 clean:
 	rm -f *.o 0d1n
