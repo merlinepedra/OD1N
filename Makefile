@@ -6,6 +6,7 @@ CFLAGS=-W -Wall -Wextra -Wformat-security
 HARDENING= -mmitigate-rop -fstack-protector-all -pie -fPIE -ftrapv
 DIR=src/
 DIROUT=bin/
+DIR_HEADERS=src/headers/
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	LDFLAGS=-Wl,-lcurl
@@ -16,7 +17,7 @@ endif
 
 
 0d1n: $(DIR)0d1n.c 
-	$(CC) $(CFLAGS) $(HARDENING) -c $(DIR)*.c
+	$(CC) $(CFLAGS) $(HARDENING) -c $(DIR)*.c -I$(DIR_HEADERS)
 	$(CC) $(HARDENING)  -o $(DIROUT)0d1n *.o  $(LDFLAGS)
 
 clean:
