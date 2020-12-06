@@ -31,7 +31,6 @@ void scan(void)
 
 
 	prepare_datatable();
-	DEBUG("DEBUG TEMPALTE %s \nOUTPUT!!! %s\n ", param.datatable, param.path_output);
 	threadpool thpool = thpool_init(threadss);
 
 	while ( getline(&line,&len,fp) != -1) 
