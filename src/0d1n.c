@@ -47,7 +47,6 @@ $./0d1n
 #include "validate.h"
 
 
-
 int 
 main (int argc, char ** argv)
 {

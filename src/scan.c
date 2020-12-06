@@ -36,10 +36,6 @@ void scan(void)
 
 	while ( getline(&line,&len,fp) != -1) 
 	{
-//		curl_global_cleanup();
-//		curl_global_init(CURL_GLOBAL_ALL);
-
-
 		if (total_requests<LONG_MAX)
 			total_requests++;
 		
@@ -50,13 +46,9 @@ void scan(void)
   	}
 
 	thpool_destroy(thpool);
-
 	threadss = 0;
-
-
 	puts("Sleep 3 seconds + timeout");
 	sleep(timeout+3);
-
 	end_datatable(param.datatable);
 
 	puts(RED);

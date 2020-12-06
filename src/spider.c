@@ -6,10 +6,6 @@ pthread_mutex_t mutex_spider = PTHREAD_MUTEX_INITIALIZER;
 void spider(void *in)
 {
 	pthread_mutex_lock(&mutex_spider);
-//	curl_global_cleanup();
-//	curl_global_init(CURL_GLOBAL_ALL);
-
-//	pthread_mutex_lock(&mutex_spider);
 	char *line=(char *)in;
 
 	struct MemoryStruct chunk;
@@ -280,10 +276,8 @@ void spider(void *in)
 		}
 
 
-//		XFREE(chunk.memory);
 	
 		curl_easy_cleanup(curl);
-       // 	curl_global_cleanup();
 
 		if (old>0)
 			old--;
@@ -300,7 +294,6 @@ void spider(void *in)
 	
 	}
 
-//	pthread_mutex_lock(&mutex_spider);
 	// Write results in log and htmnl+js in /opt/0d1n/view
 	write_result(	(char *)chunk.memory,
 			param.datatable,
@@ -313,9 +306,8 @@ void spider(void *in)
 			status,
 			length
 	);	
-//	pthread_mutex_unlock(&mutex_spider);
 
-// clear all
+	// clear all
 	XFREE(chunk.memory);
 	XFREE(make_agent);
 	XFREE(make_cookie);
