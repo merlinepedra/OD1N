@@ -1,29 +1,32 @@
-## 0d1n
-=====
+# 0d1n
+---
 
 ![Alt text](https://github.com/CoolerVoid/0d1n/blob/master/doc/images/tables.png)
 0d1n is a tool for automating customized attacks against web applications.
+This tool is very faster because uses thread pool and C language.
 
 
-# Tool functions: 
+Tool functions: 
+---
 
-> *Brute force login and passwords in auth forms
+ * Brute force login and passwords in auth forms
 
-> *Directory disclosure ( use PATH list to brute, and find HTTP status code )
+ * Directory disclosure ( use PATH list to brute, and find HTTP status code )
 
-> *Test to find SQL Injection and XSS vulnerabilities 
+ * Test to find SQL Injection and XSS vulnerabilities 
 
-> *Test to find SSRF
+ * Test to find SSRF
 
-> *Test to find COmmand injection
+ * Test to find COmmand injection
 
-> *Options to load ANTI-CSRF token each request
+ * Options to load ANTI-CSRF token each request
 
-> *Options to use random proxy per request
+ * Options to use random proxy per request
 
-> *other functions...
+ * other functions...
 
-## to run and install follow this steps:
+To run and install follow this steps:
+---
 
 require libcurl-dev or libcurl-devel(on rpm linux based)
 
@@ -64,7 +67,8 @@ $ 0d1n
 ```
 
 
-## to uninstall follow this steps:
+to uninstall follow this steps:
+---
 
 
 ```
@@ -74,7 +78,8 @@ $ cd 0d1n_view; sudo make uninstall
 
 ```
 
-## Attack examples:
+Attack examples:
+---
 
 Brute force to find directory
 ```
@@ -83,17 +88,34 @@ $ 0d1n --host http://127.0.0.1/^ --payloads /opt/0d1n/payloads/dir_brute.txt --t
 Note: You can change value of threads, if you have a good machine, you can try 800, 1200... each machine have a different context.
 
 
+For SQL injection attack
+```
+$ 0d1n --host 'http://site.com/view/1^/product/^/' --payloads /opt/0d1n/payloads/sqli_list.txt --find_string_list /opt/0d1n/payloads/sqli_str2find_list.txt --log log1337 --tamper randcase --threads 800 --timeout 3 --save_response\n"
+```
+Note: Tamper is resource to try bypass the web application firewall
 
-## Notes External libs
 
-To gain extreme performance 0d1n uses thread pool of posix threads, you can study this small library: 
+To brute force auth system
+```
+0d1n --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads /opt/0d1n/payloads/wordlist.txt --log log007 --threads 500 --timeout 3\n"
+```
+Note: if have csrf token, you can use argv to get this token each request and brute...
+
+
+
+Notes External libs
+---
+
+* To gain extreme performance 0d1n uses thread pool of posix threads, you can study this small library: 
 https://github.com/Pithikos/C-Thread-Pool
 
-The 0d1n uses OpenBSD/NetBSD functions to work with strings some thing like strlcat() and strlcpy() to prevent buffer overflow.
+* The 0d1n uses OpenBSD/NetBSD functions to work with strings some thing like strlcat() and strlcpy() to prevent buffer overflow.
 
 
 
-## Project Overview on cloc
+Project Overview on cloc
+---
+
 ```
 cooler@gentoo:~/codes$ cloc 0d1n/
      937 text files.
@@ -119,10 +141,9 @@ SUM:                           487          16835          23846          91213
 ```
 
 
-Read the docs...
+Read the docs, and help menu when you execute "0d1n" binary...
 
 Do you have any doubt about 0d1n? please create a issue in this repository, i can help you...
-
 
 
 
