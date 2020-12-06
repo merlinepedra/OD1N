@@ -1,3 +1,6 @@
+#ifndef TAMPER_H__
+#define TAMPER_H__
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,3 +24,5 @@ char *apostrophe2nullencode(char *str);
 char *rand_comment(char *str);
 char *rand_space(char *str);
 char *replace_keywords(char *str);
+
+#endif

@@ -1,13 +1,8 @@
-#include <stdio.h>	
-#include <sys/types.h>
-#include <string.h>		
-#include <stdlib.h>
-#include <assert.h>
-#include <curl/curl.h>
 #include "mem_ops.h"
 
 
-static void *xmalloc_fatal(size_t size) 
+static void *
+xmalloc_fatal(size_t size) 
 {
 
 	DEBUG("\n Memory FAILURE...\n size dbg: %lu\n",size);
@@ -15,7 +10,8 @@ static void *xmalloc_fatal(size_t size)
 	exit(0);
 }
 
-void *xmalloc (size_t size) 
+void *
+xmalloc (size_t size) 
 {
 	void *ptr = malloc (size);
 
@@ -25,7 +21,8 @@ void *xmalloc (size_t size)
 	return ptr;
 }
 
-void *xcalloc (size_t mem, size_t size) 
+void *
+xcalloc (size_t mem, size_t size) 
 {
 	void *ptr = calloc (mem, size);
 
@@ -35,7 +32,8 @@ void *xcalloc (size_t mem, size_t size)
 	return ptr;
 }
 
-void *xrealloc (void *ptr, size_t size) 
+void *
+xrealloc (void *ptr, size_t size) 
 {
 	void *p = realloc (ptr, size);
 
@@ -45,9 +43,11 @@ void *xrealloc (void *ptr, size_t size)
 	return p;
 }
 
-void xfree(void **ptr) 
+void 
+xfree(void **ptr) 
 {
 	assert(ptr);
+
 	if( ptr != NULL )
         {
 		free(*ptr);
@@ -56,14 +56,15 @@ void xfree(void **ptr)
 	
 }
 
-size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data) 
+size_t 
+WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data) 
 {
 	size_t realsize = size * nmemb;
 	struct MemoryStruct *mem = (struct MemoryStruct *)data;
 
 	mem->memory = xrealloc(mem->memory, mem->size + realsize + 1);
 
-	if( mem->memory ) 
+	if ( mem->memory ) 
 	{
 		memcpy(&(mem->memory[mem->size]), ptr, realsize);
 		mem->size += realsize;
@@ -75,7 +76,8 @@ size_t WriteMemoryCallback(void *ptr, size_t size, size_t nmemb, void *data)
 }
 
 
-int wait_on_socket(curl_socket_t sockfd, int for_recv, long timeout_ms)
+int 
+wait_on_socket(curl_socket_t sockfd, int for_recv, long timeout_ms)
 {
 	struct timeval tv;
 	fd_set infd, outfd, errfd;
@@ -100,7 +102,8 @@ int wait_on_socket(curl_socket_t sockfd, int for_recv, long timeout_ms)
 	return res;
 }
 
-void *xmallocarray (size_t nmemb, size_t size) 
+void *
+xmallocarray (size_t nmemb, size_t size) 
 {
 	if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) && nmemb > 0 && SIZE_MAX / nmemb < size) 
 	{
@@ -119,7 +122,8 @@ void *xmallocarray (size_t nmemb, size_t size)
 // based in OpenBSD reallocarray() function http://man.openbsd.org/reallocarray.3
 
 
-void *xreallocarray (void *ptr, size_t nmemb, size_t size) 
+void *
+xreallocarray (void *ptr, size_t nmemb, size_t size) 
 {
 	if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) && nmemb > 0 && SIZE_MAX / nmemb < size) 
 	{

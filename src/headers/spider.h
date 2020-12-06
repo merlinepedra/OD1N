@@ -1,3 +1,5 @@
+#ifndef SPIDER_H__
+#define SPIDER_H__
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -9,6 +11,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <limits.h>
+#include <pthread.h>
 #include <curl/curl.h>
 //#include <curl/types.h>
 #include <curl/easy.h>
@@ -20,5 +23,9 @@
 #include "file_ops.h"
 #include "tamper.h"
 #include "get_csrf_token.h"
+#include "opt_extract.h"
 
-void spider(void *arg,char *line,char * pathtable);
+
+void spider(void *in);
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef STRSEC_H__
+#define STRSEC_H__
 #include <sys/types.h>
 #include <string.h>
 #include <limits.h>
@@ -64,4 +66,4 @@ char *strnstr(const char *s, const char *find, size_t slen);
 
 #endif /* ! __*BSD__ */
 
-
+#endif

@@ -1,3 +1,5 @@
+#ifndef RESULTS_H__
+#define RESULTS_H__
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -17,6 +19,7 @@
 #include "string_ops.h"
 #include "strsec.h"
 #include "file_ops.h"
+#include "opt_extract.h"
 
 // colors macro
 #define RED "\033[22;31m"
@@ -27,8 +30,6 @@
  
 
 void write_result(
- void *pack, 
- bool save_response,
  char *chunk_in,
  char *pathtable,
  char *line,
@@ -39,3 +40,5 @@ void write_result(
  int counter_agent,
  long status,
  long length);
+
+#endif

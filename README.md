@@ -74,6 +74,23 @@ $ cd 0d1n_view; sudo make uninstall
 
 ```
 
+## Attack examples:
+
+Brute force to find directory
+```
+$ 0d1n --host http://127.0.0.1/^ --payloads /opt/0d1n/payloads/dir_brute.txt --threads 500 --timeout 3 --log bartsimpsom4 --save_response
+```
+Note: You can change value of threads, if you have a good machine, you can try 800, 1200... each machine have a different context.
+
+
+
+## Notes External libs
+
+To gain extreme performance 0d1n uses thread pool of posix threads, you can study this small library: 
+https://github.com/Pithikos/C-Thread-Pool
+
+The 0d1n uses OpenBSD/NetBSD functions to work with strings some thing like strlcat() and strlcpy() to prevent buffer overflow.
+
 
 
 ## Project Overview on cloc
@@ -105,6 +122,7 @@ SUM:                           487          16835          23846          91213
 Read the docs...
 
 Do you have any doubt about 0d1n? please create a issue in this repository, i can help you...
+
 
 
 

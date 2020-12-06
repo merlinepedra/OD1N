@@ -36,27 +36,55 @@ $./0d1n
 
 
 */
-#include <stdio.h> 
-#include <getopt.h>
+
+#ifndef OPT_EXTRACT_H__
+#define OPT_EXTRACT_H__
+
+#include <stdio.h>
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
-#include <sys/resource.h>
-#include "opt_extract.h"
+#include <errno.h>
+#include <stdbool.h>
+
+#include <getopt.h>
+
 #include "scan.h"
 #include "validate.h"
 
 
+struct choice  {
+	char *host;
+	char *payloads;
+	char *custom;
+	char *find_string_list;
+	char *find_regex_list;
+	char *cookie_jar;
+	char *cookie;
+	char *agent;
+	char *post;
+	char *method;
+	char *header;
+	char *log;
+	char *UserAgent;
+	char *CA_certificate;
+	char *SSL_version;
+	char *threads;
+	char *timeout;
+	char *proxy;
+	char *proxy_rand;
+	char *tamper;
+	char *token_name;
+	char *path_output;
+	char *datatable;
+	bool save_response;
+	bool json_headers;
+};
 
-int 
-main (int argc, char ** argv)
-{
- 	no_write_coredump();
- 	load_signal_alarm();
-	parser_opts(argc,argv);
+struct choice param;
 
-	scan();
+void init_banner_odin();
+void parser_opts (int argc, char **argv);
 
- 	exit(0);
-}
 
+#endif

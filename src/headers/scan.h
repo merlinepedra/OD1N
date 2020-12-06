@@ -1,3 +1,6 @@
+#ifndef SCAN_H__
+#define SCAN_H__
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -18,5 +21,10 @@
 #include "string_ops.h"
 #include "file_ops.h"
 #include "spider.h"
- 
-void scan(void *arg);
+#include "opt_extract.h"
+#include <pthread.h>
+#include "thpool.h"
+
+void scan(void);
+
+#endif

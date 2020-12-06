@@ -2,16 +2,16 @@ export MALLOC_MMAP_THRESHOLD_=1
 export MALLOC_CHECK_=1
 export MALLOC_PERTURB_=1
 CC=gcc
-CFLAGS=-W -Wall -Wextra -Wformat-security
-HARDENING= -mmitigate-rop -fstack-protector-all -pie -fPIE -ftrapv
+CFLAGS=-W -Wall -Wextra -Wformat-security -O2
+HARDENING= -fstack-protector-all -pie -fPIE
 DIR=src/
 DIROUT=bin/
 DIR_HEADERS=src/headers/
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-	LDFLAGS=-Wl,-lcurl
+	LDFLAGS=-Wl,-lcurl, -lpthread
 else
-	LDFLAGS=-Wl,-z,relro,-z,now -lcurl
+	LDFLAGS=-Wl,-z,relro,-z,now -lcurl -lpthread
 endif
 
 

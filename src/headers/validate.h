@@ -1,3 +1,4 @@
+
 /*
 Author:Antonio Costa aka " Cooler_ "
 contact: c00f3r[at]gmail[dot]com
@@ -35,9 +36,26 @@ $./0d1n
 
 
 */
+#ifndef VALIDATE_H__
+#define VALIDATE_H__
+#include <stdio.h> 
+#include <stdlib.h>
+#include <string.h>
+#include <signal.h>
+#include <sys/resource.h>
+#include <errno.h> 
+#include <sys/types.h>
+#include <unistd.h>
+#include <curl/curl.h>
+#include "mem_ops.h"
+
+
+
 
 void No_Pause_Scan ();
 void no_write_coredump (void); 
 void load_signal_alarm (void);
 void validate_hostname(const char *hostname);
 int test_letter(char p);
+
+#endif

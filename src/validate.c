@@ -21,18 +21,8 @@ contact: c00f3r[at]gmail[dot]com
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-#include <stdio.h> 
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/resource.h>
-#include <errno.h> 
-#include <sys/types.h>
-#include <unistd.h>
-#include <curl/curl.h>
 
 #include "validate.h"
-#include "mem_ops.h"
 
 
 // block ctrl+c 
