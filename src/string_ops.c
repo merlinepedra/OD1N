@@ -84,19 +84,21 @@ chomp(char * str)
 char *
 payload_injector(char * ptr,char * payload,int counter)
 {
-	size_t len_ptr = strlen(ptr), len_payload = strlen(payload), total_len = len_ptr+len_payload;
+	size_t len_ptr = strlen(ptr), len_payload = strlen(payload), total_len = len_ptr+(len_payload* counter);
 	char *new = xmallocarray((total_len+1),sizeof(char));
 	short i = 0, x = 1;
 	memset(new, 0,(total_len)*sizeof(char));
+
 
 	while(*ptr != '\0')
 	{
 		if(*ptr == '^')
 		{
-			if(counter==x)
+			if(counter)
 			{
 				strlcat(new,payload,total_len+1);
 				i+=len_payload;
+				counter-=1;
 			}
 			x++;
 		} 

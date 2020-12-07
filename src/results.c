@@ -10,53 +10,45 @@ void write_result(
  char * make, 
  char * make_agent, 
  char * make_cookie,
- int counter_cookie,
- int counter_agent,
  long status,
  long length
 )
 {
-	FILE *fp=NULL;
 	bool match_string=false; 
-	char randname[32],line2[1024],log[3048],tabledata[4086],pathsource[1024],pathurl[1024];
+	char randname[32],log[3048],tabledata[4086],pathsource[1024],pathurl[1024];
+	char *find_list = NULL, *ptr_line = NULL, *delim = "\n";
 
 	// param.find_regex_list  list to find with regex , param.find_string_list list without regex
 		if(  (param.find_string_list) || (param.find_regex_list)  )
 		{
+			find_list = readLine((param.find_string_list!=NULL)?param.find_string_list:param.find_regex_list);
+			ptr_line = strtok(find_list, delim);
 
-			fp = fopen((param.find_string_list!=NULL)?param.find_string_list:param.find_regex_list, "r");
-
-			if ( !fp )
-			{ 
-				DEBUG("Find List error\nPlease use correct argv\nerror to open response list : %s",strerror(errno)); 
-				exit(1);
-			}
-
-			while ( fgets(line2,1023,fp) != NULL) 
+			while (ptr_line != NULL) 
 			{
-				chomp(line2);
+				chomp(ptr_line);
 				char *tmp_make_cookie = NULL,*tmp_make_agent = NULL;
-				char *tmp_make = NULL,*tmp_line = NULL,*tmp_line2 = NULL,*tmp_response = NULL,*responsetemplate = NULL;
+				char *tmp_make = NULL,*tmp_line = NULL,*tmp_ptr_line = NULL,*tmp_response = NULL,*responsetemplate = NULL;
 
 				// find a string in response
 				if (status != 404)
 				{
 					if (param.find_string_list != NULL )
-						match_string = strstr(chunk,line2)?true:false;
+						match_string = strstr(chunk,ptr_line)?true:false;
 
 					if (param.find_regex_list != NULL )
-						match_string = strstr_regex(chunk,line2)?true:false;
+						match_string = strstr_regex(chunk,ptr_line)?true:false;
 				}
 				if (chunk && (match_string == true) ) 
 				{
 					if (make_cookie!=NULL)
-						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s \nCookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,make_cookie,LAST);
+						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s \nCookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,ptr_line,YELLOW,make,make_cookie,LAST);
 					
 
 					if (make_agent!=NULL)
-						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s \nCookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,make_agent,LAST);
+						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s \nCookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,ptr_line,YELLOW,make,make_agent,LAST);
 					else 
-						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,line2,YELLOW,make,LAST);
+						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,ptr_line,YELLOW,make,LAST);
 					
 
 					if (param.save_response==true && status != 404)
@@ -76,7 +68,7 @@ void write_result(
 					// write log file
 					if(status != 404)
 					{
-						snprintf(log,3047,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s  UserAgent: %s \n Path Response Source: %s\n",status,line,line2,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
+						snprintf(log,3047,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s  UserAgent: %s \n Path Response Source: %s\n",status,line,ptr_line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
 						WriteFile(param.log,log);
 						memset(log,0,3047);	
 					}
@@ -99,23 +91,23 @@ void write_result(
 
 // create datatables	
 					tmp_make = html_entities(make);
-					tmp_line2 = html_entities(line2);
+					tmp_ptr_line = html_entities(ptr_line);
 					tmp_line = html_entities(line);
 
 					if (make_cookie!=NULL)
 					{
 						tmp_make_cookie = html_entities(make_cookie);
-						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s cookie: %s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_cookie,tmp_line2,tmp_line);
+						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s cookie: %s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_cookie,tmp_ptr_line,tmp_line);
 						memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
 					}
 
 					if (make_agent!=NULL)
 					{
 						tmp_make_agent = html_entities(make_agent);
-						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s UserAgent: %s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_agent,tmp_line2,tmp_line);
+						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s UserAgent: %s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_agent,tmp_ptr_line,tmp_line);
 						memset(tmp_make_agent,0,strlen(tmp_make_agent)-1);
 					} else 
-						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_line2,tmp_line);
+						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_ptr_line,tmp_line);
 
 					if (status != 404)					
 						WriteFile(pathtable,tabledata);
@@ -123,7 +115,7 @@ void write_result(
 					// liberate heap
 					XFREE(tmp_line);
 					XFREE(tmp_make);
-					XFREE(tmp_line2);
+					XFREE(tmp_ptr_line);
 					XFREE(responsetemplate);
 					XFREE(tmp_response);	
 					XFREE(tmp_make_cookie);
@@ -131,18 +123,11 @@ void write_result(
 	
 	
 				}
-
+				
+				ptr_line = strtok(NULL, delim);
 			}
  
-			
-			if( fclose(fp) == EOF )
-			{
-				DEBUG("Error in close()");
-				exit(0);
-			}
-
-			
-			fp=NULL;
+			XFREE(find_list);
 
 // if don't have list to find data in response, usually for brute path result
 		} else {
@@ -150,10 +135,10 @@ void write_result(
 			char *tmp_line = NULL,*tmp_make = NULL,*tmp_response = NULL,*responsetemplate = NULL;
 			char *tmp_make_cookie = NULL,*tmp_make_agent = NULL;
 
-			if (counter_cookie)
+			if (make_cookie != NULL)
 				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n Cookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_cookie,LAST);
 			
-			if (counter_agent)
+			if (make_agent != NULL)
 				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n UserAgent: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_agent,LAST);
 			else 
 				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
@@ -196,7 +181,7 @@ void write_result(
 			tmp_make = html_entities(make);
 			tmp_line = html_entities(line);
 
-			if (counter_cookie)
+			if (make_cookie != NULL)
 			{
 				
 				tmp_make_cookie = html_entities(make_cookie);
@@ -204,7 +189,7 @@ void write_result(
 			//	memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
 			}
 
-			if (counter_agent)
+			if (make_agent != NULL)
 			{
 				
 				tmp_make_agent = html_entities(make_agent);

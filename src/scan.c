@@ -37,11 +37,10 @@ void scan(void)
 	{
 		if (total_requests<LONG_MAX)
 			total_requests++;
-		
+
 		void *tmp_str = (void *)line;
 		thpool_add_work(thpool, spider, tmp_str);
 		thpool_wait(thpool);
-
   	}
 
 	thpool_destroy(thpool);

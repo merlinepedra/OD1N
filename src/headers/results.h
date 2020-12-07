@@ -36,8 +36,6 @@ void write_result(
  char * make, 
  char * make_agent, 
  char * make_cookie,
- int counter_cookie,
- int counter_agent,
  long status,
  long length);
 

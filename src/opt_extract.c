@@ -107,7 +107,7 @@ LAST
 YELLOW
 "example 4 Brute dir:\n"
 LAST
-"0d1n --host https://page/^ --payloads /opt/0d1n/payloads/dir_brute.txt --threads 1000 --timeout 3 --log logtest_brutedir --save_response\n"
+"0d1n --host https://page/^ --payloads /opt/0d1n/payloads/dir_brute.txt --threads 800 --timeout 3 --log logtest_brutedir --save_response\n"
 YELLOW
 "Notes:\n"
 LAST

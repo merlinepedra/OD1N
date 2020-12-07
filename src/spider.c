@@ -10,9 +10,9 @@ void spider(void *in)
 
 	struct MemoryStruct chunk;
 	long status = 0,length = 0;
-	int old = 0, res = 0, counter = 0, counter_cookie = 0, counter_agent = 0, POST = 0, timeout = 3, debug_host = 3; 
+	int res = 0, try = 1, POST = 0, timeout = 3, debug_host = 3; 
 	char *make = NULL, *make2 = NULL, *make_cookie = NULL, *make_agent = NULL;
-	char *token = NULL;
+	char *token = NULL, *request_file = NULL;
 
 
 	if (param.timeout!=NULL)
@@ -35,31 +35,16 @@ void spider(void *in)
 // payload tamper, get payload of line and make tamper 
 	if(param.tamper!=NULL)
 		line = tamper_choice(param.tamper,line);
-// brute POST/GET/COOKIES/UserAgent
-	if(param.custom==NULL)
-	{
-		POST = (param.post==NULL)?0:1;
-		counter = char_type_counter(POST?param.post:param.host,'^');
-		counter_cookie = char_type_counter(param.cookie!=NULL?param.cookie:"",'^');
-		counter_agent = char_type_counter(param.UserAgent!=NULL?param.UserAgent:"",'^');
-		old = counter;  
-
-	} else {
-
-		char *file_request = readLine(param.custom);
-		counter = char_type_counter(file_request,'^');
-		old = counter;
-		XFREE(file_request);
-	}
 
 	chomp(line);
 
 // goto to fix signal stop if user do ctrl+c
 	try_again:
 
-	while ( old > 0 || counter_cookie > 0  || counter_agent > 0 )
-	{
+	POST=param.post?1:0;
 
+	while(try)
+	{
 		CURL *curl;  
 //		curl_global_init(CURL_GLOBAL_ALL); 
 
@@ -76,7 +61,7 @@ void spider(void *in)
 // add payload at inputs
 		if(param.custom==NULL) //if custom request  argv mode null
 		{
-			make2 = payload_injector( (POST?param.post:param.host),line,old);
+			make2 = replace ( (POST?param.post:param.host),"^",line);
 
 			if (token)
 		 		make = replace(make2,"{token}",token); // if user pass token to bypass anti-csrf
@@ -84,16 +69,16 @@ void spider(void *in)
 				make = strdup(make2);	
 
 			if (param.cookie!=NULL)	
-				make_cookie = payload_injector( param.cookie,line,counter_cookie);	
+				make_cookie = replace( param.cookie,"^",line);	
 	
 			if (param.UserAgent!=NULL)
-				make_agent = payload_injector( param.UserAgent,line,counter_agent);
+				make_agent = replace( param.UserAgent,"^",line);
 
-			curl_easy_setopt(curl,  CURLOPT_URL, POST?param.host:make);
+			curl_easy_setopt(curl,  CURLOPT_URL, param.host);
 		} else {
 // if is custom request
-			char *request_file = readLine(param.custom);
-			make2 = payload_injector( request_file,line,old);	
+			request_file = readLine(param.custom);
+			make2 = replace( request_file,"^",line);	
 			curl_easy_setopt(curl,  CURLOPT_URL, param.host);
 
 			if (token!=NULL)
@@ -268,7 +253,7 @@ void spider(void *in)
 			if (debug_host==0)
 				exit(0);
 
-			sleep(30);
+			sleep(3);
 
 			goto try_again;
 			
@@ -276,24 +261,12 @@ void spider(void *in)
 		}
 
 
-	
-		curl_easy_cleanup(curl);
-
-		if (old>0)
-			old--;
-
-		if (counter_cookie > 0)
-			counter_cookie--;
-
-		if (counter_agent > 0)
-			counter_agent--;
-
 		debug_host=3;
+		try--;
 
-	
-	
+
+		curl_easy_cleanup(curl);
 	}
-
 	// Write results in log and htmnl+js in /opt/0d1n/view
 	write_result(	(char *)chunk.memory,
 			param.datatable,
@@ -301,8 +274,6 @@ void spider(void *in)
 			make,
 			make_agent,
 			make_cookie,
-			counter_cookie,
-			counter_agent,
 			status,
 			length
 	);	
@@ -319,6 +290,7 @@ void spider(void *in)
 
 	if(param.token_name != NULL)
 		XFREE(token);
+
 
 	pthread_mutex_unlock(&mutex_spider);
 }

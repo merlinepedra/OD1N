@@ -108,7 +108,7 @@ void validate_hostname(const char *hostname)
 			if(choice != 'y' && choice != 'Y')
 			{
 				curl_easy_cleanup(curl);
-				exit(1);
+				exit(0);
 			}
 		}
 
