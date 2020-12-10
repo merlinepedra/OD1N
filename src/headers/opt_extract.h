@@ -77,6 +77,7 @@ struct choice  {
 	char *token_name;
 	char *path_output;
 	char *datatable;
+	char *buffer_list;
 	bool save_response;
 	bool json_headers;
 };

@@ -15,9 +15,9 @@
 
 void end_datatable(char * path);
 void prepare_datatable(void);
-char *readLine(char * NameFile);
-int WriteFile(char *file,char *str);
-long FileSize(const char *file);
+char *read_lines(char * NameFile);
+int write_file(char *file,char *str);
+long file_size(const char *file);
 char *Random_linefile(char * namefile);
 
 #endif

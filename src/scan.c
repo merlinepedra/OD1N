@@ -54,6 +54,7 @@ void scan(void)
 	fprintf(stdout,"\nExecute 0d1n_view server \nFind the file html in https://127.0.0.1:40111/tables/hammer_%s.html\n", param.log);
 	puts(LAST);
 
+	XFREE(param.buffer_list);
 	XFREE(param.path_output);
 	XFREE(param.datatable);
 	XFREE(line);

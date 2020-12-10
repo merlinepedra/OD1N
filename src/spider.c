@@ -77,7 +77,7 @@ void spider(void *in)
 			curl_easy_setopt(curl,  CURLOPT_URL, param.host);
 		} else {
 // if is custom request
-			request_file = readLine(param.custom);
+			request_file = read_lines(param.custom);
 			make2 = replace( request_file,"^",line);	
 			curl_easy_setopt(curl,  CURLOPT_URL, param.host);
 

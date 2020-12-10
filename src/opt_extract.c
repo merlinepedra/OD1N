@@ -444,5 +444,12 @@ parser_opts (int argc, char **argv)
 		exit(1);
  	}
 
+
+	
+	if (param.find_string_list!=NULL)
+		param.buffer_list = read_lines(param.find_string_list);
+
+	if (param.find_regex_list!=NULL && param.buffer_list == NULL)
+		param.buffer_list = read_lines(param.find_regex_list);
 }
 

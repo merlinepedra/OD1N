@@ -16,17 +16,19 @@ void write_result(
 {
 	bool match_string=false; 
 	char randname[32],log[3048],tabledata[4086],pathsource[1024],pathurl[1024];
-	char *find_list = NULL, *ptr_line = NULL, *delim = "\n";
+	char *ptr_line = NULL, *delim = "\n", *tmp_list = NULL;
 
 	// param.find_regex_list  list to find with regex , param.find_string_list list without regex
 		if(  (param.find_string_list) || (param.find_regex_list)  )
 		{
-			find_list = readLine((param.find_string_list!=NULL)?param.find_string_list:param.find_regex_list);
-			ptr_line = strtok(find_list, delim);
+			tmp_list = strdup(param.buffer_list);
+			ptr_line = strtok(tmp_list, delim);
 
 			while (ptr_line != NULL) 
 			{
-				chomp(ptr_line);
+
+		//		chomp(ptr_line);
+		//		don't declare this vars on top, if off and global can trigger UAF
 				char *tmp_make_cookie = NULL,*tmp_make_agent = NULL;
 				char *tmp_make = NULL,*tmp_line = NULL,*tmp_ptr_line = NULL,*tmp_response = NULL,*responsetemplate = NULL;
 
@@ -69,7 +71,7 @@ void write_result(
 					if(status != 404)
 					{
 						snprintf(log,3047,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s  UserAgent: %s \n Path Response Source: %s\n",status,line,ptr_line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
-						WriteFile(param.log,log);
+						write_file(param.log,log);
 						memset(log,0,3047);	
 					}
 
@@ -78,14 +80,14 @@ void write_result(
 					{
 // write highlights response
 						responsetemplate = NULL;
-                				responsetemplate = readLine(TEMPLATE_RES);
-						WriteFile(pathsource,responsetemplate);
+                				responsetemplate = read_lines(TEMPLATE_RES);
+						write_file(pathsource,responsetemplate);
 						memset(responsetemplate,0,strlen(responsetemplate)-1);
 						tmp_response = NULL;
 						tmp_response = html_entities(chunk);
-						WriteFile(pathsource,tmp_response);
+						write_file(pathsource,tmp_response);
 				//		memset(tmp_response,0,strlen(tmp_response)-1);
-						WriteFile(pathsource,"</pre></html>");
+						write_file(pathsource,"</pre></html>");
 					}
 
 
@@ -110,7 +112,7 @@ void write_result(
 						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_ptr_line,tmp_line);
 
 					if (status != 404)					
-						WriteFile(pathtable,tabledata);
+						write_file(pathtable,tabledata);
 
 					// liberate heap
 					XFREE(tmp_line);
@@ -127,7 +129,7 @@ void write_result(
 				ptr_line = strtok(NULL, delim);
 			}
  
-			XFREE(find_list);
+			XFREE(tmp_list);
 
 // if don't have list to find data in response, usually for brute path result
 		} else {
@@ -160,21 +162,21 @@ void write_result(
 			if(status != 404)
 			{
 				snprintf(log,3047,"[%ld Payload: %s Params: %s Cookie: %s UserAgent: %s \n Path Response Source: %s\n",status,line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
-				WriteFile(param.log,log);
+				write_file(param.log,log);
 				memset(log,0,3047);
 			}
 
 			if (param.save_response==true && status != 404)
 			{
 // write response source with highlights
-              	 		responsetemplate=readLine(TEMPLATE_RES);
-				WriteFile(pathsource,responsetemplate);
+              	 		responsetemplate=read_lines(TEMPLATE_RES);
+				write_file(pathsource,responsetemplate);
 				//memset(responsetemplate,0,strlen(responsetemplate)-1);
 				tmp_response = html_entities(chunk);
-				WriteFile(pathsource,tmp_response);
+				write_file(pathsource,tmp_response);
 				//memset(tmp_response,0,strlen(tmp_response)-1);
 	
-				WriteFile(pathsource,"</pre></html>");
+				write_file(pathsource,"</pre></html>");
 			}
 
 // create datatables
@@ -198,7 +200,7 @@ void write_result(
 			} else 
 				snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_line);
 			if (status != 404)
-  				WriteFile(pathtable,tabledata);
+  				write_file(pathtable,tabledata);
 
 			XFREE(tmp_line);
 			XFREE(tmp_make);

@@ -7,7 +7,7 @@
 void 
 end_datatable(char * path)
 {
-	WriteFile(path," [\"\",\"\",\"\",\"\",\"\"] \n ] }");
+	write_file(path," [\"\",\"\",\"\",\"\",\"\"] \n ] }");
 }
 
 void 
@@ -25,19 +25,19 @@ prepare_datatable(void)
 	strlcat(pathtable,".txt",strlen(pathtable)+6);
 
 	//prepare templates for HTML report
-	num1 = FileSize(TEMPLATE2);
-        num2 = FileSize(TEMPLATE3); 
+	num1 = file_size(TEMPLATE2);
+        num2 = file_size(TEMPLATE3); 
 	size_t total = num1+num2+512;
 	view = xmallocarray(total,sizeof(char));
 	memset(view,0,(total-1)*sizeof(char));
-        template2 = readLine(TEMPLATE2);
+        template2 = read_lines(TEMPLATE2);
 
 	// prepare JSON to render on datatables
 	strlcat(view,template2,(num1+1)*sizeof(char));
 	strlcat(view,"\"sAjaxSource\": \"",num1+24);
 	strlcat(view,param.log,num1+64);
 	strlcat(view,".txt\" \n",num1+112);
-        template3 = readLine(TEMPLATE3);
+        template3 = read_lines(TEMPLATE3);
 	strlcat(view,template3,total);
 	strlcat(view,template3,num2+num1+112);
 
@@ -47,8 +47,8 @@ prepare_datatable(void)
 	strlcat(pathhammer,"/opt/0d1n/view/tables/hammer_",40);
 	strlcat(pathhammer,param.log,50);
 	strlcat(pathhammer,".html",55);
-	WriteFile(pathhammer,view);
-	WriteFile(pathtable,"{ \"aaData\": [ \n");
+	write_file(pathhammer,view);
+	write_file(pathtable,"{ \"aaData\": [ \n");
 
 	XFREE(view);
 	XFREE(template2);
@@ -61,7 +61,7 @@ prepare_datatable(void)
 
 //read lines of file
 char 
-*readLine (char * NameFile)
+*read_lines (char * NameFile)
 {
 	FILE * arq;
 
@@ -73,20 +73,19 @@ char
 		exit(0);
 	}
 
-	char *lineBuffer = xcalloc(1,1);
-	char *line = NULL;
-	size_t len = 0, tmp_len = 0;
-
-	while ( getline(&line, &len, arq) != -1  )  
+	fseek(arq, 0, SEEK_END);
+    	long length = ftell(arq);
+    	fseek(arq, 0, SEEK_SET);
+    	char *buffer = xmalloc(sizeof(char)*(length + 1));
+    	buffer[length] = '\0';
+	
+    	if (fread(buffer, sizeof(char), length, arq)<=0)
 	{
-			
-		tmp_len += strlen(line);
-		lineBuffer = xreallocarray(lineBuffer, tmp_len, sizeof(char));
-		strlcat(lineBuffer,line, tmp_len);
+		DEBUG("Config error Empty rule file %s",NameFile);
+		exit(0);
 	}
-
  
-	if( fclose(arq) == EOF )
+	if (fclose(arq) == EOF)
 	{
 		DEBUG("Error in close() file %s",NameFile);
 		exit(0);
@@ -94,13 +93,12 @@ char
 
 	arq = NULL;
 
-
-	return lineBuffer;
+	return buffer;
 }
 
 // write line in file
 int 
-WriteFile(char *file,char *str)
+write_file (char *file,char *str)
 {
 	FILE *fp;
 	int res = 0;
@@ -113,7 +111,7 @@ WriteFile(char *file,char *str)
 	if ( fp == NULL ) 
 	{
 //		fclose(arq);
-		DEBUG("error in WriteFile() %s: %s\nBuffer log: %s \n",file,strerror(errno),str); 
+		DEBUG("error in write_file() %s: %s\nBuffer log: %s \n",file,strerror(errno),str); 
 		tolerate-=1;
 		sleep(5);
 
@@ -144,7 +142,7 @@ WriteFile(char *file,char *str)
 
 // return size of bytes on file , same to unix cmd "du -b file"
 long 
-FileSize(const char *file)
+file_size(const char *file)
 {
 	long ret;
 	FILE *arq; 
