@@ -54,7 +54,7 @@ void init_banner_odin()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "0d1n Web Hacking Tool version 3.0\n"
+ "0d1n Web Hacking Tool version 3.3\n"
  LAST
  "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^ \n"
  "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
