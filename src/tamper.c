@@ -170,12 +170,6 @@ char *rand_case(char *str)
 		str++;	
 	}
 
-/*
-	if(str_new != NULL)
-	{
-		free(str_new);
-	}
-*/
 	return str_new;
 
 }
