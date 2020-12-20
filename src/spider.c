@@ -78,9 +78,10 @@ void spider(void *in)
 			curl_easy_setopt(curl,  CURLOPT_URL, param.host);
 
 			if (token!=NULL)
-				make = replace(make2,"{token}",token); // if user pass token to bypass anti-csrf
+				make = insert_csrf_token(make2, param.token_name, token);
+
 			else
-				make = strdup(make2);
+				make = xstrndup(make2, strlen(make2));
 
 			XFREE(request_file);
 		}	
