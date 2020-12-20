@@ -308,11 +308,6 @@ char *rand_comment(char *str)
 	}
 
 
-//	if(str_new != NULL)
-//	{
-//		free(str_new);
-//	}
-
 	return str_new;
 
 }
@@ -379,12 +374,6 @@ char *rand_space(char *str)
 		str++;	
 	}
 
-
-	if(str_new != NULL)
-	{
-		free(str_new);
-	}
-
 	return str_new;
 }
 
@@ -393,8 +382,8 @@ char *replace_keywords(char *str)
 {
  int mem_size=strlen(str)+1;
  char *out=xmallocarray(mem_size,sizeof(char));
- char *strs[] = {"select", "union", "delete", "script","where","from","and","eval","exec","or","update"};
- char *strs2[] = {"selselectect", "uniunionon", "deldeleteete", "scrscriptipt","whewherere","frfromom","anandd","evevalal","exexecec","oorr","updupdateate"};
+ char *strs[] = {"select", "union", "delete", "script","where","from","and","eval","exec","or","update","sleep"};
+ char *strs2[] = {"selselectect", "uniunionon", "deldeleteete", "scrscriptipt","whewherere","frfromom","anandd","evevalal","exexecec","oorr","updupdateate","slesleepep"};
  short num=10;
 
 	 strlcpy(out,str,mem_size);
