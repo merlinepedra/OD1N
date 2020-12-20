@@ -23,10 +23,9 @@ parse_token(char *str)
 	char *parse = xmalloc(sizeof(char)*2048);	
     	memset(parse,0,2047); // i dont use last byte because crash my compiler, hardening use last byte to canary
 	
-		while ((*str!='"') && (*str!='\'') && (*str!='\n')&&(*str!='\0'))
+		while ((*str!='"') && (*str!='\'') && (*str!='\n')&&(*str!='\0')&&(x <= 2047))
 		{
-			if(x<=2047)
-				parse[x]=*str;
+			parse[x]=*str;
 			str++;
 			x++;
 		}
@@ -77,7 +76,7 @@ get_anti_csrf_token(char *url,char *token_name)
 
 
 	if(param.post || param.custom)
-		new_url = strdup(url);
+		new_url = xstrndup(url,strnlen(url,2048));
 	else
 		new_url = prepare_url(url);
 
@@ -144,6 +143,7 @@ get_anti_csrf_token(char *url,char *token_name)
  	} else {
     	
 		memset(parse,0,2047);
+		short len_max = 0;
 		char *line = strtok(chunk.memory, "\n");
 
 		while (line!=NULL)
@@ -154,13 +154,14 @@ get_anti_csrf_token(char *url,char *token_name)
 				char *ptr = line;
 				deadspace(ptr);	
 
-					while (*ptr!='\n' && *ptr!='\0' && ValidToken==false)
+					while (*ptr!='\n' && *ptr!='\0' && ValidToken==false && len_max <= 2047)
 					{
 						if (ptr[0]=='v' && ptr[1]=='a' && ptr[2]=='l' && ptr[3]=='u' && ptr[4]=='e')
 						{
 							ptr += 7;
 							ValidToken = true;
 							parse=parse_token(ptr);
+							len_max++;
 								
 						}
 						ptr++;

@@ -21,7 +21,7 @@ void write_result(
 	// param.find_regex_list  list to find with regex , param.find_string_list list without regex
 		if(  (param.find_string_list) || (param.find_regex_list)  )
 		{
-			tmp_list = strdup(param.buffer_list);
+			tmp_list = strdup(param.buffer_list); // var safe not need xstrndup()
 			ptr_line = strtok(tmp_list, delim);
 
 			while (ptr_line != NULL) 
