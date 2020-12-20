@@ -271,7 +271,7 @@ char *apostrophe2nullencode(char *str)
 
 char *rand_comment(char *str)
 {
-	int i=0,mem_size=strlen(str)+1;
+	int i=0, mem_size=strlen(str)+1;
 	char *str_new=xmallocarray(mem_size,sizeof(char));
 		
 	while(*str != '\0')
@@ -308,10 +308,10 @@ char *rand_comment(char *str)
 	}
 
 
-	if(str_new != NULL)
-	{
-		free(str_new);
-	}
+//	if(str_new != NULL)
+//	{
+//		free(str_new);
+//	}
 
 	return str_new;
 

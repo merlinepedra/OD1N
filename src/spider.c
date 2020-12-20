@@ -21,13 +21,9 @@ void spider(void *in)
 // if need get anti-csrf token
 	if(param.host!=NULL && param.token_name!=NULL)
 	{
-		token = xmalloc(sizeof(char)*1024);
-		memset(token,0,1023);
-
-		if(param.agent!=NULL)
-			token = get_anti_csrf_token(param.host,param.token_name,param.agent);
-		else
-			token = get_anti_csrf_token(param.host,param.token_name,"Mozilla/5.0 (0d1n v2.7)");
+		token = xmalloc(sizeof(char)*2048); 
+		memset(token,0,2047); // note: last byte for canary, hardening makefile...
+		token = get_anti_csrf_token(param.host,param.token_name);
 	}
 
 

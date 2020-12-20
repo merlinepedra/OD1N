@@ -45,6 +45,8 @@ $./0d1n
 #include "opt_extract.h"
 #include "scan.h"
 #include "validate.h"
+#include "get_csrf_token.h"
+
 
 
 int 

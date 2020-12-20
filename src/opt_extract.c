@@ -54,7 +54,7 @@ void init_banner_odin()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "0d1n Web Hacking Tool version 3.2\n"
+ "0d1n Web Hacking Tool version 3.0\n"
  LAST
  "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^ \n"
  "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
@@ -102,7 +102,7 @@ LAST
 YELLOW
 "example 3 to search XSS and pass anti-csrf token:\n"
 LAST
-"0d1n --host https://page/test.php --post 'csrf={token}&pass=^' --payloads /opt/0d1n/payloads/xss.txt --find_string_list opt/0d1n/payloads/xss.txt --token_name name_token_field --log logtest --save_response\n"
+"0d1n --host https://page/test.php --post 'name_token_field={token}&pass=^' --payloads /opt/0d1n/payloads/xss.txt --find_string_list opt/0d1n/payloads/xss.txt --token_name name_token_field --log logtest --save_response\n"
 
 YELLOW
 "example 4 Brute dir:\n"

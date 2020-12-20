@@ -33,7 +33,7 @@ void write_result(
 				char *tmp_make = NULL,*tmp_line = NULL,*tmp_ptr_line = NULL,*tmp_response = NULL,*responsetemplate = NULL;
 
 				// find a string in response
-				if (status != 404)
+				if (status) // != 404)
 				{
 					if (param.find_string_list != NULL )
 						match_string = strstr(chunk,ptr_line)?true:false;
