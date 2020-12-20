@@ -1,5 +1,21 @@
 #include "get_csrf_token.h"
 
+
+char *insert_csrf_token(char *payload, char *token_name, char *token)
+{
+	size_t len_payload = strlen(payload);
+	size_t len_token = strlen(token);
+	size_t len_token_name = strlen(token_name);
+	size_t total = len_payload + len_token + len_token_name;
+	char *new_payload = xmalloc(sizeof(char)*(total));
+	
+	memset(new_payload,0,total-1);  
+
+	snprintf(new_payload,total-1,"%s&%s=%s",payload,token_name,token);
+
+	return new_payload;
+}
+
 char *
 parse_token(char *str)
 {

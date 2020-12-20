@@ -5,6 +5,9 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
+#include "mem_ops.h"
+
 /*	$OpenBSD: strlcpy, strlcat,v 1.11 2006/05/05 15:27:38 millert Exp $	*/
 
 /*
@@ -22,7 +25,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
+char *xstrndup (const char *s, size_t n);
 #if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__) && \
     !defined(__bsdi__) && !defined(__APPLE__)
 

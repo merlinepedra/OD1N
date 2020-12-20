@@ -60,9 +60,9 @@ void spider(void *in)
 			make2 = replace ( (POST?param.post:param.host),"^",line);
 
 			if (token)
-		 		make = replace(make2,"{token}",token); // if user pass token to bypass anti-csrf
+		 		make = insert_csrf_token(make2, param.token_name, token); 
 			else
-				make = strdup(make2);	
+				make = xstrndup(make2, strlen(make2));	
 
 			if (param.cookie!=NULL)	
 				make_cookie = replace( param.cookie,"^",line);	

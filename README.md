@@ -5,6 +5,11 @@
 0d1n is a tool for automating customized attacks against web applications.
 This tool is very faster because uses thread pool and C language.
 
+![Alt text](https://github.com/CoolerVoid/0d1n/blob/master/doc/images/overview1.png)
+0d1n is a tool for automating customized attacks against web applications.
+Video demo: https://www.youtube.com/watch?v=1L22mbbVge0
+
+
 
 Tool functions: 
 ---
@@ -37,6 +42,7 @@ You need libcurl to run, look the following to install::
 
 ```  
 $ sudo apt-get install libcurl-dev
+or try libcurl4-dev... libcurl*
 
 if rpm distro
 
@@ -100,6 +106,13 @@ To brute force auth system
 0d1n --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads /opt/0d1n/payloads/wordlist.txt --log log007 --threads 500 --timeout 3\n"
 ```
 Note: if have csrf token, you can use argv to get this token each request and brute...
+
+
+Search SQLi in hard mode in login system with csrf token:
+```
+0d1n  --host "http://127.0.0.1/vulnerabilities/sqli/index.php?id=^" --payloads /opt/0d1n/payloads/sqli.txt --find_string_list /opt/0d1n/payloads/find_responses.txt --token_name user_token --log logtest_fibonaci49 --cookie_jar /home/user_name/cookies.txt --save_response --tamper randcase --threads 100
+```
+Note: Load cookies jar form browser and save in cookies.txt to load.
 
 
 

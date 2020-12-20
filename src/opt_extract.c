@@ -54,7 +54,7 @@ void init_banner_odin()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "0d1n Web Hacking Tool version 3.3\n"
+ "0d1n Web Hacking Tool version 3.4\n"
  LAST
  "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^ \n"
  "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
@@ -80,9 +80,7 @@ void init_banner_odin()
 "    spaces2comment:  change spaces ' ' to comment '/**/'\n    unmagicquote: change apostrophe to a multi-byte \%bf\%27 \n"
 "    apostrophe2nullencode: change apostrophe to illegal double unicode counterpart\n    rand_comment: to use random comment '/**/' position in payload string\n"
 "    rand_space: write random ' ' blank spaces\n    replace_keywords: replace especial words, SELECT to SELselectECT etc...\n"
-"--token_name : Name of anti-csrf token to get and use at your request\n"
-"NOTE: if you using any token to bypass anti-csrf protection, you use {token} var at your POST or GET or custom request\n" 
-"if you make this 0d1n change {token} to token of form... example --post 'var=^&token={token}&var2=test'\n"
+"--token_name : Name of anti-csrf token field to get and use in your request\n"
 YELLOW
 YELLOW
  "\nEnable-options-args:\n"
@@ -102,7 +100,7 @@ LAST
 YELLOW
 "example 3 to search XSS and pass anti-csrf token:\n"
 LAST
-"0d1n --host https://page/test.php --post 'name_token_field={token}&pass=^' --payloads /opt/0d1n/payloads/xss.txt --find_string_list opt/0d1n/payloads/xss.txt --token_name name_token_field --log logtest --save_response\n"
+"0d1n --host https://page/test.php --post 'admin=user_name&pass=^' --payloads /opt/0d1n/payloads/xss.txt --find_string_list opt/0d1n/payloads/xss.txt --token_name name_token_field --log logtest --save_response\n"
 
 YELLOW
 "example 4 Brute dir:\n"

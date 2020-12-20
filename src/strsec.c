@@ -16,6 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
 #if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__) && \
     !defined(__bsdi__) && !defined(__APPLE__)
 
@@ -150,4 +151,18 @@ strnstr(const char *s, const char *find, size_t slen)
 
 
 #endif /* ! __*BSD__ */
+
+
+char *xstrndup (const char *s, size_t n)
+{
+	char* new = xmalloc(n+1);
+
+	if (new) 
+	{
+		strncpy(new, s, n);
+		new[n] = '\0';
+	}
+
+	return new;
+}
 

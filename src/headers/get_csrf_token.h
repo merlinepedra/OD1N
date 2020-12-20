@@ -20,10 +20,9 @@
 THis function get anti csrf token of param var
 */
 
+char *insert_csrf_token(char *payload, char *token_name, char *token);
 char *parse_token(char *str);
-
 char *get_anti_csrf_token(char *url, char *name_token);
-
 char *prepare_url(char * url);
 
 #endif
