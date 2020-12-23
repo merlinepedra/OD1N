@@ -38,6 +38,10 @@ $./0d1n
 */
 #include "opt_extract.h"
 
+
+
+struct choice param;
+
 void init_banner_odin()
 {
  puts(

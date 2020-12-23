@@ -82,7 +82,7 @@ struct choice  {
 	bool json_headers;
 };
 
-struct choice param;
+extern struct choice param;
 
 void init_banner_odin();
 void parser_opts (int argc, char **argv);
