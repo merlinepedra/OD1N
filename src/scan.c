@@ -19,7 +19,7 @@ void scan(void)
 	puts("start...");
 
 
-	tmp_list = strdup(param.buffer_payloads); // var safe not need xstrndup()
+	tmp_list = xstrndup(param.buffer_payloads,strlen(param.buffer_payloads)); 
 	ptr_line = strtok(tmp_list, delim);
 
 
@@ -57,6 +57,7 @@ void scan(void)
 	puts(LAST);
 
 	XFREE(param.buffer_list);
+	XFREE(param.buffer_payloads);
 	XFREE(param.path_output);
 	XFREE(param.datatable);
 

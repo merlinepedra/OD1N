@@ -194,11 +194,17 @@ void spider(void *in)
 // if use custom request
 		if (param.custom!=NULL)
 			curl_easy_setopt(curl, CURLOPT_CONNECT_ONLY, 1L);
-		
 
-		res = curl_easy_perform(curl);
-// get HTTP status code
-		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
+
+// to not send requests in same time (load balancer can block)
+// This code block is for bypass time based WAFs or load balancers
+		usleep(rand()%1000); 
+		usleep(rand()%1000); 
+		short position_t = rand()%15;
+		// you can calibrate this point array
+		short array_time[] = { 690, 435, 2915, 1720, 1050, 1600, 200, 800, 500 , 600, 700, 380, 455, 755, 930, 1100 };
+		usleep( array_time[position_t]  ); // random microsend wait each request
+
 
 // custom http request
 		if (param.custom!=NULL)
@@ -228,8 +234,13 @@ void spider(void *in)
 
 			
 			status = (long)parse_http_status(chunk.memory);
-//status=404;
+
+		} else {
+
+			res = curl_easy_perform(curl);
+			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
 		}
+
 
 			
 
