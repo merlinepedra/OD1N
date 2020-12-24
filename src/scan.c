@@ -2,9 +2,11 @@
 
 void scan(void)
 {
-	char *tmp_list = NULL, *delim = "\n", *ptr_line = NULL;
+	FILE *fp = NULL;
         long int total_requests = 0;	
 	int threadss = 2, timeout = 3;
+	char *line = NULL;
+	size_t len = 0;
 
 	if (param.threads!=NULL)
 		threadss = (int)strtol(param.threads,(char **)NULL,10);
@@ -18,31 +20,28 @@ void scan(void)
 	printf("Threads per request: %d\n Timeout seconds per threads: %d\n",threadss,timeout);
 	puts("start...");
 
-
-	tmp_list = xstrndup(param.buffer_payloads,strlen(param.buffer_payloads)); 
-	ptr_line = strtok(tmp_list, delim);
-
-
 	prepare_datatable();
 	threadpool thpool = thpool_init(threadss);
-	int inter = 0;
 
-	while (ptr_line != NULL)
+
+
+	fp = fopen(param.payloads, "r");
+
+ 	if (!fp)
+	{ 
+		DEBUG("error to open Payload list"); 
+		exit(0);
+	}
+
+	while ( getline(&line,&len,fp) != -1) 
 	{
 		if (total_requests<LONG_MAX)
 			total_requests++;
 
-		void *tmp_str = (void *)ptr_line;
-		thpool_add_work(thpool, spider, tmp_str);
+		thpool_add_work(thpool, spider, (void *)line);
 
-		if(inter == threadss)
-		{
-			thpool_wait(thpool);			
-			inter = 0;
-		}
+		thpool_wait(thpool);			
 
-		ptr_line = strtok(NULL, delim);
-		inter++;
   	}
 
 	thpool_destroy(thpool);
@@ -60,6 +59,14 @@ void scan(void)
 	XFREE(param.buffer_payloads);
 	XFREE(param.path_output);
 	XFREE(param.datatable);
+
+	if (fclose(fp) == EOF)
+	{
+		DEBUG("Error in close()");
+		exit(0);
+	}
+
+	fp = NULL;
 
 	exit(0);
 }

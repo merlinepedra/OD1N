@@ -5,8 +5,7 @@
 void spider(void *in)
 {
 //	pthread_mutex_lock(&mutex_spider);
-	char *line=(char *)in;
-
+	char *lines=(char *)in;
 	struct MemoryStruct chunk;
 	long status = 0,length = 0;
 	int res = 0, try = 1, POST = 0, timeout = 3, debug_host = 3; 
@@ -27,11 +26,11 @@ void spider(void *in)
 
 
 
-// payload tamper, get payload of line and make tamper 
+// payload tamper, get payload of lines and make tamper 
 	if(param.tamper!=NULL)
-		line = tamper_choice(param.tamper,line);
+		lines = tamper_choice(param.tamper,lines);
 
-	chomp(line);
+	chomp(lines);
 
 // goto to fix signal stop if user do ctrl+c
 	try_again:
@@ -56,7 +55,7 @@ void spider(void *in)
 // add payload at inputs
 		if(param.custom==NULL) //if custom request  argv mode null
 		{
-			make2 = replace ( (POST?param.post:param.host),"^",line);
+			make2 = replace ( (POST?param.post:param.host),"^",lines);
 
 			if (token)
 		 		make = insert_csrf_token(make2, param.token_name, token); 
@@ -64,16 +63,16 @@ void spider(void *in)
 				make = xstrndup(make2, strlen(make2));	
 
 			if (param.cookie!=NULL)	
-				make_cookie = replace( param.cookie,"^",line);	
+				make_cookie = replace( param.cookie,"^",lines);	
 	
 			if (param.UserAgent!=NULL)
-				make_agent = replace( param.UserAgent,"^",line);
+				make_agent = replace( param.UserAgent,"^",lines);
 
 			curl_easy_setopt(curl,  CURLOPT_URL, param.host);
 		} else {
 // if is custom request
 			request_file = read_lines(param.custom);
-			make2 = replace( request_file,"^",line);	
+			make2 = replace( request_file,"^",lines);	
 			curl_easy_setopt(curl,  CURLOPT_URL, param.host);
 
 			if (token!=NULL)
@@ -277,7 +276,7 @@ void spider(void *in)
 	// Write results in log and htmnl+js in /opt/0d1n/view
 	write_result(	(char *)chunk.memory,
 			param.datatable,
-			line,
+			lines,
 			make,
 			make_agent,
 			make_cookie,
@@ -293,7 +292,7 @@ void spider(void *in)
 	XFREE(make2);
 
 	if(param.tamper != NULL)
-		XFREE(line);
+		XFREE(lines);
 
 	if(param.token_name != NULL)
 		XFREE(token);
