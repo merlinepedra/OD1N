@@ -56,7 +56,7 @@ $ cd 0d1n
 
 $ make; sudo make install USER=name_your_user; 
 
-$ cd 0d1n_view; make; sudo make install USER=name_your_user; 
+$ cd 0d1n_viewer; make; sudo make install USER=name_your_user; 
 ```
 
 Up the view server to look the reports online:
