@@ -1,11 +1,10 @@
 #include "spider.h"
 
-
-pthread_mutex_t mutex_spider = PTHREAD_MUTEX_INITIALIZER;
+// pthread_mutex_t mutex_spider = PTHREAD_MUTEX_INITIALIZER;
 
 void spider(void *in)
 {
-	pthread_mutex_lock(&mutex_spider);
+//	pthread_mutex_lock(&mutex_spider);
 	char *line=(char *)in;
 
 	struct MemoryStruct chunk;
@@ -289,6 +288,6 @@ void spider(void *in)
 		XFREE(token);
 
 
-	pthread_mutex_unlock(&mutex_spider);
+//	pthread_mutex_unlock(&mutex_spider);
 }
 

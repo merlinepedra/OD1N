@@ -2,11 +2,9 @@
 
 void scan(void)
 {
-	FILE *fp = NULL;
-	char *line = NULL;
+	char *tmp_list = NULL, *delim = "\n", *ptr_line = NULL;
         long int total_requests = 0;	
 	int threadss = 2, timeout = 3;
-	size_t len = 0;
 
 	if (param.threads!=NULL)
 		threadss = (int)strtol(param.threads,(char **)NULL,10);
@@ -21,32 +19,36 @@ void scan(void)
 	puts("start...");
 
 
-	fp = fopen(param.payloads, "r");
-
- 	if (!fp)
-	{ 
-		DEBUG("error to open Payload list"); 
-		exit(0);
-	}
+	tmp_list = strdup(param.buffer_payloads); // var safe not need xstrndup()
+	ptr_line = strtok(tmp_list, delim);
 
 
 	prepare_datatable();
 	threadpool thpool = thpool_init(threadss);
+	int inter = 0;
 
-	while ( getline(&line,&len,fp) != -1) 
+	while (ptr_line != NULL)
 	{
 		if (total_requests<LONG_MAX)
 			total_requests++;
 
-		void *tmp_str = (void *)line;
+		void *tmp_str = (void *)ptr_line;
 		thpool_add_work(thpool, spider, tmp_str);
-		thpool_wait(thpool);
+
+		if(inter == threadss)
+		{
+			thpool_wait(thpool);			
+			inter = 0;
+		}
+
+		ptr_line = strtok(NULL, delim);
+		inter++;
   	}
 
 	thpool_destroy(thpool);
 	threadss = 0;
-	puts("Sleep 3 seconds + timeout");
-	sleep(timeout+3);
+	puts("Sleep timeout seconds");
+	sleep(timeout);
 	end_datatable(param.datatable);
 
 	puts(RED);
@@ -57,15 +59,6 @@ void scan(void)
 	XFREE(param.buffer_list);
 	XFREE(param.path_output);
 	XFREE(param.datatable);
-	XFREE(line);
-
-	if (fclose(fp) == EOF)
-	{
-		DEBUG("Error in close()");
-		exit(0);
-	}
-
-	fp = NULL;
 
 	exit(0);
 }

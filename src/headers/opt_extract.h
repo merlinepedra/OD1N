@@ -78,6 +78,7 @@ struct choice  {
 	char *path_output;
 	char *datatable;
 	char *buffer_list;
+	char *buffer_payloads;
 	bool save_response;
 	bool json_headers;
 };

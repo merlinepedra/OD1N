@@ -448,6 +448,9 @@ parser_opts (int argc, char **argv)
 
 
 	
+	
+	param.buffer_payloads = read_lines(param.payloads);
+
 	if (param.find_string_list!=NULL)
 		param.buffer_list = read_lines(param.find_string_list);
 
