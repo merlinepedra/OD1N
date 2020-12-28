@@ -6,7 +6,7 @@ char *insert_csrf_token(char *payload, char *token_name, char *token)
 	size_t len_payload = strlen(payload);
 	size_t len_token = strlen(token);
 	size_t len_token_name = strlen(token_name);
-	size_t total = len_payload + len_token + len_token_name;
+	size_t total = len_payload + len_token + len_token_name +4;
 	char *new_payload = xmalloc(sizeof(char)*(total));
 	
 	memset(new_payload,0,total-1);  

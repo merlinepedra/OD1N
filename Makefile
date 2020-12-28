@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-W -Wall -Wextra -Wformat-security
+CFLAGS=-W -Wall -Wextra -Wformat-security -O2
 HARDENING=-fstack-protector-all -pie -fPIE
 DIR=src/
 DIROUT=bin/
