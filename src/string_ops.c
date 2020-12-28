@@ -2,7 +2,6 @@
 #include "mem_ops.h"
 #include "strsec.h"
 
-
 void 
 deadspace(char *str)
 {

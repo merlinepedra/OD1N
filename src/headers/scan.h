@@ -24,6 +24,9 @@
 #include <pthread.h>
 #include "thpool.h"
 
-void scan(void);
+long int parse_n_scan(const char* input, int threads_total);
+void scan_gcc_old(void);
+void scan_gcc_new(void);
+
 
 #endif

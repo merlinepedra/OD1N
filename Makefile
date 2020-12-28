@@ -1,8 +1,5 @@
-export MALLOC_MMAP_THRESHOLD_=1
-export MALLOC_CHECK_=1
-export MALLOC_PERTURB_=1
 CC=gcc
-CFLAGS=-W -Wall -Wextra -Wformat-security -O2
+CFLAGS=-W -Wall -Wextra -Wformat-security
 HARDENING=-fstack-protector-all -pie -fPIE
 DIR=src/
 DIROUT=bin/

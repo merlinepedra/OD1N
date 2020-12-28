@@ -55,8 +55,17 @@ main (int argc, char ** argv)
  	no_write_coredump();
  	load_signal_alarm();
 	parser_opts(argc,argv);
-
-	scan();
+// So new versions of GCC skip pthreads with file systems ops, 
+// This cause anomaly in threads when you use with strtok() resources in loop.
+// why ? i don't know, maybe need study internals of LLVM/GCC to make a report  ¯\_(ツ)_/¯
+// this source code have a different scan() function to bypass the compiler bug
+#ifdef __GNUC__
+#  if __GNUC_PREREQ(10,0)
+	scan_gcc_new();
+#  else
+	scan_gcc_old();
+#  endif
+#endif
 
  	exit(0);
 }
