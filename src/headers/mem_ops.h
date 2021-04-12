@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <assert.h>
 
+#include "opt_extract.h"
 #define XFREE(x) xfree((void **)&x); 
 #define MUL_NO_OVERFLOW	((size_t)1 << (sizeof(size_t)*4))
 // set DEBUG ON
@@ -32,6 +33,7 @@ struct MemoryStruct {
 
 typedef struct MemoryStruct MemoryStruct;
 
+void free_global_buf();
 void *xmalloc (size_t size);
 void *xcalloc (size_t mem, size_t size);
 void *xrealloc (void *ptr, size_t size);

@@ -1,6 +1,18 @@
 #include "mem_ops.h"
 
 
+
+void free_global_buf()
+{
+	XFREE(blob.buf_list);
+	XFREE(blob.buf_payloads);
+	XFREE(param.path_output);
+	XFREE(param.datatable);
+	XFREE(blob.buf_proxy);
+	XFREE(blob.buf_useragent);
+	XFREE(blob.buf_custom);
+}
+
 static void *
 xmalloc_fatal(size_t size) 
 {

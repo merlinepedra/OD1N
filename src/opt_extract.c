@@ -41,6 +41,7 @@ $./0d1n
 
 
 struct choice param;
+struct bufferglobal blob;
 
 void init_banner_odin()
 {
@@ -58,7 +59,7 @@ void init_banner_odin()
    " `.    `-'  `-'  `-'  `-'  `-'  .'   \n"
    "   `---------------------------'     \n"
  YELLOW
- "0d1n Web Hacking Tool version 3.4\n"
+ "0d1n Web Hacking Tool version 3.6\n"
  LAST
  "--host :	Host to scan or  GET method to fuzz  site.com/page.jsp?var=^&var2=^ \n"
  "--post :	POST method fuzz params  ex: 'var=^&x=^...'\n"
@@ -78,7 +79,8 @@ void init_banner_odin()
  "--threads : Number of threads to use, default is 4, you can choice any number here, try 500, 1000... each machine have a different context.\n"
  "--timeout :	Timeout to wait Response\n"
  "--proxy :   Proxy_address:port to use single proxy tunnel\n	example: format [protocol://][user:password@]machine[:port]\n"
- "--proxy-rand :   Use proxy list to use random proxy per Request\n	example: format [protocol://][user:password@]machine[:port]\n"
+ "--proxy-rand :   First argv is a file list of proxys, proxy list to use random proxy per Request\n	example: format [protocol://][user:password@]machine[:port]\n"
+ "--useragent-rand : Need a list of User agents, use different user agent per request\n"
  "--tamper : Payload tamper to try bypass filters\n   Choice one option :\n    encode64 : to encode payload to 64 base \n    randcase : to use lower and upper case random position in string\n"
  "    urlencode :  converts characters into a format that can be transmitted over the Internet, percent encoding\n    double_urlencode : converts payload two times with urlencode\n"
 "    spaces2comment:  change spaces ' ' to comment '/**/'\n    unmagicquote: change apostrophe to a multi-byte \%bf\%27 \n"
@@ -91,33 +93,70 @@ YELLOW
 LAST
  "--save_response :   Enable save response highlights view when you click at http status code in datatables \n"
  "--json_headers :   Enable add JSON headers in Request \n\n"
+ "--keep_alive_test : Enable no-cache header + keep alive with rand number to test Denial of Service \n\n"
+ "--max_requests : keep alive test total requests in test \n\n"
  YELLOW
- "example 1 to find SQL-injection:\n"
+ "Example 1 to find SQL-injection:\n"
 LAST
 "0d1n --host 'http://site.com/view/1^/product/^/' --payloads /opt/0d1n/payloads/sqli_list.txt --find_string_list /opt/0d1n/payloads/sqli_str2find_list.txt --log log1337 --tamper randcase --threads 800 --timeout 3 --save_response\n"
 "\n"
 YELLOW
- "example 2 to Bruteforce in simple auth:\n"
+ "Example 2 to Bruteforce in simple auth:\n"
 LAST
 "0d1n --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads /opt/0d1n/payloads/wordlist.txt --log log007 --threads 500 --timeout 3\n"
 "\n"
 YELLOW
-"example 3 to search XSS and pass anti-csrf token:\n"
+"Example 3 to search XSS and pass anti-csrf token:\n"
 LAST
 "0d1n --host https://page/test.php --post 'admin=user_name&pass=^' --payloads /opt/0d1n/payloads/xss.txt --find_string_list opt/0d1n/payloads/xss.txt --token_name name_token_field --log logtest --save_response\n"
-
+"\n"
 YELLOW
-"example 4 Brute dir:\n"
+"Example 4 Brute dir:\n"
 LAST
 "0d1n --host https://page/^ --payloads /opt/0d1n/payloads/dir_brute.txt --threads 800 --timeout 3 --log logtest_brutedir --save_response\n"
 YELLOW
-"Notes:\n"
+"\n"
+"Example 5 Keep alive test like slowloris:\n"
+LAST
+"0d1n --host https://page/ --threads 50 --keep_alive_test --max_requests 1000 --proxy-rand  /opt/0d1n/payloads/proxy.txt --useragent-rand /opt/0d1n/payloads/useragents.txt --log logtest_keepalive --save_response\n"
+"\nNotes:\n"
 LAST
 "Look the character '^', is lexical char to change to payload list lines...\n"
 CYAN
  "Coded by Cooler_\n coolerlair[at]gmail[dot]com\n "
  );
  puts(LAST);
+}
+
+
+
+void
+load_files()
+{	
+	if(param.keep_alive_test != true)	
+		blob.buf_payloads = read_lines(param.payloads);
+	
+	if(param.custom != NULL)	
+		blob.buf_custom = read_lines(param.custom);
+	
+	if(param.proxy_rand != NULL)
+	{	
+		printf("Load proxy list: %s",param.proxy_rand);	
+		blob.buf_proxy = read_lines(param.proxy_rand);
+		blob.proxy_lines = char_type_counter( blob.buf_proxy,'\n' );
+	}
+
+	if(param.useragent_rand != NULL)
+	{	
+		blob.buf_useragent = read_lines(param.useragent_rand);
+		blob.useragent_lines = char_type_counter( blob.buf_useragent,'\n');
+	}
+
+	if (param.find_string_list!=NULL)
+		blob.buf_list = read_lines(param.find_string_list);
+
+	if (param.find_regex_list!=NULL && blob.buf_list == NULL)
+		blob.buf_list = read_lines(param.find_regex_list);
 }
 
 void 
@@ -147,9 +186,12 @@ parser_opts (int argc, char **argv)
  		{"timeout", required_argument, NULL, 'T'}, 
  		{"proxy", required_argument, NULL, '1'}, 
  		{"proxy-rand", required_argument, NULL, '2'},
+ 		{"useragent-rand", required_argument, NULL, '7'},
  		{"tamper", required_argument, NULL, 'w'}, 
 		{"save_response", no_argument, 0, 'k'},	
 		{"json_headers", no_argument, 0, 'j'},
+		{"keep_alive_test", no_argument, 0, '5'},
+ 		{"max_requests", required_argument, NULL, '6'},
  		{"token_name", required_argument, NULL, '4'}, 
 		{NULL, 0, NULL, 0}
 	};
@@ -164,8 +206,11 @@ parser_opts (int argc, char **argv)
  
 
  	opterr = 0;
+	param.max_requests = 0;
+	param.keep_alive_test = false;
+	param.save_response = false;
 
- 	while ((c = getopt_long(argc, argv, "h:p:f:z:e:c:i:a:P:b:d:o:u:s:t:T:1:2:w:k:j:V:3:4",long_options,NULL)) != -1)
+ 	while ((c = getopt_long(argc, argv, "h:p:f:z:e:c:i:a:P:b:d:o:u:s:t:T:1:2:w:k:j:V:3:4:5:6:7",long_options,NULL)) != -1)
   		switch(c) 
   		{
 // Host
@@ -180,7 +225,7 @@ parser_opts (int argc, char **argv)
     					
 				} else {
 					DEBUG("Error \nArgument Host is very large \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 // payload list
@@ -192,7 +237,7 @@ parser_opts (int argc, char **argv)
     					
 				} else {
 					DEBUG("Error \nArgument Payloads is very large  \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 
@@ -205,7 +250,7 @@ parser_opts (int argc, char **argv)
     					
 				} else {
 					DEBUG("Error \nArgument custom is very large  \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 
@@ -217,7 +262,7 @@ parser_opts (int argc, char **argv)
     				} else {
 			
 					DEBUG("Error \nArgument Find list file is very large  \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 
@@ -228,7 +273,7 @@ parser_opts (int argc, char **argv)
     					printf("Regex list: %s \n",param.find_regex_list);
     				} else {
 					DEBUG("Error \nArgument Regex file is very large  \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 
@@ -239,7 +284,7 @@ parser_opts (int argc, char **argv)
 				} else {
 
 					DEBUG("Error \nArgument cookie jar file is very large  \n");
-					exit(1);
+					exit(0);
 				}
     				break;
 
@@ -250,7 +295,7 @@ parser_opts (int argc, char **argv)
 				} else {
 
 					DEBUG("Error \nArgument Useragent fuzz is very large  \n");
-					exit(1);
+					exit(0);
 				
 				}
     				break;
@@ -263,7 +308,7 @@ parser_opts (int argc, char **argv)
 				} else {
 
 					DEBUG("Error \nArgument cookie is very large  \n");
-					exit(1);
+					exit(0);
 				}
     				break;
 
@@ -273,7 +318,7 @@ parser_opts (int argc, char **argv)
     					param.post = optarg;
 				} else {
 					DEBUG("Error \nArgument POST is very large  \n");
-					exit(1);
+					exit(0);
 				}
     				break;
 
@@ -283,7 +328,7 @@ parser_opts (int argc, char **argv)
     					param.method = optarg;
 				} else {
 					DEBUG("Error \nArgument method is very large  \n");
-					exit(1);
+					exit(0);
 				}
     				break;
 
@@ -293,7 +338,7 @@ parser_opts (int argc, char **argv)
     					param.header = optarg;
 				} else {
 					DEBUG("Error \nArgument header is very large  \n");
-					exit(1);
+					exit(0);
 				}
     				break;
 
@@ -304,7 +349,7 @@ parser_opts (int argc, char **argv)
     					printf("Log file: %s \n", param.log);
     				} else {
 					DEBUG("Error \nArgument Log file is very large \n");
-					exit(1);
+					exit(0);
 				}
 				break;
    
@@ -314,7 +359,7 @@ parser_opts (int argc, char **argv)
     					param.UserAgent = optarg;
     				} else {	
 					DEBUG("Error \nArgument user agent is very large  \n");
-					exit(1);
+					exit(0);
 				}
 				break;
  
@@ -324,7 +369,7 @@ parser_opts (int argc, char **argv)
     					param.CA_certificate = optarg;
 				} else {	
 					DEBUG("Error \nArgument ca cert file name is very large  \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 
@@ -335,7 +380,7 @@ parser_opts (int argc, char **argv)
     					param.threads = optarg;
 				} else {	
 					DEBUG("Error \nArgument threads is very large  \n");
-					exit(1);
+					exit(0);
 				}
 				break;
  
@@ -345,7 +390,7 @@ parser_opts (int argc, char **argv)
     					param.timeout = optarg;
 				} else {	
 					DEBUG("Error \nArgument timeout is very large need 3 digit  \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 
@@ -356,17 +401,28 @@ parser_opts (int argc, char **argv)
     					param.proxy = optarg;
 				} else {	
 					DEBUG("Error \nArgument proxy is very large \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 //proxy list
    			case '2':
-				if ( strnlen(optarg,63)<= 64 )
+				if ( strnlen(optarg,63)<= 256 )
 				{	
     					param.proxy_rand = optarg;
 				} else {	
 					DEBUG("Error \nArgument proxy list is very large \n");
-					exit(1);
+					exit(0);
+				}
+				break;
+
+// user agent list to use rand useragen per request
+   			case '7':
+				if ( strnlen(optarg,63)<= 256 )
+				{	
+    					param.useragent_rand = optarg;
+				} else {	
+					DEBUG("Error \nArgument useragent list is very large \n");
+					exit(0);
 				}
 				break;
 
@@ -377,7 +433,7 @@ parser_opts (int argc, char **argv)
     					param.tamper = optarg;
 				} else {	
 					DEBUG("Error \nArgument tamper is very large \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 
@@ -399,9 +455,23 @@ parser_opts (int argc, char **argv)
     					param.SSL_version = optarg;
 				} else {	
 					DEBUG("Error \nArgument SSL version one digit example 1,2,3,32,39 : \n1 is TLSv1\n2 is SSLv2\n3 is SSLv3\n5 is TLS 1.1\n6 is TLS 1.2\n7 is TLS 1.3\n 0 default if possible use last version\n");
-					exit(1);
+					exit(0);
 				}
 				break;
+
+
+			case '6':
+				if ( strnlen(optarg,8)<= 9 )
+				{
+    					param.max_requests = (int)strtol(optarg,NULL,10);
+    					printf("Max requests : %d \n", param.max_requests);
+    					
+				} else {
+					DEBUG("Error \nArgument max requests is very large  \n");
+					exit(0);
+				}
+				break;
+
 
 			case '4':
 				if ( strnlen(optarg,256)<= 128 )
@@ -411,50 +481,47 @@ parser_opts (int argc, char **argv)
     					
 				} else {
 					DEBUG("Error \nArgument token name is large  \n");
-					exit(1);
+					exit(0);
 				}
 				break;
 
 
+			case '5':
+    				param.keep_alive_test = true;
+				break;
+
+
+
    			case '?':
-    				if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s') 
+    				if(optopt == 'h' || optopt == 'p' || optopt == 'f' || optopt == 'c' || optopt == 'P' || optopt == 'o' || optopt=='s' || optopt == '6' || optopt == '7') 
     				{
      					init_banner_odin();
      					puts(RED);
      					DEBUG("Option -%c requires an argument.\n", optopt); 
      					puts(LAST);
-     					exit(1);
+     					exit(0);
     				}
 				break;
 
 			default:
 				init_banner_odin();
 				DEBUG("error argv, need more arguments.\n");
-				exit(1);
+				exit(0);
   		}
 
-	if(param.log==NULL)
+	if(param.log==NULL && (param.max_requests == 0 || param.save_response==true)  )
 	{
 		DEBUG("To run need a argument log");
 		exit(0);
  	}
 
 
-	if(param.payloads==NULL)
+	if(param.payloads==NULL && param.max_requests == 0)
 	{
 		DEBUG("To run, need a argument payload");
-		exit(1);
+		exit(0);
  	}
 
-
-	
-	
-	param.buffer_payloads = read_lines(param.payloads);
-
-	if (param.find_string_list!=NULL)
-		param.buffer_list = read_lines(param.find_string_list);
-
-	if (param.find_regex_list!=NULL && param.buffer_list == NULL)
-		param.buffer_list = read_lines(param.find_regex_list);
+	load_files();
 }
 

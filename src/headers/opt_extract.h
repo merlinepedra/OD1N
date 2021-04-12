@@ -73,20 +73,33 @@ struct choice  {
 	char *timeout;
 	char *proxy;
 	char *proxy_rand;
+	char *useragent_rand;
 	char *tamper;
 	char *token_name;
 	char *path_output;
 	char *datatable;
-	char *buffer_list;
-	char *buffer_payloads;
 	bool save_response;
 	bool json_headers;
+	bool keep_alive_test;
+	int max_requests;
 };
 
-extern struct choice param;
+struct bufferglobal {
+	char *buf_useragent;
+	char *buf_proxy;
+	char *buf_list;
+	char *buf_payloads;
+	char *buf_custom;
+	int useragent_lines;
+	int proxy_lines;
+};
 
+
+extern struct choice param;
+extern struct bufferglobal blob;
+
+void load_files();
 void init_banner_odin();
 void parser_opts (int argc, char **argv);
-
 
 #endif

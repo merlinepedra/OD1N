@@ -1,17 +1,38 @@
 #include "spider.h"
 
+
+struct curl_slist *keep_alive_generate(struct curl_slist *headers)
+{
+	curl_slist_append(headers, "Cache-Control: noCache");
+	curl_slist_append(headers, "Connection: keep-alive");
+
+	char keep_value[]="Keep-Alive: ";
+	char num_keep[8];
+	char header_keep_custom[32];
+
+	// keep-Alive: random_number(four numbers 0-9)
+	memset(num_keep,0,7);
+	rand_number(num_keep,4);
+	memset(header_keep_custom,0,31); // if use 20 crash because hardening use canary cookie in last chunk
+	snprintf(header_keep_custom,31,"%s%s",keep_value,num_keep);
+
+	curl_slist_append(headers, header_keep_custom);
+
+	return headers;
+}
+
 // pthread_mutex_t mutex_spider = PTHREAD_MUTEX_INITIALIZER;
 
 void spider(void *in)
 {
 //	pthread_mutex_lock(&mutex_spider);
-	char *lines=(char *)in;
+	char *lines=in==NULL?" ":(char *)in;
 	struct MemoryStruct chunk;
 	long status = 0,length = 0;
 	int res = 0, try = 1, POST = 0, timeout = 3, debug_host = 3; 
 	char *make = NULL, *make2 = NULL, *make_cookie = NULL, *make_agent = NULL;
 	char *token = NULL, *request_file = NULL;
-
+	struct curl_slist *headers = NULL;
 
 	if (param.timeout!=NULL)
 		timeout = (int)strtol(param.timeout,(char **)NULL,10);
@@ -30,10 +51,12 @@ void spider(void *in)
 	if(param.tamper!=NULL)
 		lines = tamper_choice(param.tamper,lines);
 
-	chomp(lines);
+	if(lines != NULL)
+		chomp(lines);
 
 // goto to fix signal stop if user do ctrl+c
 	try_again:
+
 
 	POST=param.post?1:0;
 
@@ -71,7 +94,7 @@ void spider(void *in)
 			curl_easy_setopt(curl,  CURLOPT_URL, param.host);
 		} else {
 // if is custom request
-			request_file = read_lines(param.custom);
+			request_file = blob.buf_custom;
 			make2 = replace( request_file,"^",lines);	
 			curl_easy_setopt(curl,  CURLOPT_URL, param.host);
 
@@ -95,14 +118,33 @@ void spider(void *in)
 		{
 			curl_easy_setopt(curl,  CURLOPT_USERAGENT, param.agent);
 		} else {
-			curl_easy_setopt(curl,  CURLOPT_USERAGENT, "Mozilla/5.0 (0d1n v0.1) ");
+			if(param.useragent_rand==NULL)
+				curl_easy_setopt(curl,  CURLOPT_USERAGENT, "Mozilla/5.0 (0d1n v0.1) ");
+			else
+				curl_easy_setopt(curl,  CURLOPT_USERAGENT, random_line_of_buffer( blob.buf_useragent, blob.useragent_lines));
 		}
+
+
+// encode
+
+		curl_easy_setopt(curl,  CURLOPT_ENCODING,"gzip,deflate");
+
+// keep-alive denial of service test, based in old tools like slowloris and goldeneye tool
+
+		if(param.keep_alive_test==true)
+		{
+
+				headers=keep_alive_generate(headers);
+				curl_easy_setopt(curl,  CURLOPT_HTTPHEADER, headers);
+				curl_slist_free_all(headers);
+		} 
+
+		
 
 // json headers to use JSON
 
 		if (param.header!=NULL)
 		{
-			struct curl_slist *headers = NULL;
 			curl_slist_append(headers, param.header);
 
 			if (param.json_headers==true)
@@ -118,20 +160,21 @@ void spider(void *in)
 
 			if (param.json_headers==true)
 			{
-				struct curl_slist *headers = NULL;
 
 				curl_slist_append(headers, "Accept: application/json");
 				curl_slist_append(headers, "Content-Type: application/json");
 				curl_easy_setopt(curl,  CURLOPT_HTTPHEADER, headers);
 				curl_slist_free_all(headers);
 			}
+
 		}
-	
+
+
+
+
 //use custom method PUT,DELETE...
 		if (param.method!=NULL)
 			curl_easy_setopt(curl,  CURLOPT_CUSTOMREQUEST, param.method);
- 
-		curl_easy_setopt(curl,  CURLOPT_ENCODING,"gzip,deflate");
 
 // load cookie jar
 		if (param.cookie_jar != NULL)
@@ -139,7 +182,8 @@ void spider(void *in)
 			curl_easy_setopt(curl,CURLOPT_COOKIEFILE,param.cookie_jar);
 			curl_easy_setopt(curl,CURLOPT_COOKIEJAR,param.cookie_jar);
 		} else {
-			curl_easy_setopt(curl,CURLOPT_COOKIEJAR,"odin_cookiejar.txt");
+			if(param.keep_alive_test!=true)
+				curl_easy_setopt(curl,CURLOPT_COOKIEJAR,"odin_cookiejar.txt");
 		}
 // LOAD cookie fuzz
 
@@ -178,8 +222,7 @@ void spider(void *in)
 // load random proxy in list 
 		if (param.proxy_rand != NULL)
 		{
-			char *randproxy = Random_linefile(param.proxy_rand);
-			curl_easy_setopt(curl, CURLOPT_PROXY, randproxy);
+			curl_easy_setopt(curl, CURLOPT_PROXY, random_line_of_buffer( blob.buf_proxy, blob.proxy_lines) );
 	//		curl_easy_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 1);
 		}
 
@@ -254,9 +297,9 @@ void spider(void *in)
 		if (status==0)
 		{	
 			debug_host--;
-			DEBUG("Problem in Host: \n %s\n Host is down ? %s\n", chunk.memory, strerror(errno));
+			DEBUG("Problem in Host: \n %s\n Host is down ? %s\n", param.host, strerror(errno));
  			DEBUG("curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
-			if (debug_host==0)
+			if (debug_host==0 && param.max_requests == 0)
 				exit(0);
 
 			sleep(3);
@@ -274,7 +317,9 @@ void spider(void *in)
 		curl_easy_cleanup(curl);
 	}
 	// Write results in log and htmnl+js in /opt/0d1n/view
-	write_result(	(char *)chunk.memory,
+	if(param.save_response == true)
+	{	
+		write_result(	(char *)chunk.memory,
 			param.datatable,
 			lines,
 			make,
@@ -282,7 +327,8 @@ void spider(void *in)
 			make_cookie,
 			status,
 			length
-	);	
+		);	
+	}
 
 	// clear all
 	XFREE(chunk.memory);

@@ -179,18 +179,20 @@ Random_linefile(char * namefile)
 	FILE *f;
 	int nLines = 0;
 	static char line[1024];   // think recv space to nullbyte 1023
-	int randLine = 0, i = 0;
- 
+	int randLine = 0, i = 0; 
+
 	entropy_clock();  // i set entropy seed here
 
 	memset(line,0x0,1023);
+
 
 	f = fopen(namefile, "r");
 
 	if ( f == NULL )
 	{
+		fprintf(stderr, "Error opening file: %s\n", strerror(errno) );
 //		fclose(f);
-		DEBUG("error in file");
+		DEBUG("error in file %s",namefile);
 		exit(0);
 	}
 

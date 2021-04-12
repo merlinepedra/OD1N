@@ -11,6 +11,51 @@ deadspace(char *str)
 }
 
 
+
+
+char * 
+random_line_of_buffer(char *list, int lines_total)
+{
+	
+	int line_counter = 0, rand_line = 0;
+	char *token = strtok(list, "\n");
+
+	entropy_clock();
+	rand_line = rand() % lines_total;
+
+     	while (token != NULL)
+	{
+		if(rand_line == line_counter)
+			return token;  
+		line_counter++;
+		token = strtok(NULL, "\n");
+	}
+// todo add integer overflow checker
+
+	return token;
+}
+
+
+
+int 
+total_lines_of_buffer(char *list)
+{
+	
+	int line_counter = 0;
+	char *start = strtok(list, "\n");
+
+
+     	while (start != NULL)
+	{
+		line_counter++;	
+		start = strtok(NULL, "\n");
+	}
+// todo add integer overflow checker
+
+	return line_counter;
+}
+
+
 void *
 entropy_clock(void)
 {
@@ -23,6 +68,30 @@ entropy_clock(void)
   	return NULL;	
 }
 
+
+
+char *
+rand_number(char *dst, int size)
+{
+	static const char text[] =	"0123456789";                    
+	entropy_clock();
+
+	int i, len = random() % (size - 1);
+  
+	if( !len ) 
+		len=8;
+ 
+	for ( i=0; i<len; ++i )
+		dst[i] = text[random() % (sizeof text - 1)];
+
+   	dst[i] = '\0';
+
+
+	entropy_clock();
+
+
+	return dst;
+}
 
 char *
 rand_str(char *dst, int size)

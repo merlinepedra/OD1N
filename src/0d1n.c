@@ -60,15 +60,16 @@ main (int argc, char ** argv)
 // why ? i don't know, maybe need study internals of LLVM/GCC to make a report  ¯\_(ツ)_/¯
 // this source code have a different scan() function to bypass the compiler bug
 /* remove comment to test the patch
+*/
 #ifdef __GNUC__
 #  if __GNUC_PREREQ(10,0)
-*/
+
 	scan_gcc_new();
-/* #  else
+#  else
 	scan_gcc_old();
 #  endif
 #endif
-*/
+
  	exit(0);
 }
 

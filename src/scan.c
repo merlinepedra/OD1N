@@ -1,6 +1,37 @@
 #include "scan.h"
 
 
+long int keep_alive_test_scan(int threads_total)
+{
+	long int total_requests= 0;
+	threadpool thpool = thpool_init(threads_total);
+	int requests_limit = param.max_requests;
+	int inter = 0;
+
+	while(requests_limit)
+	{
+		
+		if (total_requests<LONG_MAX)
+			total_requests++;
+
+		thpool_add_work(thpool, spider, NULL);
+
+		if(inter == threads_total)
+		{
+			thpool_wait(thpool);			
+			inter = 0;
+		}
+
+		total_requests++;
+		requests_limit--;
+		inter++;
+	}
+
+	thpool_destroy(thpool);
+	return total_requests;
+
+}
+
 
 long int parse_n_scan(const char* input, int threads_total)
 {
@@ -55,45 +86,69 @@ void scan_gcc_old(void)
 	printf("Threads per request: %d\n Timeout seconds per threads: %d\n",threadss,timeout);
 	puts("start...");
 
-	prepare_datatable();
+
+	if(param.log!=NULL)
+		prepare_datatable();
+
 	threadpool thpool = thpool_init(threadss);
 
 
-
-	fp = fopen(param.payloads, "r");
-
- 	if (!fp)
-	{ 
-		DEBUG("error to open Payload list"); 
-		exit(0);
-	}
-
-	while ( getline(&line,&len,fp) != -1) 
+	if(param.keep_alive_test!=true)
 	{
-		if (total_requests<LONG_MAX)
-			total_requests++;
+		fp = fopen(param.payloads, "r");
 
-		thpool_add_work(thpool, spider, (void *)line);
+ 		if (!fp)
+		{ 
+			DEBUG("error to open Payload list"); 
+			exit(0);
+		}
 
-		thpool_wait(thpool);			
+		while ( getline(&line,&len,fp) != -1) 
+		{
+			if (total_requests<LONG_MAX)
+				total_requests++;
+	
+			thpool_add_work(thpool, spider, (void *)line);
+	
+			thpool_wait(thpool);			
 
-  	}
+	  	}
+	} else {
+		int requests_limit = param.max_requests;
+
+		while(requests_limit)
+		{
+			if (total_requests<LONG_MAX)
+				total_requests++;
+	
+			thpool_add_work(thpool, spider, NULL);
+			thpool_wait(thpool);			
+			requests_limit--;
+		}
+	}
 
 	thpool_destroy(thpool);
 	threadss = 0;
 	puts("Sleep timeout seconds");
 	sleep(timeout);
-	end_datatable(param.datatable);
 
-	puts(RED);
-	fprintf(stdout,"End scan \n look the file %s\n Total Requests %ld\n Path table: %s\n",param.path_output, total_requests, param.datatable);
-	fprintf(stdout,"\nExecute 0d1n_view server \nFind the file html in https://127.0.0.1:40111/tables/hammer_%s.html\n", param.log);
+	if(param.log!=NULL)
+		end_datatable(param.datatable);
+
+	puts(YELLOW);
+
+	if(param.path_output != NULL)
+		fprintf(stdout,"Look the file %s\n Total Requests %ld\n Path table: %s\n",param.path_output, total_requests, param.datatable);
+
+	if(param.log != NULL)
+		fprintf(stdout,"\nExecute 0d1n_view server \nFind the file html in https://127.0.0.1:40111/tables/hammer_%s.html\n", param.log);
+	
+
+	printf("0d1n done...");
+
 	puts(LAST);
 
-	XFREE(param.buffer_list);
-	XFREE(param.buffer_payloads);
-	XFREE(param.path_output);
-	XFREE(param.datatable);
+	free_global_buf();
 
 	if (fclose(fp) == EOF)
 	{
@@ -126,24 +181,34 @@ void scan_gcc_new(void)
 	printf("Threads per request: %d\n Timeout seconds per threads: %d\n",total_threads,timeout);
 	puts("start...");
 
+	if(param.log!=NULL)
+		prepare_datatable();
 
-	prepare_datatable();
 
-	total_requests = parse_n_scan(param.buffer_payloads, total_threads);
-
+	if(param.keep_alive_test!=true)
+		total_requests = parse_n_scan(blob.buf_payloads, total_threads);
+	else  
+		total_requests = keep_alive_test_scan(total_threads);
+	
 	puts("Sleep timeout seconds");
 	sleep(timeout);
-	end_datatable(param.datatable);
 
-	puts(RED);
-	fprintf(stdout,"End scan \n look the file %s\n Total Requests %ld\n Path table: %s\n",param.path_output, total_requests, param.datatable);
-	fprintf(stdout,"\nExecute 0d1n_view server \nFind the file html in https://127.0.0.1:40111/tables/hammer_%s.html\n", param.log);
+	if(param.log!=NULL)
+		end_datatable(param.datatable);
+
+	puts(YELLOW);
+
+	if(param.path_output!=NULL)
+		fprintf(stdout,"End scan \n look the file %s\n Total Requests %ld\n Path table: %s\n",param.path_output, total_requests, param.datatable);
+
+	if(param.log != NULL)
+		fprintf(stdout,"\nExecute 0d1n_view server \nFind the file html in https://127.0.0.1:40111/tables/hammer_%s.html\n", param.log);
+
+	printf("0d1n done...");
+
 	puts(LAST);
-
-	XFREE(param.buffer_list);
-	XFREE(param.buffer_payloads);
-	XFREE(param.path_output);
-	XFREE(param.datatable);
+	
+	free_global_buf();
 
 	exit(0);
 }

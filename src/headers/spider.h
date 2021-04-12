@@ -25,7 +25,7 @@
 #include "get_csrf_token.h"
 #include "opt_extract.h"
 
-
+struct curl_slist *keep_alive_generate(struct curl_slist *headers);
 void spider(void *in);
 
 #endif
