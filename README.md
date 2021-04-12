@@ -23,11 +23,15 @@ Tool functions:
 
  * Test to find SSRF
 
- * Test to find COmmand injection
+ * Test to find Command injection
 
  * Options to load ANTI-CSRF token each request
 
  * Options to use random proxy per request
+
+ * Options to use random useragent  per request
+
+ * Option for keep alive test (slowloris test) 
 
  * other functions.
 
@@ -124,7 +128,7 @@ Notes External libs
 https://github.com/Pithikos/C-Thread-Pool
 
 * The 0d1n uses OpenBSD/NetBSD functions to work with strings something like strlcat() and strlcpy() to prevent buffer overflow.
-
+https://man.openbsd.org/strlcpy.3
 
 
 Project Overview on cloc
