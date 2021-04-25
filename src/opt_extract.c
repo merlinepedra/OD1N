@@ -103,7 +103,7 @@ LAST
 YELLOW
  "Example 2 to Bruteforce in simple auth:\n"
 LAST
-"0d1n --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads /opt/0d1n/payloads/wordlist.txt --log log007 --threads 500 --timeout 3\n"
+"0d1n --host 'http://site.com/auth.py' --post 'user=admin&password=^' --payloads /opt/0d1n/payloads/wordlist.txt --log log007 --threads 500 --timeout 3 --save_response\n"
 "\n"
 YELLOW
 "Example 3 to search XSS and pass anti-csrf token:\n"
