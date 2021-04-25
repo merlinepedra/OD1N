@@ -11,7 +11,8 @@ void write_result(
  char * make_agent, 
  char * make_cookie,
  long status,
- long length
+ long length,
+ char * time_total
 )
 {
 	bool match_string=false; 
@@ -44,13 +45,13 @@ void write_result(
 				if (chunk && (match_string == true) ) 
 				{
 					if (make_cookie!=NULL)
-						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s \nCookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,ptr_line,YELLOW,make,make_cookie,LAST);
+						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s \nCookie: %s \nTime: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,ptr_line,YELLOW,make,make_cookie,time_total,LAST);
 					
 
 					if (make_agent!=NULL)
-						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s \nCookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,ptr_line,YELLOW,make,make_agent,LAST);
+						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s \nCookie: %s\nTime: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,ptr_line,YELLOW,make,make_agent,time_total,LAST);
 					else 
-						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,ptr_line,YELLOW,make,LAST);
+						fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Grep: %s %s %s  Params: %s Time: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,ptr_line,YELLOW,make,time_total,LAST);
 					
 
 					if (param.save_response==true && status != 404)
@@ -70,7 +71,7 @@ void write_result(
 					// write log file
 					if(status != 404)
 					{
-						snprintf(log,3047,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s  UserAgent: %s \n Path Response Source: %s\n",status,line,ptr_line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
+						snprintf(log,3047,"[ %ld ] Payload: %s  Grep: %s Params: %s cookie: %s  UserAgent: %s Time: %s\n Path Response Source: %s\n",status,line,ptr_line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",time_total,pathsource);
 						write_file(param.log,log);
 						memset(log,0,3047);	
 					}
@@ -99,17 +100,17 @@ void write_result(
 					if (make_cookie!=NULL)
 					{
 						tmp_make_cookie = html_entities(make_cookie);
-						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s cookie: %s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_cookie,tmp_ptr_line,tmp_line);
+						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s cookie: %s\",\"%s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_cookie,tmp_ptr_line,tmp_line,time_total);
 						memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
 					}
 
 					if (make_agent!=NULL)
 					{
 						tmp_make_agent = html_entities(make_agent);
-						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s UserAgent: %s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_agent,tmp_ptr_line,tmp_line);
+						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s UserAgent: %s\",\"%s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_agent,tmp_ptr_line,tmp_line,time_total);
 						memset(tmp_make_agent,0,strlen(tmp_make_agent)-1);
 					} else 
-						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_ptr_line,tmp_line);
+						snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"%s\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_ptr_line,tmp_line,time_total);
 
 					if (status != 404)					
 						write_file(pathtable,tabledata);
@@ -138,12 +139,12 @@ void write_result(
 			char *tmp_make_cookie = NULL,*tmp_make_agent = NULL;
 
 			if (make_cookie != NULL)
-				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n Cookie: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_cookie,LAST);
+				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n Cookie: %s Time: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_cookie,time_total,LAST);
 			
 			if (make_agent != NULL)
-				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n UserAgent: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_agent,LAST);
+				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s\n UserAgent: %s Time: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,make_agent,time_total,LAST);
 			else 
-				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,LAST);
+				fprintf(stdout,"%s [ %s %ld %s ] Payload: %s %s %s Params: %s %s Time: %s %s\n",YELLOW,CYAN,status,YELLOW,GREEN,line,YELLOW,CYAN,make,time_total,LAST);
 	
 			if (param.save_response==true && status != 404)
 			{		
@@ -161,7 +162,7 @@ void write_result(
 //write logs
 			if(status != 404)
 			{
-				snprintf(log,3047,"[%ld Payload: %s Params: %s Cookie: %s UserAgent: %s \n Path Response Source: %s\n",status,line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",pathsource);
+				snprintf(log,3047,"[%ld Payload: %s Params: %s Cookie: %s UserAgent: %s \nTime: %s\n Path Response Source: %s\n",status,line,make,(make_cookie!=NULL)?make_cookie:" ",(make_agent!=NULL)?make_agent:" ",time_total,pathsource);
 				write_file(param.log,log);
 				memset(log,0,3047);
 			}
@@ -187,7 +188,7 @@ void write_result(
 			{
 				
 				tmp_make_cookie = html_entities(make_cookie);
-				snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  cookie: %s\",\"\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_cookie,tmp_line);
+				snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  cookie: %s\",\"\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_cookie,tmp_line,time_total);
 			//	memset(tmp_make_cookie,0,strlen(tmp_make_cookie)-1);
 			}
 
@@ -195,10 +196,10 @@ void write_result(
 			{
 				
 				tmp_make_agent = html_entities(make_agent);
-				snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  UserAgent: %s\",\"\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_agent,tmp_line);
+				snprintf(tabledata,4085,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s  UserAgent: %s\",\"\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_make_agent,tmp_line,time_total);
 
 			} else 
-				snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_line);
+				snprintf(tabledata,4047,"[\"<a class=\\\"fancybox fancybox.iframe\\\" href=\\\"../%s\\\">%ld </a>\",\"%ld\",\"%s\",\"\",\"%s\",\"%s\"],\n",pathurl,status,length,tmp_make,tmp_line,time_total);
 			if (status != 404)
   				write_file(pathtable,tabledata);
 

@@ -30,13 +30,14 @@
  
 
 void write_result(
- char *chunk_in,
- char *pathtable,
- char *line,
+ char * chunk_in,
+ char * pathtable,
+ char * line,
  char * make, 
  char * make_agent, 
  char * make_cookie,
  long status,
- long length);
+ long length,
+ char * time_total);
 
 #endif

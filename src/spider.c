@@ -26,13 +26,17 @@ struct curl_slist *keep_alive_generate(struct curl_slist *headers)
 void spider(void *in)
 {
 //	pthread_mutex_lock(&mutex_spider);
-	char *lines=in==NULL?" ":(char *)in;
-	struct MemoryStruct chunk;
+	curl_off_t time_total = 0;
 	long status = 0,length = 0;
 	int res = 0, try = 1, POST = 0, timeout = 3, debug_host = 3; 
+	char *lines=in==NULL?" ":(char *)in;
 	char *make = NULL, *make2 = NULL, *make_cookie = NULL, *make_agent = NULL;
 	char *token = NULL, *request_file = NULL;
+	char time_total_str[35];
 	struct curl_slist *headers = NULL;
+	struct MemoryStruct chunk;
+
+	memset(time_total_str,0,34);
 
 	if (param.timeout!=NULL)
 		timeout = (int)strtol(param.timeout,(char **)NULL,10);
@@ -123,6 +127,7 @@ void spider(void *in)
 			else
 				curl_easy_setopt(curl,  CURLOPT_USERAGENT, random_line_of_buffer( blob.buf_useragent, blob.useragent_lines));
 		}
+
 
 
 // encode
@@ -276,11 +281,13 @@ void spider(void *in)
 
 			
 			status = (long)parse_http_status(chunk.memory);
+			curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME_T, &time_total);
 
 		} else {
 
 			res = curl_easy_perform(curl);
 			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE,&status);
+			curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME_T, &time_total);
 		}
 
 
@@ -309,6 +316,9 @@ void spider(void *in)
 		
 		}
 
+		// https://curl.se/libcurl/c/CURLINFO_TOTAL_TIME_T.html
+		snprintf(time_total_str,34,"%.06ld",(long)(time_total % 1000000));
+
 
 		debug_host=3;
 		try--;
@@ -317,7 +327,7 @@ void spider(void *in)
 		curl_easy_cleanup(curl);
 	}
 	// Write results in log and htmnl+js in /opt/0d1n/view
-	if(param.save_response == true)
+	if(param.log)
 	{	
 		write_result(	(char *)chunk.memory,
 			param.datatable,
@@ -326,7 +336,8 @@ void spider(void *in)
 			make_agent,
 			make_cookie,
 			status,
-			length
+			length,
+			time_total_str
 		);	
 	}
 

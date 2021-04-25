@@ -7,7 +7,7 @@
 void 
 end_datatable(char * path)
 {
-	write_file(path," [\"\",\"\",\"\",\"\",\"\"] \n ] }");
+	write_file(path," [\"\",\"\",\"\",\"\",\"\",\"\"] \n ] }");
 }
 
 void 
