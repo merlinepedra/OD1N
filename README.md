@@ -169,4 +169,7 @@ Do you have any doubt about 0d1n? Please create an issue in this repository. I c
 
 http://sourceforge.net/projects/odin-security-tool/files/?source=navbar
 
+## Point of attention
+The purpose of this tool is to use in pentest, take attention if you have a proper authorization before to use that. I do not have responsibility for your actions. You can use a hammer to construct a house or destroy it, choose the law path, don't be a bad guy, remember.
+
                              
